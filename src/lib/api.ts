@@ -1,0 +1,86 @@
+import ky from "ky"
+import { ApiResponse } from "types/response"
+
+const api = ky.create({
+  prefixUrl: process.env.NEXT_PUBLIC_API_URL,
+  credentials: "include",
+  hooks: {
+    beforeRequest: [
+      (req) => {
+        // Example: attach auth token if exists
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+        if (token) req.headers.set("Authorization", `Bearer ${token}`)
+      }
+    ]
+  }
+})
+
+// Generic helper for cleaner try/catch with optional mapper
+export async function handleRequest<T, R = T>(
+  promise: Promise<Response>
+): Promise<ApiResponse<T>>
+
+export async function handleRequest<T, R = T>(
+  promise: Promise<Response>,
+  mapper: (data: R) => T
+): Promise<ApiResponse<T>>
+
+export async function handleRequest<T, R = T>(
+  promise: Promise<Response>,
+  mapper: (data: R) => T,
+  custom: {
+    success: any
+    failure: any
+  }
+): Promise<any>
+
+export async function handleRequest<T, R = T>(
+  promise: Promise<Response>,
+  mapper?: (data: R) => T,
+  custom?: {
+    success: any
+    failure: any
+  }
+): Promise<ApiResponse<T> | any> {
+  try {
+    const response = await promise
+    const result = await response.json()
+
+    const data = result.data !== undefined ? result.data : result
+
+    let mappedData: T
+    if (mapper) {
+      if (Array.isArray(data)) {
+        mappedData = data.map((item: any) => mapper(item)) as unknown as T
+      } else if (data !== null && typeof data === "object") {
+        mappedData = mapper(data)
+      } else {
+        mappedData = mapper(data)
+      }
+    } else {
+      mappedData = data
+    }
+
+    if (custom?.success !== undefined) {
+      return custom.success
+    }
+
+    return {
+      success: result.success !== undefined ? result.success : true,
+      message: result.message || "Request successful",
+      data: mappedData
+    }
+  } catch (error: any) {
+    if (custom?.failure !== undefined) {
+      return custom.failure
+    }
+
+    return {
+      success: false,
+      message: error?.message || "Network error",
+      error: error?.message || "Network error"
+    }
+  }
+}
+
+export default api

@@ -20,6 +20,7 @@
     "@mui/material": "^7.3.4",
     "@mui/material-nextjs": "^7.3.3",
     "dayjs": "^1.11.18",
+    "ky": "^1.13.0",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.0",
     "next": "15.3.2",
