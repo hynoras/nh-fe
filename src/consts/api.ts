@@ -8,9 +8,9 @@ export const authPaths = {
   logout: `${authPath}/logout`
 }
 
-const userPath = "/user"
+const userPath = "/users"
 export const userPaths = {
-  getList: `${userPath}s`,
+  getList: `${userPath}`,
   getMe: `${userPath}/me`,
   getDetail: (userId: string) => `${userPath}/${userId}`
 }

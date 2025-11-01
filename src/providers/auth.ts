@@ -1,6 +1,7 @@
 import { AuthProvider } from "@refinedev/core"
 import { LoginDto } from "app/login/_domain/dto/login"
 import { loginApi, logoutApi } from "app/login/_service"
+import { getMeApi } from "app/user/_service"
 
 export const authProvider: AuthProvider = {
   login: async ({ username, password }) => {
@@ -34,8 +35,17 @@ export const authProvider: AuthProvider = {
     }
   },
   check: async () => {
+    const response = await getMeApi()
+    if (response.success) {
+      return {
+        authenticated: true,
+        logout: false
+      }
+    }
     return {
-      authenticated: true
+      authenticated: false,
+      redirectTo: "/login",
+      logout: true
     }
   },
   onError: async (error) => {

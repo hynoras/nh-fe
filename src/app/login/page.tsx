@@ -1,28 +1,30 @@
 "use client"
 
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Box,
-  Container,
-  CardHeader,
-  FormLabel,
-  Divider,
-  InputAdornment,
-  IconButton
-} from "@mui/material"
-import { useForm } from "react-hook-form"
-import { FormContainer, TextFieldElement } from "react-hook-form-mui"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
 import LockPersonIcon from "@mui/icons-material/LockPerson"
 import PersonIcon from "@mui/icons-material/Person"
-import { Visibility, VisibilityOff } from "@mui/icons-material"
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  Typography
+} from "@mui/material"
+import { useLogin } from "@refinedev/core"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { FormContainer, TextFieldElement } from "react-hook-form-mui"
+import { LoginDto } from "./_domain/dto/login"
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
 
+  const { mutate: login } = useLogin<LoginDto>()
   const formContext = useForm({
     defaultValues: {
       email: "",
@@ -41,8 +43,10 @@ const Login = () => {
   }
 
   const handleLogin = (data: any) => {
-    // 🔒 TODO: Add login API call + validation logic here
-    console.log("Form submitted:", data)
+    login({
+      email: data.email,
+      password: data.password
+    })
   }
 
   return (

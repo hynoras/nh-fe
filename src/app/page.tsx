@@ -1,8 +1,6 @@
 import Header from "components/Header"
-import { redirect } from "next/navigation"
 
 export default function Home() {
-  redirect("/login")
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-800">
       <Header />
