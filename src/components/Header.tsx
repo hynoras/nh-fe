@@ -24,9 +24,9 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
           })
       }}
     >
-      <Toolbar className="flex justify-between">
+      <Toolbar>
         <IconButton
-          size="large"
+          size="small"
           edge="start"
           color="inherit"
           aria-label="menu"
@@ -35,36 +35,35 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
         >
           <MenuIcon />
         </IconButton>
-        <div>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            //onClick={handleMenu}
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            //anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right"
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right"
-            }}
-            open={false}
-            // onClose={handleClose}
-          >
-            <MenuItem onClick={() => router.push("/user")}>Profile</MenuItem>
-            <MenuItem onClick={() => router.push("/login")}>My account</MenuItem>
-          </Menu>
-        </div>
+        <IconButton
+          size="small"
+          edge="end"
+          aria-label="account of current user"
+          aria-controls="menu-appbar"
+          aria-haspopup="true"
+          //onClick={handleMenu}
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        <Menu
+          id="menu-appbar"
+          //anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          open={false}
+          // onClose={handleClose}
+        >
+          <MenuItem onClick={() => router.push("/user")}>Profile</MenuItem>
+          <MenuItem onClick={() => router.push("/login")}>My account</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   )

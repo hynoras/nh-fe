@@ -31,7 +31,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             marginLeft: sidebarOpen ? 0 : `-${DRAWER_WIDTH}px`
           }}
         >
-          <Toolbar />
+          <Toolbar sx={{ minHeight: 50, height: 50 }} />
           {children}
         </Box>
       </Box>
