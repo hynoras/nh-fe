@@ -50,7 +50,7 @@ const Login = () => {
   }
 
   return (
-    <Box className="flex items-center justify-center min-h-screen bg-gray-100">
+    <Box className="flex items-center justify-center min-h-screen">
       <Card
         variant="outlined"
         className="w-full max-w-md shadow-lg"
@@ -184,9 +184,6 @@ const Login = () => {
                 fullWidth
                 size="small"
                 className="mt-4 font-bold"
-                sx={{
-                  background: "linear-gradient(135deg, #3f0087 0%, #6b21a8 100%)"
-                }}
               >
                 Login
               </Button>
