@@ -1,14 +1,14 @@
 /**
  * Auth API paths
  */
-const authPath = "/auth"
+const authPath = "auth"
 export const authPaths = {
   login: `${authPath}/login`,
   register: `${authPath}/register`,
   logout: `${authPath}/logout`
 }
 
-const userPath = "/users"
+const userPath = "users"
 export const userPaths = {
   getList: `${userPath}`,
   getMe: `${userPath}/me`,

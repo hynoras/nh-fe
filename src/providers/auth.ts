@@ -1,7 +1,7 @@
 import { AuthProvider } from "@refinedev/core"
+import { getMeApi } from "app/(protected)/user/_service"
 import { LoginDto } from "app/login/_domain/dto/login"
 import { loginApi, logoutApi } from "app/login/_service"
-import { getMeApi } from "app/user/_service"
 
 export const authProvider: AuthProvider = {
   login: async ({ username, password }) => {
@@ -35,17 +35,29 @@ export const authProvider: AuthProvider = {
     }
   },
   check: async () => {
-    const response = await getMeApi()
-    if (response.success) {
-      return {
-        authenticated: true,
-        logout: false
+    try {
+      console.log("🔒 Auth check: Calling /users/me API...")
+      const response = await getMeApi()
+      console.log("🔒 Auth check response:", response)
+
+      if (response.success) {
+        return {
+          authenticated: true,
+          logout: false
+        }
       }
-    }
-    return {
-      authenticated: false,
-      redirectTo: "/login",
-      logout: true
+      return {
+        authenticated: false,
+        redirectTo: "/login",
+        logout: true
+      }
+    } catch (error) {
+      console.error("🔒 Auth check error:", error)
+      return {
+        authenticated: false,
+        redirectTo: "/login",
+        logout: true
+      }
     }
   },
   onError: async (error) => {

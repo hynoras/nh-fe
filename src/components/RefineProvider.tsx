@@ -1,6 +1,6 @@
 "use client"
 
-import { Authenticated, Refine, ResourceProps } from "@refinedev/core"
+import { Refine, ResourceProps } from "@refinedev/core"
 import { RefineSnackbarProvider } from "@refinedev/mui"
 import routerProvider from "@refinedev/nextjs-router"
 import { authProvider } from "providers/auth"
@@ -20,7 +20,7 @@ export default function RefineProvider({ children }: RefineProviderProps) {
         resources={refineResource}
         options={{ syncWithLocation: true }}
       >
-        <Authenticated key="authenticated">{children}</Authenticated>
+        {children}
       </Refine>
     </RefineSnackbarProvider>
   )

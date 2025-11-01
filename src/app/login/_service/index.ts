@@ -1,9 +1,8 @@
-import api, { handleRequest } from "lib/api"
-
-import { User } from "app/user/_domain/entity/user"
-import { userDetailMapper } from "app/user/_domain/mapper/user"
-import { UserDetailModel } from "app/user/_domain/model/user"
+import { User } from "app/(protected)/user/_domain/entity/user"
+import { userDetailMapper } from "app/(protected)/user/_domain/mapper/user"
+import { UserDetailModel } from "app/(protected)/user/_domain/model/user"
 import { authPaths } from "consts/api"
+import api, { handleRequest } from "lib/api"
 import { ApiResponse } from "types/response"
 import { LoginDto } from "../_domain/dto/login"
 

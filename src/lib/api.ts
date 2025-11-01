@@ -10,6 +10,14 @@ const api = ky.create({
         // Example: attach auth token if exists
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
         if (token) req.headers.set("Authorization", `Bearer ${token}`)
+
+        console.log("🌐 API Request:", req.method, req.url)
+      }
+    ],
+    afterResponse: [
+      async (req, options, response) => {
+        console.log("✅ API Response:", response.status, req.url)
+        return response
       }
     ]
   }
@@ -71,6 +79,8 @@ export async function handleRequest<T, R = T>(
       data: mappedData
     }
   } catch (error: any) {
+    console.error("❌ API Error:", error?.message || error)
+
     if (custom?.failure !== undefined) {
       return custom.failure
     }

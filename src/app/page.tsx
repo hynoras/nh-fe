@@ -1,12 +1,29 @@
-import Header from "components/Header"
+"use client"
 
-export default function Home() {
+import { useIsAuthenticated } from "@refinedev/core"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+
+export default function IndexPage() {
+  const { data, isLoading } = useIsAuthenticated()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (data?.authenticated) {
+        router.push("/user")
+      } else {
+        router.push("/login")
+      }
+    }
+  }, [data, isLoading, router])
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-800">
-      <Header />
-      <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-yellow-500">
-        Tailwind Gradient Test
-      </h1>
-    </main>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto" />
+        <p className="mt-4 text-gray-600">Loading...</p>
+      </div>
+    </div>
   )
 }
