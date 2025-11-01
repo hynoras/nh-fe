@@ -45,15 +45,7 @@ const theme = createTheme({
   typography: {
     fontFamily: "var(--font-roboto)"
   },
-  components: {
-    MuiFilledInput: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "rgba(255, 255, 255, 0.05)"
-        }
-      }
-    }
-  }
+  components: {}
 })
 
 export default theme

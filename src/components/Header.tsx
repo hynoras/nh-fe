@@ -3,10 +3,27 @@ import MenuIcon from "@mui/icons-material/Menu"
 import { AppBar, IconButton, Menu, MenuItem, Toolbar } from "@mui/material"
 import { useRouter } from "next/navigation"
 
-export default function Header() {
+type HeaderProps = {
+  sidebarOpen: boolean
+  setSidebarOpen: (open: boolean) => void
+  drawerWidth: number
+}
+
+const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
   const router = useRouter()
   return (
-    <AppBar position="static">
+    <AppBar
+      position="fixed"
+      sx={{
+        width: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
+        ml: sidebarOpen ? `${drawerWidth}px` : 0,
+        transition: (theme) =>
+          theme.transitions.create(["margin", "width"], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen
+          })
+      }}
+    >
       <Toolbar className="flex justify-between">
         <IconButton
           size="large"
@@ -14,6 +31,7 @@ export default function Header() {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <MenuIcon />
         </IconButton>
@@ -51,3 +69,5 @@ export default function Header() {
     </AppBar>
   )
 }
+
+export default Header
