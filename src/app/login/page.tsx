@@ -24,8 +24,8 @@ import { LoginDto } from "./_domain/dto/login"
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
 
-  const { mutate: login } = useLogin<LoginDto>()
-  const formContext = useForm({
+  const { mutate: login } = useLogin()
+  const formContext = useForm<LoginDto>({
     defaultValues: {
       email: "",
       password: ""
@@ -42,9 +42,9 @@ const Login = () => {
     event.preventDefault()
   }
 
-  const handleLogin = (data: any) => {
+  const handleLogin = (data: LoginDto) => {
     login({
-      email: data.email,
+      username: data.email,
       password: data.password
     })
   }
@@ -74,7 +74,10 @@ const Login = () => {
         />
         <Divider variant="middle" />
         <CardContent className="flex flex-col justify-center gap-10">
-          <FormContainer formContext={formContext} onSuccess={handleLogin}>
+          <FormContainer
+            formContext={formContext}
+            handleSubmit={formContext.handleSubmit(handleLogin)}
+          >
             <Box className="space-y-4 h-full flex flex-col justify-center gap-4">
               <div>
                 <FormLabel className="font-semibold" required htmlFor="email">
@@ -173,22 +176,22 @@ const Login = () => {
                 />
               </div>
             </Box>
+            <div className="mt-4">
+              <Divider />
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="small"
+                className="mt-4 font-bold"
+                sx={{
+                  background: "linear-gradient(135deg, #3f0087 0%, #6b21a8 100%)"
+                }}
+              >
+                Login
+              </Button>
+            </div>
           </FormContainer>
-          <div>
-            <Divider />
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              size="small"
-              className="mt-4 font-bold"
-              sx={{
-                background: "linear-gradient(135deg, #3f0087 0%, #6b21a8 100%)"
-              }}
-            >
-              Login
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </Box>
