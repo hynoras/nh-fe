@@ -13,16 +13,20 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   return (
     <Authenticated key="authenticated-routes">
       <Box sx={{ display: "flex" }}>
+        <Sidebar open={sidebarOpen} drawerWidth={DRAWER_WIDTH} />
         <Header
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           drawerWidth={DRAWER_WIDTH}
         />
-        <Sidebar open={sidebarOpen} drawerWidth={DRAWER_WIDTH} />
         <Box
           sx={{
             flexGrow: 1,
+            height: "99vh",
             p: 1,
+            mb: "6px",
+            mr: "6px",
+            borderRadius: 2,
             transition: (theme) =>
               theme.transitions.create(["margin"], {
                 easing: theme.transitions.easing.sharp,
@@ -31,7 +35,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             marginLeft: sidebarOpen ? 0 : `-${DRAWER_WIDTH}px`
           }}
         >
-          <Toolbar sx={{ minHeight: 50, height: 50 }} />
+          <Toolbar />
           {children}
         </Box>
       </Box>

@@ -24,7 +24,7 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
           })
       }}
     >
-      <Toolbar>
+      <Toolbar className="flex justify-between items-center">
         <IconButton
           size="small"
           edge="start"
