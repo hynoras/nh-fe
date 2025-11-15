@@ -2,7 +2,7 @@ import ky from "ky"
 import { ApiResponse } from "types/response"
 
 const api = ky.create({
-  prefixUrl: "http://localhost:8000/api/v1/",
+  prefixUrl: "http://localhost:8080/api/v1/",
   credentials: "include",
   hooks: {
     beforeRequest: [
@@ -71,7 +71,7 @@ export async function handleRequest<T, R = T>(
       data: mappedData
     }
   } catch (error: any) {
-    console.error("❌ API Error:", error?.message || error)
+    console.error("API Error:", error?.message || error)
 
     if (custom?.failure !== undefined) {
       return custom.failure

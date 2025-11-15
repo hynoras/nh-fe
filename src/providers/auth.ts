@@ -36,9 +36,7 @@ export const authProvider: AuthProvider = {
   },
   check: async () => {
     try {
-      console.log("🔒 Auth check: Calling /users/me API...")
       const response = await getMeApi()
-      console.log("🔒 Auth check response:", response)
 
       if (response.success) {
         return {
@@ -52,7 +50,7 @@ export const authProvider: AuthProvider = {
         logout: true
       }
     } catch (error) {
-      console.error("🔒 Auth check error:", error)
+      console.error("Auth check error:", error)
       return {
         authenticated: false,
         redirectTo: "/login",

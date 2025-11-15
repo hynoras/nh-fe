@@ -24,6 +24,7 @@
     "@refinedev/nextjs-router": "^7.0.4",
     "@refinedev/react-hook-form": "^5.0.2",
     "@refinedev/simple-rest": "^6.0.1",
+    "@tanstack/react-query": "^5.90.9",
     "dayjs": "^1.11.18",
     "dotenv": "^17.2.3",
     "ky": "^1.13.0",
@@ -34,7 +35,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.65.0",
-    "react-hook-form-mui": "^8.2.0"
+    "react-hook-form-mui": "^8.2.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

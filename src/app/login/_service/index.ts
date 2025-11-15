@@ -7,10 +7,16 @@ import { ApiResponse } from "types/response"
 import { LoginDto } from "../_domain/dto/login"
 
 export const loginApi = async (body: LoginDto): Promise<ApiResponse<User>> => {
-  return await handleRequest<User, UserDetailModel>(
+  const response = await handleRequest<User, UserDetailModel>(
     api.post(authPaths.login, { json: body }),
     userDetailMapper
   )
+
+  if (!response.success) {
+    throw new Error(response.message || response.error || "Login failed")
+  }
+
+  return response
 }
 
 export const logoutApi = async (): Promise<ApiResponse<boolean>> => {
