@@ -13,7 +13,7 @@ export default function IndexPage() {
   useEffect(() => {
     if (!isLoading) {
       if (data?.authenticated) {
-        router.push("/user")
+        router.push("/home")
       } else {
         router.push("/login")
       }

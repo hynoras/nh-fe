@@ -48,7 +48,7 @@ const Login = () => {
     mutationFn: loginApi,
     onSuccess: () => {
       //navigate to home page
-      router.push("/user")
+      router.push("/home")
     }
   })
 
