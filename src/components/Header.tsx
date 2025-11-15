@@ -1,7 +1,8 @@
-import { AccountCircle } from "@mui/icons-material"
+import { AccountCircle, Logout, Settings } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
-import { AppBar, IconButton, Menu, MenuItem, Toolbar } from "@mui/material"
+import { AppBar, IconButton, ListItemIcon, Menu, MenuItem, Toolbar } from "@mui/material"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 type HeaderProps = {
   sidebarOpen: boolean
@@ -11,6 +12,16 @@ type HeaderProps = {
 
 const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
   const router = useRouter()
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
   return (
     <AppBar
       position="fixed"
@@ -38,31 +49,27 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
         <IconButton
           size="small"
           edge="end"
-          aria-label="account of current user"
-          aria-controls="menu-appbar"
+          aria-controls={open ? "setting-menu" : undefined}
           aria-haspopup="true"
-          //onClick={handleMenu}
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleOpenMenu}
           color="inherit"
         >
           <AccountCircle />
         </IconButton>
-        <Menu
-          id="menu-appbar"
-          //anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right"
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right"
-          }}
-          open={false}
-          // onClose={handleClose}
-        >
-          <MenuItem onClick={() => router.push("/user")}>Profile</MenuItem>
-          <MenuItem onClick={() => router.push("/login")}>My account</MenuItem>
+        <Menu id="setting-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
+          <MenuItem onClick={() => router.push("/setting")}>
+            <ListItemIcon>
+              <Settings fontSize="small" />
+            </ListItemIcon>
+            Settings
+          </MenuItem>
+          <MenuItem onClick={() => router.push("/login")}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
