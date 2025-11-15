@@ -195,6 +195,7 @@ const Login = () => {
                 size="small"
                 className="mt-4 font-bold"
                 loading={loginMutation.isPending}
+                disabled={loginMutation.isPending}
               >
                 Login
               </Button>

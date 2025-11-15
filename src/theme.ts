@@ -41,7 +41,9 @@ const theme = createTheme({
       }
     }
   },
-  cssVariables: true,
+  cssVariables: {
+    colorSchemeSelector: "class"
+  },
   typography: {
     fontFamily: "var(--font-roboto)"
   },

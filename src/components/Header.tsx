@@ -1,6 +1,8 @@
 import { AccountCircle, Logout, Settings } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
 import { AppBar, IconButton, ListItemIcon, Menu, MenuItem, Toolbar } from "@mui/material"
+import { useMutation } from "@tanstack/react-query"
+import { logoutApi } from "app/login/_service"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
@@ -11,15 +13,25 @@ type HeaderProps = {
 }
 
 const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
-  const router = useRouter()
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const router = useRouter()
+  const logoutMutation = useMutation({
+    mutationFn: logoutApi,
+    onSuccess: () => {
+      router.push("/login")
+    }
+  })
   const open = Boolean(anchorEl)
+
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
   }
 
   return (
@@ -64,7 +76,7 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
             </ListItemIcon>
             Settings
           </MenuItem>
-          <MenuItem onClick={() => router.push("/login")}>
+          <MenuItem onClick={handleLogout}>
             <ListItemIcon>
               <Logout fontSize="small" />
             </ListItemIcon>

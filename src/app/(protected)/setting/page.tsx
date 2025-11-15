@@ -1,5 +1,19 @@
+"use client"
+import { usePathname, useRouter } from "next/navigation"
+import { useEffect } from "react"
+
 const SettingPage = () => {
-  return <div>SettingPage</div>
+  const router = useRouter()
+  const pathname = usePathname()
+
+  useEffect(() => {
+    // Redirect to profile page when accessing /setting directly
+    if (pathname === "/setting") {
+      router.push("/setting/profile")
+    }
+  }, [pathname, router])
+
+  return null
 }
 
 export default SettingPage
