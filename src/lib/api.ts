@@ -51,11 +51,12 @@ export async function handleRequest<T, R = T>(
     let mappedData: T
     if (mapper) {
       if (Array.isArray(data)) {
-        mappedData = data.map((item: any) => mapper(item)) as unknown as T
+        // Pass the entire array to the mapper - let the mapper handle array mapping
+        mappedData = mapper(data as R) as T
       } else if (data !== null && typeof data === "object") {
-        mappedData = mapper(data)
+        mappedData = mapper(data as R)
       } else {
-        mappedData = mapper(data)
+        mappedData = mapper(data as R)
       }
     } else {
       mappedData = data

@@ -19,6 +19,7 @@
     "@mui/icons-material": "^6.5.0",
     "@mui/material": "^6.5.0",
     "@mui/material-nextjs": "^6.5.0",
+    "@mui/x-data-grid": "^8.18.0",
     "@refinedev/core": "^5.0.5",
     "@refinedev/mui": "^7.0.0",
     "@refinedev/nextjs-router": "^7.0.4",
