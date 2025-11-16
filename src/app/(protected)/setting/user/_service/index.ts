@@ -44,3 +44,14 @@ export const createUserApi = async (
   }
   return response
 }
+
+export const deleteUserApi = async (ids: string[]): Promise<ApiResponse<boolean>> => {
+  const response = await handleRequest(
+    api.delete(userPaths.delete, { json: { ids } }),
+    (data: any) => data
+  )
+  if (!response.success) {
+    throw new Error(response.message)
+  }
+  return response
+}

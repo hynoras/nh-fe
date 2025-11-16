@@ -5,14 +5,21 @@ import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import {
+  Alert,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   IconButton,
   InputAdornment,
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   Stack,
   TextField,
   TextFieldProps,
@@ -25,19 +32,88 @@ import {
   GridPaginationModel,
   GridRenderCellParams
 } from "@mui/x-data-grid"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
-import { getUserListApi } from "./_service"
+import { User } from "./_domain/entity/user"
+import { deleteUserApi, getUserListApi } from "./_service"
 import { UserListFilter } from "./_types/user"
 
+type DeleteUserDialogProps = {
+  open: boolean
+  onClose: () => void
+  selectedUser: User | null
+  handleDeleteUser: () => void
+}
+
+const DeleteUserDialog = ({
+  open,
+  onClose,
+  selectedUser,
+  handleDeleteUser
+}: DeleteUserDialogProps) => {
+  const [disableDeleteButton, setDisableDeleteButton] = useState(true)
+
+  const handleConfirmDeleteInputChange = (value: string) => {
+    setDisableDeleteButton(value !== selectedUser?.username)
+  }
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">{`Deleting ${selectedUser?.username}`}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          Are you sure about deleting this user? This action can not be undone.
+        </DialogContentText>
+        <DialogContentText id="alert-dialog-description">
+          <Typography variant="caption" color="text">
+            Type "{selectedUser?.username}" to confirm.
+          </Typography>
+        </DialogContentText>
+        <TextField
+          fullWidth
+          id="confirm-delete-input"
+          placeholder="Type username to confirm"
+          variant="outlined"
+          size="small"
+          autoFocus
+          onChange={(e) => handleConfirmDeleteInputChange(e.target.value as string)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} variant="contained" color="primary">
+          Cancel
+        </Button>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleDeleteUser}
+          autoFocus
+          disabled={disableDeleteButton}
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
 const UserPage = () => {
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
     search: "",
     role: "",
     page: 1,
     pageSize: 10
   })
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const queryClient = useQueryClient()
   const { data: usersData, isLoading } = useQuery({
     queryKey: ["users", userListFilter],
     queryFn: () =>
@@ -51,64 +127,19 @@ const UserPage = () => {
     gcTime: 10 * 60 * 1000
   })
 
-  const router = useRouter()
-
-  const handlePaginationChange = (model: GridPaginationModel) => {
-    setUserListFilter((prev) => ({
-      ...prev,
-      page: model.page + 1,
-      pageSize: model.pageSize
-    }))
-  }
-
-  const columns: GridColDef[] = [
-    {
-      field: "email",
-      headerName: "User",
-      flex: 1,
-      valueGetter: (_, row) => {
-        return `${row.username}-${row.email}`
-      },
-      renderCell: (params: GridRenderCellParams<any, string>) => {
-        const [username, email] = params.value?.split("-") || []
-        return (
-          <Stack direction={"column"} spacing={1}>
-            <Typography variant="body1" color="text" sx={{ height: 20 }}>
-              {username}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {email}
-            </Typography>
-          </Stack>
-        )
-      }
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string[]) => deleteUserApi(userId),
+    onSuccess: () => {
+      handleCloseDeleteDialog()
+      setSnackbarOpen(true)
+      queryClient.invalidateQueries({ queryKey: ["users"] })
     },
-    { field: "role", headerName: "Role", flex: 1 },
-    { field: "createdAt", headerName: "Created At", flex: 1 },
-    { field: "updatedAt", headerName: "Updated At", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: () => {
-        return (
-          <Stack
-            direction={"row"}
-            justifyContent={"flex-start"}
-            alignItems={"center"}
-            spacing={2}
-          >
-            <IconButton>
-              <EditIcon />
-            </IconButton>
-            <IconButton color="error">
-              <DeleteIcon />
-            </IconButton>
-          </Stack>
-        )
-      }
+    onError: (error) => {
+      setSnackbarOpen(true)
+      console.error(error)
     }
-  ]
+  })
+  const router = useRouter()
 
   const handleSearch: TextFieldProps["onChange"] = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -127,70 +158,173 @@ const UserPage = () => {
     router.push("/setting/user/create")
   }
 
-  return (
-    <Box sx={{ width: "100%" }}>
-      <Stack direction={"column"} spacing={2}>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-          <Stack direction={"row"} spacing={1}>
-            <TextField
-              id="outlined-basic"
-              placeholder="Search by email"
-              variant="outlined"
-              size="small"
-              onChange={(e) => debouncedHandleSearch(e)}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Search />
-                    </InputAdornment>
-                  )
-                }
-              }}
-            />
-            <FormControl sx={{ minWidth: 150 }} size="small">
-              <InputLabel id="select-role-label">Select Role</InputLabel>
-              <Select
-                size="small"
-                labelId="select-role-label"
-                label="Select Role"
-                value={userListFilter.role}
-                onChange={(e) =>
-                  setUserListFilter((prev) => ({ ...prev, role: e.target.value }))
-                }
-              >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value={"admin"}>Admin</MenuItem>
-                <MenuItem value={"user"}>User</MenuItem>
-              </Select>
-            </FormControl>
+  const handlePaginationChange = (model: GridPaginationModel) => {
+    setUserListFilter((prev) => ({
+      ...prev,
+      page: model.page + 1,
+      pageSize: model.pageSize
+    }))
+  }
+
+  const handleClickOpen = (user: User) => {
+    setSelectedUser(user)
+    setOpenDeleteDialog(true)
+  }
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false)
+    setSelectedUser(null)
+  }
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false)
+  }
+
+  const handleDeleteUser = () => {
+    if (selectedUser) {
+      deleteUserMutation.mutate([selectedUser.id as string])
+    }
+  }
+
+  const columns: GridColDef[] = [
+    {
+      field: "email",
+      headerName: "User",
+      flex: 1,
+      valueGetter: (_, row) => {
+        return `${row.username}-${row.email}`
+      },
+      renderCell: (params: GridRenderCellParams<any, string>) => {
+        const [username, email] = params.value?.split("-") || []
+        return (
+          <Stack height={"100%"} direction={"column"} spacing={0.5}>
+            <Typography variant="body1" color="text">
+              {username}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {email}
+            </Typography>
           </Stack>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={handleCreateUser}
+        )
+      }
+    },
+    { field: "role", headerName: "Role", flex: 1 },
+    { field: "createdAt", headerName: "Created At", flex: 1 },
+    { field: "updatedAt", headerName: "Updated At", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      renderCell: (params: GridRenderCellParams<any, string>) => {
+        return (
+          <Stack
+            height={"100%"}
+            direction={"row"}
+            justifyContent={"flex-start"}
+            alignItems={"center"}
+            spacing={2}
           >
-            Create User
-          </Button>
+            <IconButton>
+              <EditIcon />
+            </IconButton>
+            <IconButton color="error" onClick={() => handleClickOpen(params.row)}>
+              <DeleteIcon />
+            </IconButton>
+          </Stack>
+        )
+      }
+    }
+  ]
+
+  return (
+    <>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={deleteUserMutation.isError ? "error" : "success"}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {deleteUserMutation.isError
+            ? deleteUserMutation.error.message
+            : "User deleted successfully"}
+        </Alert>
+      </Snackbar>
+      <DeleteUserDialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        selectedUser={selectedUser}
+        handleDeleteUser={handleDeleteUser}
+      />
+      <Box sx={{ width: "100%" }}>
+        <Stack direction={"column"} spacing={2}>
+          <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+            <Stack direction={"row"} spacing={1}>
+              <TextField
+                id="outlined-basic"
+                placeholder="Search by email"
+                variant="outlined"
+                size="small"
+                onChange={(e) => debouncedHandleSearch(e)}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Search />
+                      </InputAdornment>
+                    )
+                  }
+                }}
+              />
+              <FormControl sx={{ minWidth: 150 }} size="small">
+                <InputLabel id="select-role-label">Select Role</InputLabel>
+                <Select
+                  size="small"
+                  labelId="select-role-label"
+                  label="Select Role"
+                  value={userListFilter.role}
+                  onChange={(e) =>
+                    setUserListFilter((prev) => ({ ...prev, role: e.target.value }))
+                  }
+                >
+                  <MenuItem value="">None</MenuItem>
+                  <MenuItem value={"admin"}>Admin</MenuItem>
+                  <MenuItem value={"user"}>User</MenuItem>
+                </Select>
+              </FormControl>
+            </Stack>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={handleCreateUser}
+            >
+              Create User
+            </Button>
+          </Stack>
+          <Box sx={{ height: "55vh" }}>
+            <DataGrid
+              rows={usersData?.data || []}
+              columns={columns}
+              loading={isLoading}
+              paginationMode="server"
+              rowCount={usersData?.length || 0}
+              paginationModel={{
+                page: userListFilter.page - 1,
+                pageSize: userListFilter.pageSize
+              }}
+              onPaginationModelChange={handlePaginationChange}
+              pageSizeOptions={[5, 10, 25, 50, 100]}
+            />{" "}
+          </Box>
         </Stack>
-        <Box sx={{ height: "55vh" }}>
-          <DataGrid
-            rows={usersData?.data || []}
-            columns={columns}
-            loading={isLoading}
-            paginationMode="server"
-            rowCount={usersData?.length || 0}
-            paginationModel={{
-              page: userListFilter.page - 1,
-              pageSize: userListFilter.pageSize
-            }}
-            onPaginationModelChange={handlePaginationChange}
-            pageSizeOptions={[5, 10, 25, 50, 100]}
-          />{" "}
-        </Box>
-      </Stack>
-    </Box>
+      </Box>
+    </>
   )
 }
 

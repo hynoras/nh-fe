@@ -16,5 +16,5 @@ export const userPaths = {
   getDetail: (userId: string) => `${userPath}/${userId}`,
   create: `${userPath}`,
   update: (userId: string) => `${userPath}/${userId}`,
-  delete: (userId: string) => `${userPath}/${userId}`
+  delete: `${userPath}`
 }
