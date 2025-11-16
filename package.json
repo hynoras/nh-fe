@@ -26,6 +26,7 @@
     "@refinedev/react-hook-form": "^5.0.2",
     "@refinedev/simple-rest": "^6.0.1",
     "@tanstack/react-query": "^5.90.9",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
     "dotenv": "^17.2.3",
     "ky": "^1.13.0",

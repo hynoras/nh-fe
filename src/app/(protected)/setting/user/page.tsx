@@ -33,6 +33,7 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { User } from "./_domain/entity/user"
@@ -209,8 +210,22 @@ const UserPage = () => {
       }
     },
     { field: "role", headerName: "Role", flex: 1 },
-    { field: "createdAt", headerName: "Created At", flex: 1 },
-    { field: "updatedAt", headerName: "Updated At", flex: 1 },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      flex: 1,
+      valueGetter: (_, row) => {
+        return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
+      }
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated At",
+      flex: 1,
+      valueGetter: (_, row) => {
+        return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
+      }
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -321,18 +336,7 @@ const UserPage = () => {
               onPaginationModelChange={handlePaginationChange}
               pageSizeOptions={[5, 10, 25, 50, 100]}
               sx={{
-                backgroundColor: "color.background",
-                "& .MuiDataGrid-cell": {
-                  borderBottom: "1px solid color.border"
-                },
-                "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: "color.primary",
-                  fontWeight: 600
-                },
-                "& .MuiDataGrid-row:hover": {
-                  backgroundColor: "color.background",
-                  cursor: "pointer"
-                }
+                border: 0
               }}
             />
           </Box>
