@@ -14,12 +14,26 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { useQuery } from "@tanstack/react-query"
+import { useState } from "react"
 import { getUserListApi } from "./_service"
+import { UserListFilter } from "./types/user"
 
 const UserPage = () => {
+  const [userListFilter, setUserListFilter] = useState<UserListFilter>({
+    search: "",
+    role: "",
+    page: 1,
+    pageSize: 10
+  })
   const { data: usersData, isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => getUserListApi()
+    queryKey: ["users", userListFilter],
+    queryFn: () =>
+      getUserListApi(
+        userListFilter.search,
+        userListFilter.role,
+        userListFilter.page,
+        userListFilter.pageSize
+      )
   })
 
   const columns: GridColDef[] = [

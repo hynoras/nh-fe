@@ -5,9 +5,14 @@ import { User } from "../_domain/entity/user"
 import { userDetailMapper, userListMapper } from "../_domain/mapper/user"
 import { UserDetailModel, UserListModel } from "../_domain/model/user"
 
-export const getUserListApi = async (): Promise<ApiResponse<User[]>> => {
+export const getUserListApi = async (
+  search: string,
+  role: string,
+  page: number,
+  pageSize: number
+): Promise<ApiResponse<User[]>> => {
   return await handleRequest<User[], UserListModel[]>(
-    api.get(userPaths.getList),
+    api.get(userPaths.getList(search, role, page, pageSize)),
     userListMapper
   )
 }

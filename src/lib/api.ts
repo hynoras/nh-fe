@@ -66,10 +66,19 @@ export async function handleRequest<T, R = T>(
       return custom.success
     }
 
-    return {
-      success: result.success !== undefined ? result.success : true,
-      message: result.message || "Request successful",
-      data: mappedData
+    if (result.length !== undefined && result.length > 0) {
+      return {
+        success: result.success !== undefined ? result.success : true,
+        message: result.message || "Request successful",
+        data: mappedData,
+        length: result.length
+      }
+    } else {
+      return {
+        success: result.success !== undefined ? result.success : true,
+        message: result.message || "Request successful",
+        data: mappedData
+      }
     }
   } catch (error: any) {
     console.error("API Error:", error?.message || error)

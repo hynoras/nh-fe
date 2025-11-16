@@ -8,5 +8,6 @@ export interface ApiResponse<T> {
   success: boolean
   message: string
   data?: T
+  length?: number
   error?: string
 }
