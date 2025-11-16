@@ -320,7 +320,21 @@ const UserPage = () => {
               }}
               onPaginationModelChange={handlePaginationChange}
               pageSizeOptions={[5, 10, 25, 50, 100]}
-            />{" "}
+              sx={{
+                backgroundColor: "color.background",
+                "& .MuiDataGrid-cell": {
+                  borderBottom: "1px solid color.border"
+                },
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "color.primary",
+                  fontWeight: 600
+                },
+                "& .MuiDataGrid-row:hover": {
+                  backgroundColor: "color.background",
+                  cursor: "pointer"
+                }
+              }}
+            />
           </Box>
         </Stack>
       </Box>

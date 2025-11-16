@@ -11,7 +11,7 @@ const DRAWER_WIDTH = 200
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true)
   return (
-    <Authenticated key="authenticated-routes">
+    <Authenticated key="authenticated-routes" redirectOnFail="/login">
       <Box sx={{ display: "flex", width: "100%", overflow: "hidden" }}>
         <Sidebar open={sidebarOpen} drawerWidth={DRAWER_WIDTH} />
         <Header
