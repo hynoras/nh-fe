@@ -27,7 +27,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             mb: "6px",
             width: "100%",
             maxWidth: "100%",
-            overflow: "auto",
+            overflowY: "hidden",
             borderRadius: 2,
             transition: (theme) =>
               theme.transitions.create(["margin"], {

@@ -1,6 +1,7 @@
 "use client"
 
 import { Search } from "@mui/icons-material"
+import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import {
@@ -24,10 +25,11 @@ import {
   GridPaginationModel,
   GridRenderCellParams
 } from "@mui/x-data-grid"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { getUserListApi } from "./_service"
-import { UserListFilter } from "./types/user"
+import { UserListFilter } from "./_types/user"
 
 const UserPage = () => {
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
@@ -36,8 +38,6 @@ const UserPage = () => {
     page: 1,
     pageSize: 10
   })
-
-  const queryClient = useQueryClient()
   const { data: usersData, isLoading } = useQuery({
     queryKey: ["users", userListFilter],
     queryFn: () =>
@@ -50,6 +50,8 @@ const UserPage = () => {
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000
   })
+
+  const router = useRouter()
 
   const handlePaginationChange = (model: GridPaginationModel) => {
     setUserListFilter((prev) => ({
@@ -121,6 +123,10 @@ const UserPage = () => {
     [handleSearch]
   )
 
+  const handleCreateUser = () => {
+    router.push("/setting/user/create")
+  }
+
   return (
     <Box sx={{ width: "100%" }}>
       <Stack direction={"column"} spacing={2}>
@@ -159,7 +165,12 @@ const UserPage = () => {
               </Select>
             </FormControl>
           </Stack>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleCreateUser}
+          >
             Create User
           </Button>
         </Stack>

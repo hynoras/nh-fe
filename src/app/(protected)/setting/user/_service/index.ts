@@ -1,6 +1,7 @@
 import { userPaths } from "consts/api"
 import api, { handleRequest } from "lib/api"
 import { ApiResponse } from "types/response"
+import { CreateUserDto } from "../_domain/dto/user"
 import { User } from "../_domain/entity/user"
 import { userDetailMapper, userListMapper } from "../_domain/mapper/user"
 import { UserDetailModel, UserListModel } from "../_domain/model/user"
@@ -28,5 +29,18 @@ export const getUserDetailApi = async (userId: string): Promise<ApiResponse<User
   return await handleRequest<User, UserDetailModel>(
     api.get(userPaths.getDetail(userId)),
     userDetailMapper
+  )
+}
+
+export const createUserApi = async (
+  user: CreateUserDto
+): Promise<ApiResponse<boolean>> => {
+  return await handleRequest(
+    api.post(userPaths.create, { json: user }),
+    (data: any) => data,
+    {
+      success: true,
+      failure: false
+    }
   )
 }

@@ -28,6 +28,9 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
       case 2:
         router.push("/setting/user")
         break
+      case 2:
+        router.push("/setting/user/create")
+        break
       default:
         router.push("/setting/profile")
     }
@@ -44,13 +47,16 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
       case "/setting/user":
         setValue(2)
         break
+      case "/setting/user/create":
+        setValue(2)
+        break
       default:
         setValue(0)
     }
   }, [pathname])
 
   return (
-    <Stack direction={"column"} spacing={2}>
+    <Stack className="overflow-y-hidden" direction={"column"} spacing={2}>
       <Typography variant="h4">Settings</Typography>
       <Typography variant="body2">Managing your settings and preferences</Typography>
       <Box sx={{ width: "100%" }}>
