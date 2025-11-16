@@ -35,7 +35,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { User } from "./_domain/entity/user"
 import { deleteUserApi, getUserListApi } from "./_service"
 import { UserListFilter } from "./_types/user"
@@ -105,6 +105,7 @@ const DeleteUserDialog = ({
 }
 
 const UserPage = () => {
+  const [tableHeight, setTableHeight] = useState<number>(0)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
@@ -114,6 +115,9 @@ const UserPage = () => {
     pageSize: 10
   })
   const [snackbarOpen, setSnackbarOpen] = useState(false)
+
+  const tableRef = useRef<HTMLDivElement>(null)
+
   const queryClient = useQueryClient()
   const { data: usersData, isLoading } = useQuery({
     queryKey: ["users", userListFilter],
@@ -186,6 +190,25 @@ const UserPage = () => {
       deleteUserMutation.mutate([selectedUser.id as string])
     }
   }
+
+  useEffect(() => {
+    if (!tableRef.current) return
+
+    const updateHeight = () => {
+      const rect = tableRef.current?.getBoundingClientRect()
+      if (rect) {
+        const topOffset = rect.top
+        const bottomPadding = 20
+        const calculated = window.innerHeight - topOffset - bottomPadding
+        setTableHeight(calculated)
+      }
+    }
+
+    updateHeight()
+    // Update on window resize
+    window.addEventListener("resize", updateHeight)
+    return () => window.removeEventListener("resize", updateHeight)
+  }, [window.innerHeight, tableRef])
 
   const columns: GridColDef[] = [
     {
@@ -322,7 +345,7 @@ const UserPage = () => {
               Create User
             </Button>
           </Stack>
-          <Box sx={{ height: "55vh" }}>
+          <Box sx={{ height: tableHeight }} ref={tableRef}>
             <DataGrid
               rows={usersData?.data || []}
               columns={columns}
