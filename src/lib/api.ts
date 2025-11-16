@@ -87,10 +87,30 @@ export async function handleRequest<T, R = T>(
       return custom.failure
     }
 
+    // Try to extract error and message from server response
+    let serverMessage = error?.message || "Network error"
+    let serverError = error?.message || "Network error"
+
+    if (error?.response) {
+      try {
+        const errorResponse = await error.response.json()
+        if (errorResponse.message) {
+          serverMessage = errorResponse.message
+        }
+        if (errorResponse.error) {
+          serverError = errorResponse.error
+        } else if (errorResponse.message) {
+          serverError = errorResponse.message
+        }
+      } catch (parseError) {
+        // If parsing fails, use the original error message
+      }
+    }
+
     return {
       success: false,
-      message: error?.message || "Network error",
-      error: error?.message || "Network error"
+      message: serverMessage,
+      error: serverError
     }
   }
 }

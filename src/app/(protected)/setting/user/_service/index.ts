@@ -35,12 +35,12 @@ export const getUserDetailApi = async (userId: string): Promise<ApiResponse<User
 export const createUserApi = async (
   user: CreateUserDto
 ): Promise<ApiResponse<boolean>> => {
-  return await handleRequest(
+  const response = await handleRequest(
     api.post(userPaths.create, { json: user }),
-    (data: any) => data,
-    {
-      success: true,
-      failure: false
-    }
+    (data: any) => data
   )
+  if (!response.success) {
+    throw new Error(response.message)
+  }
+  return response
 }

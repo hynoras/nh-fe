@@ -54,9 +54,21 @@ const CreateUserPage = () => {
         router.push("/setting/user")
       }, 500)
     },
-    onError: (error) => {
-      console.error(error)
+    onError: (error: any) => {
       setSnackbarOpen(true)
+      const errorMessage = error.message?.toLowerCase() || ""
+      if (errorMessage.includes("username") && errorMessage.includes("already exist")) {
+        formContext.setError("username", {
+          type: "manual",
+          message: "Username is already taken"
+        })
+      }
+      if (errorMessage.includes("email") && errorMessage.includes("already exist")) {
+        formContext.setError("email", {
+          type: "manual",
+          message: "Email is already registered"
+        })
+      }
     }
   })
 
@@ -119,7 +131,6 @@ const CreateUserPage = () => {
                     variant="outlined"
                     size="small"
                     disabled={createUserMutation.isPending}
-                    error={createUserMutation.isError}
                   />
                 </div>
                 <div>
@@ -138,7 +149,6 @@ const CreateUserPage = () => {
                     variant="outlined"
                     size="small"
                     disabled={createUserMutation.isPending}
-                    error={createUserMutation.isError}
                   />
                 </div>
                 <div>
@@ -154,7 +164,6 @@ const CreateUserPage = () => {
                     fullWidth
                     variant="outlined"
                     size="small"
-                    error={createUserMutation.isError}
                     disabled={createUserMutation.isPending}
                   />
                 </div>
@@ -171,7 +180,6 @@ const CreateUserPage = () => {
                     fullWidth
                     variant="outlined"
                     size="small"
-                    error={createUserMutation.isError}
                     disabled={createUserMutation.isPending}
                   />
                 </div>
