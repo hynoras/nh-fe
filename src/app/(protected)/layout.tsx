@@ -6,7 +6,7 @@ import Header from "components/Header"
 import Sidebar from "components/Sidebar"
 import { useState } from "react"
 
-const DRAWER_WIDTH = 200
+const DRAWER_WIDTH = 250
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true)

@@ -25,12 +25,6 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
       case 1:
         router.push("/setting/preferences")
         break
-      case 2:
-        router.push("/setting/user")
-        break
-      case 2:
-        router.push("/setting/user/create")
-        break
       default:
         router.push("/setting/profile")
     }
@@ -43,12 +37,6 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
         break
       case "/setting/preferences":
         setValue(1)
-        break
-      case "/setting/user":
-        setValue(2)
-        break
-      case "/setting/user/create":
-        setValue(2)
         break
       default:
         setValue(0)
@@ -64,7 +52,6 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
           <Tabs value={value} onChange={handleChange} aria-label="settings tabs">
             <Tab label="Profile" {...a11yProps(0)} />
             <Tab label="Preferences" {...a11yProps(1)} />
-            <Tab label="User" {...a11yProps(2)} />
           </Tabs>
         </Box>
         <Box sx={{ pt: 3 }}>{children}</Box>

@@ -160,7 +160,7 @@ const UserPage = () => {
   )
 
   const handleCreateUser = () => {
-    router.push("/setting/user/create")
+    router.push("/user/create")
   }
 
   const handlePaginationChange = (model: GridPaginationModel) => {

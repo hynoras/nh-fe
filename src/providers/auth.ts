@@ -1,5 +1,5 @@
 import { AuthProvider } from "@refinedev/core"
-import { getMeApi } from "app/(protected)/setting/user/_service"
+import { getMeApi } from "app/(protected)/user/_service"
 import { LoginDto } from "app/login/_domain/dto/login"
 import { loginApi, logoutApi } from "app/login/_service"
 
