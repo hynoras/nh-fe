@@ -8,6 +8,7 @@ import {
   Stack,
   Typography
 } from "@mui/material"
+import { navigationKeys } from "consts/navigation"
 import { useRouter } from "next/navigation"
 
 type MenuItem = {
@@ -17,7 +18,11 @@ type MenuItem = {
 }
 
 const menuItems: MenuItem[] = [
-  { text: "Users & Access", icon: <ManageAccountsIcon />, navigate: "/user" }
+  {
+    text: "Users & Access",
+    icon: <ManageAccountsIcon />,
+    navigate: navigationKeys.usersAndAccess
+  }
 ]
 
 type SidebarProps = {
