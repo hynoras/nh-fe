@@ -1,14 +1,14 @@
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts"
 import {
   Divider,
   Drawer,
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
-  ListItemText
+  Stack,
+  Typography
 } from "@mui/material"
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 type MenuItem = {
   text: string
@@ -17,7 +17,7 @@ type MenuItem = {
 }
 
 const menuItems: MenuItem[] = [
-  { text: "Users and permissions", icon: <ManageAccountsIcon />, navigate: "/user" }
+  { text: "Users & Access", icon: <ManageAccountsIcon />, navigate: "/user" }
 ]
 
 type SidebarProps = {
@@ -46,8 +46,10 @@ const Sidebar = ({ open, drawerWidth }: SidebarProps) => {
         {menuItems.map((item: MenuItem) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton onClick={() => router.push(item.navigate)}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <Stack direction="row" alignItems="center" gap={1}>
+                {item.icon}
+                <Typography variant="body2">{item.text}</Typography>
+              </Stack>
             </ListItemButton>
           </ListItem>
         ))}

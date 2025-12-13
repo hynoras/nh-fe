@@ -39,6 +39,7 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
       position="fixed"
       sx={{
         width: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
+        height: 50,
         ml: sidebarOpen ? `${drawerWidth}px` : 0,
         transition: (theme) =>
           theme.transitions.create(["margin", "width"], {
@@ -47,7 +48,7 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
           })
       }}
     >
-      <Toolbar className="flex justify-between items-center">
+      <Toolbar className="flex justify-between items-center min-h-[50px]">
         <IconButton
           size="small"
           edge="start"
