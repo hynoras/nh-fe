@@ -17,7 +17,7 @@ export const userListMapper = (model: UserListModel[]): User[] => {
     username: user.username,
     email: user.email,
     role: user.role,
-    permissions: user.permission_groups.map(permissionGroupMapper),
+    permissions: user.permission_groups?.map(permissionGroupMapper) || [],
     createdAt: user.created_at,
     updatedAt: user.updated_at
   }))

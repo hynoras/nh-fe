@@ -8,6 +8,7 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,6 +19,7 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
+  Popover,
   Select,
   Snackbar,
   Stack,
@@ -33,11 +35,13 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
+import Overflow from "rc-overflow"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { deleteUserApi, getUserListApi } from "../../../service/user"
-import { User } from "./_domain/entity/user"
+import { Permission, User } from "./_domain/entity/user"
 import { UserListFilter } from "./_types/user"
 
 type DeleteUserDialogProps = {
@@ -115,8 +119,12 @@ const UserPage = () => {
     pageSize: 10
   })
   const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [anchorPermissionPopper, setAnchorPermissionPopper] =
+    useState<null | HTMLElement>(null)
 
   const tableRef = useRef<HTMLDivElement>(null)
+
+  const open = Boolean(anchorPermissionPopper)
 
   const queryClient = useQueryClient()
   const { data: usersData, isLoading } = useQuery({
@@ -160,7 +168,15 @@ const UserPage = () => {
   )
 
   const handleCreateUser = () => {
-    router.push("/user/create")
+    router.push(navigationRoutes.usersAndAccess.createUser)
+  }
+
+  const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorPermissionPopper(event.currentTarget)
+  }
+
+  const handleClosePermissionPopover = () => {
+    setAnchorPermissionPopper(null)
   }
 
   const handlePaginationChange = (model: GridPaginationModel) => {
@@ -232,11 +248,58 @@ const UserPage = () => {
         )
       }
     },
-    { field: "role", headerName: "Role", flex: 1 },
+    { field: "role", headerName: "Role", flex: 0.4 },
+    {
+      field: "permissions",
+      headerName: "Permissions",
+      flex: 1,
+      renderCell: (params: GridRenderCellParams<User, Permission[]>) => {
+        const permissions = params.value
+        return (
+          <Overflow
+            className="flex gap-2"
+            data={permissions}
+            renderItem={(item: Permission) => <Chip key={item.id} label={item.name} />}
+            renderRest={(omittedItems) => (
+              <>
+                <Popover
+                  id="permission-popper"
+                  className="pointer-events-none flex gap-2"
+                  open={open}
+                  anchorEl={anchorPermissionPopper}
+                  onClose={handleClosePermissionPopover}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left"
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left"
+                  }}
+                >
+                  {omittedItems.map((item) => (
+                    <Chip key={item.id} label={item.name} />
+                  ))}
+                </Popover>
+                <Chip
+                  aria-owns={open ? "permission-popper" : undefined}
+                  aria-haspopup="true"
+                  label={`+${omittedItems.length}`}
+                  onMouseEnter={handleOpenPermissionPopover}
+                  onMouseLeave={handleClosePermissionPopover}
+                />
+              </>
+            )}
+            maxCount={"responsive"}
+            component={Box}
+          />
+        )
+      }
+    },
     {
       field: "createdAt",
       headerName: "Created At",
-      flex: 1,
+      flex: 0.6,
       valueGetter: (_, row) => {
         return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
       }
@@ -244,7 +307,7 @@ const UserPage = () => {
     {
       field: "updatedAt",
       headerName: "Updated At",
-      flex: 1,
+      flex: 0.6,
       valueGetter: (_, row) => {
         return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
       }
@@ -252,7 +315,9 @@ const UserPage = () => {
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1,
+      flex: 0.6,
+      sortable: false,
+      resizable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => {
         return (
           <Stack
