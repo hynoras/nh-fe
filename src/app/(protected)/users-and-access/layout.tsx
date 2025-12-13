@@ -24,9 +24,9 @@ export default function UsersAndAccessLayout({
 
   const tabs = ["users", "roles"]
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    const tabValue = tabs[newValue]
-    params.set("tab", tabValue)
+  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue)
+    params.set("tab", tabs[newValue])
     router.push(`${navigationKeys.usersAndAccess}?${params.toString()}`)
   }
 
@@ -39,14 +39,12 @@ export default function UsersAndAccessLayout({
       } else {
         setValue(0)
         params.set("tab", "users")
-        router.replace(`${navigationKeys.usersAndAccess}?${params.toString()}`)
       }
     } else {
       setValue(0)
       params.set("tab", "users")
-      router.replace(`${navigationKeys.usersAndAccess}?${params.toString()}`)
     }
-  }, [searchParams, router])
+  }, [])
 
   return (
     <Stack direction="column">
