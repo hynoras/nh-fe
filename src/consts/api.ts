@@ -18,3 +18,18 @@ export const userPaths = {
   update: (userId: string) => `${userPath}/${userId}`,
   delete: `${userPath}`
 }
+
+const permissionPath = "permissions"
+export const permissionPaths = {
+  getList: `${permissionPath}`,
+  getDetail: (permissionId: string) => `${permissionPath}/${permissionId}`
+}
+
+const permissionGroupPath = "permission-groups"
+export const permissionGroupPaths = {
+  getList: `${permissionGroupPath}`,
+  getDetail: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
+  create: `${permissionGroupPath}`,
+  update: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
+  delete: `${permissionGroupPath}`
+}

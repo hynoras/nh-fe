@@ -229,7 +229,7 @@ const UserPage = () => {
   const columns: GridColDef[] = [
     {
       field: "email",
-      headerName: "User",
+      headerName: "Username",
       flex: 1,
       valueGetter: (_, row) => {
         return `${row.username}-${row.email}`
