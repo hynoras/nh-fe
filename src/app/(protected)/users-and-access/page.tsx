@@ -36,8 +36,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { deleteUserApi, getUserListApi } from "../../../service/user"
 import { User } from "./_domain/entity/user"
-import { deleteUserApi, getUserListApi } from "./_service"
 import { UserListFilter } from "./_types/user"
 
 type DeleteUserDialogProps = {

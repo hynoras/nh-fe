@@ -1,10 +1,16 @@
 import { userPaths } from "consts/api"
 import api, { handleRequest } from "lib/api"
 import { ApiResponse } from "types/response"
-import { CreateUserDto } from "../_domain/dto/user"
-import { User } from "../_domain/entity/user"
-import { userDetailMapper, userListMapper } from "../_domain/mapper/user"
-import { UserDetailModel, UserListModel } from "../_domain/model/user"
+import { CreateUserDto } from "../app/(protected)/users-and-access/_domain/dto/user"
+import { User } from "../app/(protected)/users-and-access/_domain/entity/user"
+import {
+  userDetailMapper,
+  userListMapper
+} from "../app/(protected)/users-and-access/_domain/mapper/user"
+import {
+  UserDetailModel,
+  UserListModel
+} from "../app/(protected)/users-and-access/_domain/model/user"
 
 export const getUserListApi = async (
   search: string,

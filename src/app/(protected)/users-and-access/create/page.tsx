@@ -23,8 +23,8 @@ import {
   TextFieldElement,
   useForm
 } from "react-hook-form-mui"
+import { createUserApi } from "../../../../service/user"
 import { CreateUserDto } from "../_domain/dto/user"
-import { createUserApi } from "../_service"
 
 const CreateUserPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
