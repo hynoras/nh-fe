@@ -8,7 +8,7 @@ import {
   Stack,
   Typography
 } from "@mui/material"
-import { navigationKeys } from "consts/navigation"
+import { navigationRoutes } from "consts/navigation"
 import { useRouter } from "next/navigation"
 
 type MenuItem = {
@@ -21,7 +21,7 @@ const menuItems: MenuItem[] = [
   {
     text: "Users & Access",
     icon: <ManageAccountsIcon />,
-    navigate: navigationKeys.usersAndAccess
+    navigate: navigationRoutes.usersAndAccess.users
   }
 ]
 
