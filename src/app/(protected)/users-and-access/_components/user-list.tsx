@@ -41,7 +41,8 @@ import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { deleteUserApi, getUserListApi } from "service/user"
-import { Permission, User } from "../_domain/entity/user"
+import { Permission } from "../_domain/entity/permission"
+import { User } from "../_domain/entity/user"
 import { UserListFilter } from "../_types/user"
 
 type DeleteUserDialogProps = {

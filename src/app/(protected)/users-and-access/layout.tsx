@@ -1,8 +1,9 @@
 "use client"
 
-import { Box, Stack, Tab, Tabs, Typography } from "@mui/material"
-import { navigationKeys } from "consts/navigation"
-import { useRouter, useSearchParams } from "next/navigation"
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import { Box, IconButton, Stack, Tab, Tabs, Typography } from "@mui/material"
+import { navigationKeys, navigationRoutes } from "consts/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 function a11yProps(index: number) {
@@ -19,6 +20,7 @@ export default function UsersAndAccessLayout({
 }) {
   const [value, setValue] = useState<number>(0)
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams.toString())
 
@@ -46,6 +48,20 @@ export default function UsersAndAccessLayout({
     }
   }, [])
 
+  if (pathname === navigationRoutes.usersAndAccess.createUser) {
+    return (
+      <Stack className="h-[82vh] overflow-y-scroll" direction="column" spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <IconButton onClick={() => router.back()} size="small">
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6">Create User</Typography>
+        </Stack>
+        {children}
+      </Stack>
+    )
+  }
+
   return (
     <Stack direction="column">
       <Typography variant="h6">Users & Access</Typography>
@@ -56,7 +72,7 @@ export default function UsersAndAccessLayout({
             <Tab label="Roles" {...a11yProps(1)} />
           </Tabs>
         </Box>
-        <Box sx={{ pt: 3 }}>{children}</Box>
+        <Box className="pt-4">{children}</Box>
       </Box>
     </Stack>
   )

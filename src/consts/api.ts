@@ -27,7 +27,8 @@ export const permissionPaths = {
 
 const permissionGroupPath = "permission-groups"
 export const permissionGroupPaths = {
-  getList: `${permissionGroupPath}`,
+  getList: (search: string, page: number, pageSize: number) =>
+    `${permissionGroupPath}?search=${search}&page=${page}&pageSize=${pageSize}`,
   getDetail: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
   create: `${permissionGroupPath}`,
   update: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
