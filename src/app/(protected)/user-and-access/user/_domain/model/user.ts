@@ -15,6 +15,7 @@ export type UserDetailModel = {
   username: string
   email: string
   role: string
+  permission_groups: PermissionGroupModel[]
   created_at: string
   updated_at: string
 }

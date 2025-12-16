@@ -20,6 +20,7 @@ export const userDetailMapper = (model: UserDetailModel): User => {
     username: model.username,
     email: model.email,
     role: model.role,
+    permissions: model.permission_groups?.map(permissionGroupMapper) || [],
     createdAt: model.created_at,
     updatedAt: model.updated_at
   }
