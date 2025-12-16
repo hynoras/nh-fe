@@ -1,13 +1,17 @@
 export const navigationKeys = {
-  usersAndAccess: "/users-and-access",
+  userAndAccess: "/user-and-access",
   setting: "/setting"
 }
 
 export const navigationRoutes = {
-  usersAndAccess: {
-    users: "/users-and-access?tab=users",
-    roles: "/users-and-access?tab=roles",
-    createUser: "/users-and-access/create"
+  userAndAccess: {
+    user: {
+      list: `/${navigationKeys.userAndAccess}/user`,
+      create: `/${navigationKeys.userAndAccess}/user/create`
+    },
+    role: {
+      list: `/${navigationKeys.userAndAccess}/role`
+    }
   },
   setting: {
     profile: "/setting/profile",

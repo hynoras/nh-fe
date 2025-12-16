@@ -2,8 +2,8 @@
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import { Box, IconButton, Stack, Tab, Tabs, Typography } from "@mui/material"
-import { navigationKeys, navigationRoutes } from "consts/navigation"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { navigationRoutes } from "consts/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 function a11yProps(index: number) {
@@ -21,34 +21,34 @@ export default function UsersAndAccessLayout({
   const [value, setValue] = useState<number>(0)
   const router = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const params = new URLSearchParams(searchParams.toString())
-
-  const tabs = ["users", "roles"]
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue)
-    params.set("tab", tabs[newValue])
-    router.push(`${navigationKeys.usersAndAccess}?${params.toString()}`)
+    switch (newValue) {
+      case 0:
+        router.push(navigationRoutes.userAndAccess.user.list)
+        break
+      case 1:
+        router.push(navigationRoutes.userAndAccess.role.list)
+        break
+      default:
+        router.push(navigationRoutes.userAndAccess.user.list)
+    }
   }
 
   useEffect(() => {
-    const tabParam = searchParams.get("tab")
-    if (tabParam) {
-      const tabIndex = tabs.indexOf(tabParam.toLowerCase())
-      if (tabIndex !== -1) {
-        setValue(tabIndex)
-      } else {
+    switch (pathname) {
+      case navigationRoutes.userAndAccess.user.list:
         setValue(0)
-        params.set("tab", "users")
-      }
-    } else {
-      setValue(0)
-      params.set("tab", "users")
+        break
+      case navigationRoutes.userAndAccess.role.list:
+        setValue(1)
+        break
+      default:
+        setValue(0)
     }
-  }, [])
+  }, [pathname])
 
-  if (pathname === navigationRoutes.usersAndAccess.createUser) {
+  if (pathname === navigationRoutes.userAndAccess.user.create) {
     return (
       <Stack className="h-[82vh] overflow-y-scroll" direction="column" spacing={2}>
         <Stack direction="row" alignItems="center" spacing={2}>

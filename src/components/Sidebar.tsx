@@ -21,7 +21,7 @@ const menuItems: MenuItem[] = [
   {
     text: "Users & Access",
     icon: <ManageAccountsIcon />,
-    navigate: navigationRoutes.usersAndAccess.users
+    navigate: navigationRoutes.userAndAccess.user.list
   }
 ]
 

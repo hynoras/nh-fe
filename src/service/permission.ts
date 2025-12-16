@@ -1,16 +1,16 @@
 import {
   Permission,
   PermissionGroup
-} from "app/(protected)/users-and-access/_domain/entity/permission"
+} from "app/(protected)/user-and-access/user/_domain/entity/permission"
 import {
   permissionGroupListMapper,
   permissionGroupMapper,
   permissionListMapper
-} from "app/(protected)/users-and-access/_domain/mapper/permission"
+} from "app/(protected)/user-and-access/user/_domain/mapper/permission"
 import {
   PermissionGroupModel,
   PermissionModel
-} from "app/(protected)/users-and-access/_domain/model/permission"
+} from "app/(protected)/user-and-access/user/_domain/model/permission"
 import { permissionGroupPaths, permissionPaths } from "consts/api"
 import api, { handleRequest } from "lib/api"
 import { ApiResponse } from "types/response"

@@ -32,7 +32,7 @@ import {
   useForm
 } from "react-hook-form-mui"
 import { getPermissionGroupListApi } from "service/permission"
-import { createUserApi } from "../../../../service/user"
+import { createUserApi } from "../../../../../service/user"
 import { CreateUserDto } from "../_domain/dto/user"
 import { Permission } from "../_domain/entity/permission"
 import { PermissionGroupListFilter } from "../_types/user"
@@ -101,7 +101,7 @@ const CreateUserPage = () => {
       setSnackbarOpen(true)
       formContext.reset()
       setTimeout(() => {
-        router.push(navigationRoutes.usersAndAccess.users)
+        router.push(navigationRoutes.userAndAccess.user.list)
       }, 500)
     },
     onError: (error: any) => {

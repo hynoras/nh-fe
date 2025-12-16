@@ -17,7 +17,7 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
   const router = useRouter()
   const pathname = usePathname()
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     switch (newValue) {
       case 0:
         router.push("/setting/profile")
