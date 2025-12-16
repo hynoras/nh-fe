@@ -6,11 +6,11 @@ export const navigationKeys = {
 export const navigationRoutes = {
   userAndAccess: {
     user: {
-      list: `/${navigationKeys.userAndAccess}/user`,
-      create: `/${navigationKeys.userAndAccess}/user/create`
+      list: `${navigationKeys.userAndAccess}/user`,
+      create: `${navigationKeys.userAndAccess}/user/create`
     },
     role: {
-      list: `/${navigationKeys.userAndAccess}/role`
+      list: `${navigationKeys.userAndAccess}/role`
     }
   },
   setting: {

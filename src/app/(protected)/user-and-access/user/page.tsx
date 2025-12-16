@@ -169,7 +169,7 @@ const UserPage = () => {
   )
 
   const handleCreateUser = () => {
-    router.push(navigationRoutes.userAndAccess.createUser)
+    router.push(navigationRoutes.userAndAccess.user.create)
   }
 
   const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -231,6 +231,8 @@ const UserPage = () => {
     {
       field: "email",
       headerName: "Username",
+      sortable: true,
+      resizable: true,
       flex: 1,
       valueGetter: (_, row) => {
         return `${row.username}-${row.email}`
@@ -249,10 +251,12 @@ const UserPage = () => {
         )
       }
     },
-    { field: "role", headerName: "Role", flex: 0.4 },
+    { field: "role", headerName: "Role", sortable: false, resizable: true, flex: 0.4 },
     {
       field: "permissions",
       headerName: "Permissions",
+      sortable: false,
+      resizable: false,
       flex: 1,
       renderCell: (params: GridRenderCellParams<User, Permission[]>) => {
         const permissions = params.value
