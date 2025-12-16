@@ -13,6 +13,26 @@ function a11yProps(index: number) {
   }
 }
 
+type CreateLayoutProps = {
+  children: React.ReactNode
+  title: string
+}
+
+const CreateLayout = ({ children, title }: CreateLayoutProps) => {
+  const router = useRouter()
+  return (
+    <Stack className="h-[82vh] overflow-y-scroll" direction="column" spacing={2}>
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <IconButton onClick={() => router.back()} size="small">
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h6">{title}</Typography>
+      </Stack>
+      {children}
+    </Stack>
+  )
+}
+
 export default function UsersAndAccessLayout({
   children
 }: {
@@ -48,32 +68,36 @@ export default function UsersAndAccessLayout({
     }
   }, [pathname])
 
-  if (pathname === navigationRoutes.userAndAccess.user.create) {
-    return (
-      <Stack className="h-[82vh] overflow-y-scroll" direction="column" spacing={2}>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <IconButton onClick={() => router.back()} size="small">
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6">Create User</Typography>
-        </Stack>
-        {children}
-      </Stack>
-    )
+  const renderLayout = () => {
+    switch (pathname) {
+      case navigationRoutes.userAndAccess.user.create:
+        return <CreateLayout title="Create User">{children}</CreateLayout>
+      case navigationRoutes.userAndAccess.role.create:
+        return <CreateLayout title="Create Role">{children}</CreateLayout>
+      case navigationRoutes.userAndAccess.user.list:
+      case navigationRoutes.userAndAccess.role.list:
+        return (
+          <Stack direction="column">
+            <Typography variant="h6">Users & Access</Typography>
+            <Box sx={{ width: "100%" }}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="users and access tabs"
+                >
+                  <Tab label="Users" {...a11yProps(0)} />
+                  <Tab label="Roles" {...a11yProps(1)} />
+                </Tabs>
+              </Box>
+              <Box className="pt-4">{children}</Box>
+            </Box>
+          </Stack>
+        )
+      default:
+        return children
+    }
   }
 
-  return (
-    <Stack direction="column">
-      <Typography variant="h6">Users & Access</Typography>
-      <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs value={value} onChange={handleChange} aria-label="users and access tabs">
-            <Tab label="Users" {...a11yProps(0)} />
-            <Tab label="Roles" {...a11yProps(1)} />
-          </Tabs>
-        </Box>
-        <Box className="pt-4">{children}</Box>
-      </Box>
-    </Stack>
-  )
+  return renderLayout()
 }

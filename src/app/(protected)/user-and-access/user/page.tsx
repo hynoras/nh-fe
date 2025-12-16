@@ -202,6 +202,10 @@ const UserPage = () => {
     setSnackbarOpen(false)
   }
 
+  const handleEditUser = (userId: string) => {
+    router.push(navigationRoutes.userAndAccess.user.detail(userId))
+  }
+
   const handleDeleteUser = () => {
     if (selectedUser) {
       deleteUserMutation.mutate([selectedUser.id as string])
@@ -323,7 +327,7 @@ const UserPage = () => {
       flex: 0.6,
       sortable: false,
       resizable: false,
-      renderCell: (params: GridRenderCellParams<any, string>) => {
+      renderCell: (params: GridRenderCellParams<User, string>) => {
         return (
           <Stack
             height={"100%"}
@@ -332,7 +336,7 @@ const UserPage = () => {
             alignItems={"center"}
             spacing={2}
           >
-            <IconButton>
+            <IconButton onClick={() => handleEditUser(params.row.id as string)}>
               <EditIcon />
             </IconButton>
             <IconButton color="error" onClick={() => handleClickOpen(params.row)}>
