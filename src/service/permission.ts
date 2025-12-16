@@ -1,16 +1,16 @@
 import {
   Permission,
   PermissionGroup
-} from "app/(protected)/user-and-access/user/_domain/entity/permission"
+} from "app/(protected)/user-and-access/role/_domain/entity/permission"
 import {
   permissionGroupListMapper,
   permissionGroupMapper,
   permissionListMapper
-} from "app/(protected)/user-and-access/user/_domain/mapper/permission"
+} from "app/(protected)/user-and-access/role/_domain/mapper/permission"
 import {
   PermissionGroupModel,
   PermissionModel
-} from "app/(protected)/user-and-access/user/_domain/model/permission"
+} from "app/(protected)/user-and-access/role/_domain/model/permission"
 import { permissionGroupPaths, permissionPaths } from "consts/api"
 import api, { handleRequest } from "lib/api"
 import { ApiResponse } from "types/response"
@@ -40,4 +40,17 @@ export const getPermissionGroupDetailApi = async (
     api.get(permissionGroupPaths.getDetail(permissionGroupId)),
     permissionGroupMapper
   )
+}
+
+export const deletePermissionGroupApi = async (
+  permissionGroupId: string
+): Promise<ApiResponse<boolean>> => {
+  const response = await handleRequest(
+    api.delete(permissionGroupPaths.delete(permissionGroupId)),
+    (data: any) => data
+  )
+  if (!response.success) {
+    throw new Error(response.message)
+  }
+  return response
 }

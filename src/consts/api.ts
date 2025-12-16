@@ -32,5 +32,5 @@ export const permissionGroupPaths = {
   getDetail: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
   create: `${permissionGroupPath}`,
   update: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
-  delete: `${permissionGroupPath}`
+  delete: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`
 }

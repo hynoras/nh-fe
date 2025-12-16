@@ -14,13 +14,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  MenuItem,
   Popover,
-  Select,
   Snackbar,
   Stack,
   TextField,
@@ -35,33 +31,31 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { deleteUserApi, getUserListApi } from "service/user"
-import { Permission } from "../role/_domain/entity/permission"
-import { User } from "./_domain/entity/user"
-import { UserListFilter } from "./_types/user"
+import { deletePermissionGroupApi, getPermissionGroupListApi } from "service/permission"
+import { Permission, PermissionGroup } from "./_domain/entity/permission"
+import { PermissionGroupListFilter } from "./_type/permission-group"
 
-type DeleteUserDialogProps = {
+type DeletePermissionGroupDialogProps = {
   open: boolean
   onClose: () => void
-  selectedUser: User | null
-  handleDeleteUser: () => void
+  selectedPermissionGroup: PermissionGroup | null
+  handleDeletePermissionGroup: () => void
 }
 
-const DeleteUserDialog = ({
+const DeletePermissionGroupDialog = ({
   open,
   onClose,
-  selectedUser,
-  handleDeleteUser
-}: DeleteUserDialogProps) => {
+  selectedPermissionGroup,
+  handleDeletePermissionGroup
+}: DeletePermissionGroupDialogProps) => {
   const [disableDeleteButton, setDisableDeleteButton] = useState(true)
 
   const handleConfirmDeleteInputChange = (value: string) => {
-    setDisableDeleteButton(value !== selectedUser?.username)
+    setDisableDeleteButton(value !== selectedPermissionGroup?.name)
   }
 
   return (
@@ -71,20 +65,23 @@ const DeleteUserDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{`Deleting ${selectedUser?.username}`}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">
+        {`Deleting ${selectedPermissionGroup?.name}`}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Are you sure about deleting this user? This action can not be undone.
+          Are you sure about deleting this permission group? This action can not be
+          undone.
         </DialogContentText>
         <DialogContentText id="alert-dialog-description">
           <Typography variant="caption" color="text">
-            Type "{selectedUser?.username}" to confirm.
+            Type "{selectedPermissionGroup?.name}" to confirm.
           </Typography>
         </DialogContentText>
         <TextField
           fullWidth
           id="confirm-delete-input"
-          placeholder="Type username to confirm"
+          placeholder="Type permission group name to confirm"
           variant="outlined"
           size="small"
           autoFocus
@@ -98,7 +95,7 @@ const DeleteUserDialog = ({
         <Button
           variant="outlined"
           color="error"
-          onClick={handleDeleteUser}
+          onClick={handleDeletePermissionGroup}
           autoFocus
           disabled={disableDeleteButton}
         >
@@ -109,16 +106,17 @@ const DeleteUserDialog = ({
   )
 }
 
-const UserPage = () => {
+const RoleList = () => {
   const [tableHeight, setTableHeight] = useState<number>(0)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [userListFilter, setUserListFilter] = useState<UserListFilter>({
-    search: "",
-    role: "",
-    page: 1,
-    pageSize: 10
-  })
+  const [selectedPermissionGroup, setSelectedPermissionGroup] =
+    useState<PermissionGroup | null>(null)
+  const [permissionGroupListFilter, setPermissionGroupListFilter] =
+    useState<PermissionGroupListFilter>({
+      search: "",
+      page: 1,
+      pageSize: 10
+    })
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [anchorPermissionPopper, setAnchorPermissionPopper] =
     useState<null | HTMLElement>(null)
@@ -128,25 +126,25 @@ const UserPage = () => {
   const open = Boolean(anchorPermissionPopper)
 
   const queryClient = useQueryClient()
-  const { data: usersData, isLoading } = useQuery({
-    queryKey: ["users", userListFilter],
+  const { data: permissionGroupsData, isLoading } = useQuery({
+    queryKey: ["permission-groups", permissionGroupListFilter],
     queryFn: () =>
-      getUserListApi(
-        userListFilter.search,
-        userListFilter.role,
-        userListFilter.page,
-        userListFilter.pageSize
+      getPermissionGroupListApi(
+        permissionGroupListFilter.search,
+        permissionGroupListFilter.page,
+        permissionGroupListFilter.pageSize
       ),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000
   })
 
-  const deleteUserMutation = useMutation({
-    mutationFn: (userId: string[]) => deleteUserApi(userId),
+  const deletePermissionGroupMutation = useMutation({
+    mutationFn: (permissionGroupId: string) =>
+      deletePermissionGroupApi(permissionGroupId),
     onSuccess: () => {
       handleCloseDeleteDialog()
       setSnackbarOpen(true)
-      queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries({ queryKey: ["permission-groups"] })
     },
     onError: (error) => {
       setSnackbarOpen(true)
@@ -158,7 +156,10 @@ const UserPage = () => {
   const handleSearch: TextFieldProps["onChange"] = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setUserListFilter((prev) => ({ ...prev, search: e.target.value }))
+    setPermissionGroupListFilter((prev) => ({
+      ...prev,
+      search: e.target.value
+    }))
   }
 
   const debouncedHandleSearch = useCallback(
@@ -168,8 +169,9 @@ const UserPage = () => {
     [handleSearch]
   )
 
-  const handleCreateUser = () => {
-    router.push(navigationRoutes.userAndAccess.user.create)
+  const handleCreatePermissionGroup = () => {
+    // TODO: Add navigation route for creating permission group
+    // router.push(navigationRoutes.userAndAccess.role.create)
   }
 
   const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -181,30 +183,30 @@ const UserPage = () => {
   }
 
   const handlePaginationChange = (model: GridPaginationModel) => {
-    setUserListFilter((prev) => ({
+    setPermissionGroupListFilter((prev) => ({
       ...prev,
       page: model.page + 1,
       pageSize: model.pageSize
     }))
   }
 
-  const handleClickOpen = (user: User) => {
-    setSelectedUser(user)
+  const handleClickOpen = (permissionGroup: PermissionGroup) => {
+    setSelectedPermissionGroup(permissionGroup)
     setOpenDeleteDialog(true)
   }
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false)
-    setSelectedUser(null)
+    setSelectedPermissionGroup(null)
   }
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false)
   }
 
-  const handleDeleteUser = () => {
-    if (selectedUser) {
-      deleteUserMutation.mutate([selectedUser.id as string])
+  const handleDeletePermissionGroup = () => {
+    if (selectedPermissionGroup) {
+      deletePermissionGroupMutation.mutate(selectedPermissionGroup.id as string)
     }
   }
 
@@ -229,37 +231,27 @@ const UserPage = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "email",
-      headerName: "Username",
+      field: "name",
+      headerName: "Name",
       sortable: true,
       resizable: true,
-      flex: 1,
-      valueGetter: (_, row) => {
-        return `${row.username}-${row.email}`
-      },
-      renderCell: (params: GridRenderCellParams<any, string>) => {
-        const [username, email] = params.value?.split("-") || []
-        return (
-          <Stack height={"100%"} direction={"column"} spacing={0.5}>
-            <Typography variant="body1" color="text">
-              {username}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {email}
-            </Typography>
-          </Stack>
-        )
-      }
+      flex: 1
     },
-    { field: "role", headerName: "Role", sortable: false, resizable: true, flex: 0.4 },
+    {
+      field: "description",
+      headerName: "Description",
+      sortable: false,
+      resizable: true,
+      flex: 1
+    },
     {
       field: "permissions",
       headerName: "Permissions",
       sortable: false,
       resizable: false,
       flex: 1,
-      renderCell: (params: GridRenderCellParams<User, Permission[]>) => {
-        const permissions = params.value
+      renderCell: (params: GridRenderCellParams<PermissionGroup, Permission[]>) => {
+        const permissions = params.value || []
         return (
           <Overflow
             className="flex gap-2"
@@ -306,7 +298,7 @@ const UserPage = () => {
       headerName: "Created At",
       flex: 0.6,
       valueGetter: (_, row) => {
-        return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
+        return format(new Date(row.createdAt as string), "dd/MM/yyyy HH:mm")
       }
     },
     {
@@ -314,7 +306,7 @@ const UserPage = () => {
       headerName: "Updated At",
       flex: 0.6,
       valueGetter: (_, row) => {
-        return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
+        return format(new Date(row.updatedAt as string), "dd/MM/yyyy HH:mm")
       }
     },
     {
@@ -354,20 +346,20 @@ const UserPage = () => {
       >
         <Alert
           onClose={handleSnackbarClose}
-          severity={deleteUserMutation.isError ? "error" : "success"}
+          severity={deletePermissionGroupMutation.isError ? "error" : "success"}
           variant="filled"
           sx={{ width: "100%" }}
         >
-          {deleteUserMutation.isError
-            ? deleteUserMutation.error.message
-            : "User deleted successfully"}
+          {deletePermissionGroupMutation.isError
+            ? deletePermissionGroupMutation.error.message
+            : "Permission group deleted successfully"}
         </Alert>
       </Snackbar>
-      <DeleteUserDialog
+      <DeletePermissionGroupDialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
-        selectedUser={selectedUser}
-        handleDeleteUser={handleDeleteUser}
+        selectedPermissionGroup={selectedPermissionGroup}
+        handleDeletePermissionGroup={handleDeletePermissionGroup}
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>
@@ -375,7 +367,7 @@ const UserPage = () => {
             <Stack direction={"row"} spacing={1}>
               <TextField
                 id="outlined-basic"
-                placeholder="Search by email"
+                placeholder="Search by name"
                 variant="outlined"
                 size="small"
                 onChange={(e) => debouncedHandleSearch(e)}
@@ -389,42 +381,26 @@ const UserPage = () => {
                   }
                 }}
               />
-              <FormControl sx={{ minWidth: 150 }} size="small">
-                <InputLabel id="select-role-label">Select Role</InputLabel>
-                <Select
-                  size="small"
-                  labelId="select-role-label"
-                  label="Select Role"
-                  value={userListFilter.role}
-                  onChange={(e) =>
-                    setUserListFilter((prev) => ({ ...prev, role: e.target.value }))
-                  }
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value={"admin"}>Admin</MenuItem>
-                  <MenuItem value={"user"}>User</MenuItem>
-                </Select>
-              </FormControl>
             </Stack>
             <Button
               variant="contained"
               color="primary"
               startIcon={<AddIcon />}
-              onClick={handleCreateUser}
+              onClick={handleCreatePermissionGroup}
             >
-              Create User
+              Create Permission Group
             </Button>
           </Stack>
           <Box sx={{ height: tableHeight }} ref={tableRef}>
             <DataGrid
-              rows={usersData?.data || []}
+              rows={permissionGroupsData?.data || []}
               columns={columns}
               loading={isLoading}
               paginationMode="server"
-              rowCount={usersData?.length || 0}
+              rowCount={permissionGroupsData?.length || 0}
               paginationModel={{
-                page: userListFilter.page - 1,
-                pageSize: userListFilter.pageSize
+                page: permissionGroupListFilter.page - 1,
+                pageSize: permissionGroupListFilter.pageSize
               }}
               onPaginationModelChange={handlePaginationChange}
               pageSizeOptions={[5, 10, 25, 50, 100]}
@@ -439,4 +415,4 @@ const UserPage = () => {
   )
 }
 
-export default UserPage
+export default RoleList
