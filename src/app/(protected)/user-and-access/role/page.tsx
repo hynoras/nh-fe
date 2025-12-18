@@ -204,6 +204,10 @@ const RoleList = () => {
     setSnackbarOpen(false)
   }
 
+  const handleNavigateToEditRole = (permissionGroupId: string) => {
+    router.push(navigationRoutes.userAndAccess.role.detail(permissionGroupId))
+  }
+
   const handleDeletePermissionGroup = () => {
     if (selectedPermissionGroup) {
       deletePermissionGroupMutation.mutate(selectedPermissionGroup.id as string)
@@ -324,7 +328,7 @@ const RoleList = () => {
             alignItems={"center"}
             spacing={2}
           >
-            <IconButton>
+            <IconButton onClick={() => handleNavigateToEditRole(params.row.id as string)}>
               <EditIcon />
             </IconButton>
             <IconButton color="error" onClick={() => handleClickOpen(params.row)}>
