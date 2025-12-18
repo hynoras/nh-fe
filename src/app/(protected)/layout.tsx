@@ -6,13 +6,13 @@ import Header from "components/Header"
 import Sidebar from "components/Sidebar"
 import { useState } from "react"
 
-const DRAWER_WIDTH = 200
+const DRAWER_WIDTH = 220
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true)
   return (
-    <Authenticated key="authenticated-routes">
-      <Box sx={{ display: "flex" }}>
+    <Authenticated key="authenticated-routes" redirectOnFail="/login">
+      <Box sx={{ display: "flex", width: "100%", overflow: "hidden" }}>
         <Sidebar open={sidebarOpen} drawerWidth={DRAWER_WIDTH} />
         <Header
           sidebarOpen={sidebarOpen}
@@ -23,9 +23,11 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
           sx={{
             flexGrow: 1,
             height: "99vh",
-            p: 1,
+            p: 2,
             mb: "6px",
-            mr: "6px",
+            width: "100%",
+            maxWidth: "100%",
+            overflowY: "hidden",
             borderRadius: 2,
             transition: (theme) =>
               theme.transitions.create(["margin"], {
@@ -35,8 +37,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             marginLeft: sidebarOpen ? 0 : `-${DRAWER_WIDTH}px`
           }}
         >
-          <Toolbar />
-          {children}
+          <Toolbar className="min-h-[50px]" />
+          <Box sx={{ width: "100%", overflow: "hidden" }}>{children}</Box>
         </Box>
       </Box>
     </Authenticated>

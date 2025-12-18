@@ -15,16 +15,18 @@ import {
   InputAdornment,
   Typography
 } from "@mui/material"
-import { useLogin } from "@refinedev/core"
+import { useMutation } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { FormContainer, TextFieldElement } from "react-hook-form-mui"
 import { LoginDto } from "./_domain/dto/login"
+import { loginApi } from "./_service"
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
 
-  const { mutate: login } = useLogin()
+  const router = useRouter()
   const formContext = useForm<LoginDto>({
     defaultValues: {
       email: "",
@@ -42,11 +44,16 @@ const Login = () => {
     event.preventDefault()
   }
 
+  const loginMutation = useMutation({
+    mutationFn: loginApi,
+    onSuccess: () => {
+      //navigate to home page
+      router.push("/home")
+    }
+  })
+
   const handleLogin = (data: LoginDto) => {
-    login({
-      username: data.email,
-      password: data.password
-    })
+    loginMutation.mutate(data)
   }
 
   return (
@@ -84,8 +91,6 @@ const Login = () => {
                   Email
                 </FormLabel>
                 <TextFieldElement
-                  // error={emailError}
-                  // helperText={emailErrorMessage}
                   id="email"
                   type="email"
                   name="email"
@@ -95,6 +100,8 @@ const Login = () => {
                   required
                   fullWidth
                   variant="outlined"
+                  disabled={loginMutation.isPending}
+                  error={loginMutation.isError}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -117,7 +124,6 @@ const Login = () => {
                       opacity: 1
                     }
                   }}
-                  // color={emailError ? "error" : "primary"}
                 />
               </div>
               <div>
@@ -125,8 +131,6 @@ const Login = () => {
                   Password
                 </FormLabel>
                 <TextFieldElement
-                  // error={passwordError}
-                  // helperText={passwordErrorMessage}
                   name="password"
                   type={showPassword ? "text" : "password"}
                   id="password"
@@ -135,7 +139,8 @@ const Login = () => {
                   required
                   fullWidth
                   variant="outlined"
-                  // color={passwordError ? "error" : "primary"}
+                  error={loginMutation.isError}
+                  disabled={loginMutation.isPending}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -176,6 +181,11 @@ const Login = () => {
                 />
               </div>
             </Box>
+            {loginMutation.isError && (
+              <Typography variant="body2" color="error">
+                Username or password is incorrect
+              </Typography>
+            )}
             <div className="mt-4">
               <Divider />
               <Button
@@ -184,6 +194,8 @@ const Login = () => {
                 fullWidth
                 size="small"
                 className="mt-4 font-bold"
+                loading={loginMutation.isPending}
+                disabled={loginMutation.isPending}
               >
                 Login
               </Button>

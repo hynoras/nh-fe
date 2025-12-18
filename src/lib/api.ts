@@ -2,7 +2,7 @@ import ky from "ky"
 import { ApiResponse } from "types/response"
 
 const api = ky.create({
-  prefixUrl: "http://localhost:8000/api/v1/",
+  prefixUrl: "http://localhost:8080/api/v1/",
   credentials: "include",
   hooks: {
     beforeRequest: [
@@ -51,11 +51,12 @@ export async function handleRequest<T, R = T>(
     let mappedData: T
     if (mapper) {
       if (Array.isArray(data)) {
-        mappedData = data.map((item: any) => mapper(item)) as unknown as T
+        // Pass the entire array to the mapper - let the mapper handle array mapping
+        mappedData = mapper(data as R) as T
       } else if (data !== null && typeof data === "object") {
-        mappedData = mapper(data)
+        mappedData = mapper(data as R)
       } else {
-        mappedData = mapper(data)
+        mappedData = mapper(data as R)
       }
     } else {
       mappedData = data
@@ -65,22 +66,51 @@ export async function handleRequest<T, R = T>(
       return custom.success
     }
 
-    return {
-      success: result.success !== undefined ? result.success : true,
-      message: result.message || "Request successful",
-      data: mappedData
+    if (result.length !== undefined && result.length > 0) {
+      return {
+        success: result.success !== undefined ? result.success : true,
+        message: result.message || "Request successful",
+        data: mappedData,
+        length: result.length
+      }
+    } else {
+      return {
+        success: result.success !== undefined ? result.success : true,
+        message: result.message || "Request successful",
+        data: mappedData
+      }
     }
   } catch (error: any) {
-    console.error("❌ API Error:", error?.message || error)
+    console.error("API Error:", error?.message || error)
 
     if (custom?.failure !== undefined) {
       return custom.failure
     }
 
+    // Try to extract error and message from server response
+    let serverMessage = error?.message || "Network error"
+    let serverError = error?.message || "Network error"
+
+    if (error?.response) {
+      try {
+        const errorResponse = await error.response.json()
+        if (errorResponse.message) {
+          serverMessage = errorResponse.message
+        }
+        if (errorResponse.error) {
+          serverError = errorResponse.error
+        } else if (errorResponse.message) {
+          serverError = errorResponse.message
+        }
+      } catch (parseError) {
+        // If parsing fails, use the original error message
+      }
+    }
+
     return {
       success: false,
-      message: error?.message || "Network error",
-      error: error?.message || "Network error"
+      message: serverMessage,
+      error: serverError
     }
   }
 }
