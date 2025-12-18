@@ -1,4 +1,8 @@
 import {
+  CreatePermissionGroupDto,
+  UpdatePermissionGroupDto
+} from "app/(protected)/user-and-access/role/_domain/dto/permission"
+import {
   Permission,
   PermissionGroup
 } from "app/(protected)/user-and-access/role/_domain/entity/permission"
@@ -22,6 +26,19 @@ export const getPermissionListApi = async (): Promise<ApiResponse<Permission[]>>
   )
 }
 
+export const createPermissionGroupApi = async (
+  permissionGroup: CreatePermissionGroupDto
+): Promise<ApiResponse<PermissionGroup>> => {
+  const response = await handleRequest<PermissionGroup, PermissionGroupModel>(
+    api.post(permissionGroupPaths.create, { json: permissionGroup }),
+    permissionGroupMapper
+  )
+  if (!response.success) {
+    throw new Error(response.message)
+  }
+  return response
+}
+
 export const getPermissionGroupListApi = async (
   search: string,
   page: number,
@@ -40,6 +57,20 @@ export const getPermissionGroupDetailApi = async (
     api.get(permissionGroupPaths.getDetail(permissionGroupId)),
     permissionGroupMapper
   )
+}
+
+export const updatePermissionGroupApi = async (
+  permissionGroupId: string,
+  permissionGroup: UpdatePermissionGroupDto
+): Promise<ApiResponse<PermissionGroup>> => {
+  const response = await handleRequest<PermissionGroup, PermissionGroupModel>(
+    api.put(permissionGroupPaths.update(permissionGroupId), { json: permissionGroup }),
+    permissionGroupMapper
+  )
+  if (!response.success) {
+    throw new Error(response.message)
+  }
+  return response
 }
 
 export const deletePermissionGroupApi = async (

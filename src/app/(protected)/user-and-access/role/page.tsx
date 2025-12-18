@@ -31,6 +31,7 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
@@ -170,8 +171,7 @@ const RoleList = () => {
   )
 
   const handleCreatePermissionGroup = () => {
-    // TODO: Add navigation route for creating permission group
-    // router.push(navigationRoutes.userAndAccess.role.create)
+    router.push(navigationRoutes.userAndAccess.role.create)
   }
 
   const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
