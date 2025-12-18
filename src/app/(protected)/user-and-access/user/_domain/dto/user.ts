@@ -5,3 +5,9 @@ export type CreateUserDto = {
   role: string
   permissions?: string[]
 }
+
+export type UpdateUserDto = {
+  username?: string
+  email?: string
+  permissions?: string[]
+}

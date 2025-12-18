@@ -6,8 +6,8 @@ export type UserListModel = {
   email: string
   role: string
   permission_groups: PermissionGroupModel[]
-  created_at: string
-  updated_at: string
+  created_at: Date
+  updated_at: Date
 }
 
 export type UserDetailModel = {
@@ -16,6 +16,6 @@ export type UserDetailModel = {
   email: string
   role: string
   permission_groups: PermissionGroupModel[]
-  created_at: string
-  updated_at: string
+  created_at: Date
+  updated_at: Date
 }

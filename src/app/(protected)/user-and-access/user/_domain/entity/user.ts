@@ -6,6 +6,6 @@ export type User = {
   email?: string
   role?: string
   permissions?: PermissionGroup[]
-  createdAt?: string
-  updatedAt?: string
+  createdAt?: Date
+  updatedAt?: Date
 }

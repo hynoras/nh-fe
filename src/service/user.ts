@@ -1,7 +1,10 @@
 import { userPaths } from "consts/api"
 import api, { handleRequest } from "lib/api"
 import { ApiResponse } from "types/response"
-import { CreateUserDto } from "../app/(protected)/user-and-access/user/_domain/dto/user"
+import {
+  CreateUserDto,
+  UpdateUserDto
+} from "../app/(protected)/user-and-access/user/_domain/dto/user"
 import { User } from "../app/(protected)/user-and-access/user/_domain/entity/user"
 import {
   userDetailMapper,
@@ -43,6 +46,20 @@ export const createUserApi = async (
 ): Promise<ApiResponse<boolean>> => {
   const response = await handleRequest(
     api.post(userPaths.create, { json: user }),
+    (data: any) => data
+  )
+  if (!response.success) {
+    throw new Error(response.message)
+  }
+  return response
+}
+
+export const updateUserApi = async (
+  userId: string,
+  user: UpdateUserDto
+): Promise<ApiResponse<boolean>> => {
+  const response = await handleRequest(
+    api.put(userPaths.update(userId), { json: user }),
     (data: any) => data
   )
   if (!response.success) {
