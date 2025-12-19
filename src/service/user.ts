@@ -17,12 +17,11 @@ import {
 
 export const getUserListApi = async (
   search: string,
-  role: string,
   page: number,
   pageSize: number
 ): Promise<ApiResponse<User[]>> => {
   return await handleRequest<User[], UserListModel[]>(
-    api.get(userPaths.getList(search, role, page, pageSize)),
+    api.get(userPaths.getList(search, page, pageSize)),
     userListMapper
   )
 }

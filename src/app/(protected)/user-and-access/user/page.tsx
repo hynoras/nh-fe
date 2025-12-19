@@ -9,13 +9,9 @@ import {
   Box,
   Button,
   Chip,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  MenuItem,
   Popover,
-  Select,
   Snackbar,
   Stack,
   TextField,
@@ -47,7 +43,6 @@ const UserPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
     search: "",
-    role: "",
     page: 1,
     pageSize: 10
   })
@@ -63,12 +58,7 @@ const UserPage = () => {
   const { data: usersData, isLoading } = useQuery({
     queryKey: ["users", userListFilter],
     queryFn: () =>
-      getUserListApi(
-        userListFilter.search,
-        userListFilter.role,
-        userListFilter.page,
-        userListFilter.pageSize
-      ),
+      getUserListApi(userListFilter.search, userListFilter.page, userListFilter.pageSize),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000
   })
@@ -187,7 +177,6 @@ const UserPage = () => {
         )
       }
     },
-    { field: "role", headerName: "Role", sortable: false, resizable: true, flex: 0.4 },
     {
       field: "permissions",
       headerName: "Permissions",
@@ -325,22 +314,6 @@ const UserPage = () => {
                   }
                 }}
               />
-              <FormControl sx={{ minWidth: 150 }} size="small">
-                <InputLabel id="select-role-label">Select Role</InputLabel>
-                <Select
-                  size="small"
-                  labelId="select-role-label"
-                  label="Select Role"
-                  value={userListFilter.role}
-                  onChange={(e) =>
-                    setUserListFilter((prev) => ({ ...prev, role: e.target.value }))
-                  }
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value={"admin"}>Admin</MenuItem>
-                  <MenuItem value={"user"}>User</MenuItem>
-                </Select>
-              </FormControl>
             </Stack>
             <Button
               variant="contained"

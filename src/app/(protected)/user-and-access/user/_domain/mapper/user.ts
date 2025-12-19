@@ -7,7 +7,6 @@ export const userListMapper = (model: UserListModel[]): User[] => {
     id: user.id,
     username: user.username,
     email: user.email,
-    role: user.role,
     permissions: user.permission_groups?.map(permissionGroupMapper) || [],
     createdAt: user.created_at,
     updatedAt: user.updated_at
@@ -19,7 +18,6 @@ export const userDetailMapper = (model: UserDetailModel): User => {
     id: model.id,
     username: model.username,
     email: model.email,
-    role: model.role,
     permissions: model.permission_groups?.map(permissionGroupMapper) || [],
     createdAt: model.created_at,
     updatedAt: model.updated_at

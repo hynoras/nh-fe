@@ -21,6 +21,7 @@ import {
   Stack,
   TextField,
   TextFieldProps,
+  Tooltip,
   Typography,
   debounce
 } from "@mui/material"
@@ -265,7 +266,7 @@ const RoleList = () => {
               <>
                 <Popover
                   id="permission-popper"
-                  className="pointer-events-none flex gap-2"
+                  className="pointer-events-none flex gap-2 max-w-300"
                   open={open}
                   anchorEl={anchorPermissionPopper}
                   onClose={handleClosePermissionPopover}
@@ -331,9 +332,15 @@ const RoleList = () => {
             <IconButton onClick={() => handleNavigateToEditRole(params.row.id as string)}>
               <EditIcon />
             </IconButton>
-            <IconButton color="error" onClick={() => handleClickOpen(params.row)}>
-              <DeleteIcon />
-            </IconButton>
+            <Tooltip title="This role can not be deleted">
+              <IconButton
+                color="error"
+                onClick={() => handleClickOpen(params.row)}
+                disabled={params.row.name === "Super Admin"}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
         )
       }

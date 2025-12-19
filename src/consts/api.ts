@@ -10,8 +10,8 @@ export const authPaths = {
 
 const userPath = "users"
 export const userPaths = {
-  getList: (search: string, role: string, page: number, pageSize: number) =>
-    `${userPath}?search=${search}&role=${role}&page=${page}&pageSize=${pageSize}`,
+  getList: (search: string, page: number, pageSize: number) =>
+    `${userPath}?search=${search}&page=${page}&pageSize=${pageSize}`,
   getMe: `${userPath}/me`,
   getDetail: (userId: string) => `${userPath}/${userId}`,
   create: `${userPath}`,
