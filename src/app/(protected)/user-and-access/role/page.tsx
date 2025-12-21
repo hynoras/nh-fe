@@ -8,7 +8,6 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,7 +15,6 @@ import {
   DialogTitle,
   IconButton,
   InputAdornment,
-  Popover,
   Snackbar,
   Stack,
   TextField,
@@ -32,10 +30,10 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import ChipOverflowList from "components/ChipOverflowList"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
-import Overflow from "rc-overflow"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { deletePermissionGroupApi, getPermissionGroupListApi } from "service/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
@@ -120,12 +118,8 @@ const RoleList = () => {
       pageSize: 10
     })
   const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [anchorPermissionPopper, setAnchorPermissionPopper] =
-    useState<null | HTMLElement>(null)
 
   const tableRef = useRef<HTMLDivElement>(null)
-
-  const open = Boolean(anchorPermissionPopper)
 
   const queryClient = useQueryClient()
   const { data: permissionGroupsData, isLoading } = useQuery({
@@ -173,14 +167,6 @@ const RoleList = () => {
 
   const handleCreatePermissionGroup = () => {
     router.push(navigationRoutes.userAndAccess.role.create)
-  }
-
-  const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorPermissionPopper(event.currentTarget)
-  }
-
-  const handleClosePermissionPopover = () => {
-    setAnchorPermissionPopper(null)
   }
 
   const handlePaginationChange = (model: GridPaginationModel) => {
@@ -258,42 +244,11 @@ const RoleList = () => {
       renderCell: (params: GridRenderCellParams<PermissionGroup, Permission[]>) => {
         const permissions = params.value || []
         return (
-          <Overflow
-            className="flex gap-2"
-            data={permissions}
-            renderItem={(item: Permission) => <Chip key={item.id} label={item.name} />}
-            renderRest={(omittedItems) => (
-              <>
-                <Popover
-                  id="permission-popper"
-                  className="pointer-events-none flex gap-2 max-w-300"
-                  open={open}
-                  anchorEl={anchorPermissionPopper}
-                  onClose={handleClosePermissionPopover}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left"
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left"
-                  }}
-                >
-                  {omittedItems.map((item) => (
-                    <Chip key={item.id} label={item.name} />
-                  ))}
-                </Popover>
-                <Chip
-                  aria-owns={open ? "permission-popper" : undefined}
-                  aria-haspopup="true"
-                  label={`+${omittedItems.length}`}
-                  onMouseEnter={handleOpenPermissionPopover}
-                  onMouseLeave={handleClosePermissionPopover}
-                />
-              </>
-            )}
-            maxCount={"responsive"}
-            component={Box}
+          <ChipOverflowList
+            items={permissions}
+            getItemId={(item) => item.id ?? ""}
+            getItemLabel={(item) => item.name ?? ""}
+            popoverId={`permissions-popover-${params.row.id}`}
           />
         )
       }
