@@ -1,4 +1,4 @@
-import { PermissionGroupModel } from "./permission"
+import { PermissionGroupModel } from "app/(protected)/user-and-access/role/_domain/model/permission"
 
 export type UserListModel = {
   id: string

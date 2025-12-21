@@ -21,8 +21,8 @@ import Overflow from "rc-overflow"
 import { useCallback, useEffect, useState } from "react"
 import { getPermissionGroupListApi } from "service/permission"
 import { getUserDetailApi, updateUserApi } from "service/user"
+import { Permission } from "../../role/_domain/entity/permission"
 import { UpdateUserDto } from "../_domain/dto/user"
-import { Permission } from "../_domain/entity/permission"
 import { PermissionGroupListFilter } from "../_types/user"
 
 const RoleAndPermission = () => {

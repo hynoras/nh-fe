@@ -27,14 +27,13 @@ import Overflow from "rc-overflow"
 import { useCallback, useState } from "react"
 import {
   FormContainer,
-  SelectElement,
   TextFieldElement,
   useForm
 } from "react-hook-form-mui"
 import { getPermissionGroupListApi } from "service/permission"
 import { createUserApi } from "../../../../../service/user"
+import { Permission } from "../../role/_domain/entity/permission"
 import { CreateUserDto } from "../_domain/dto/user"
-import { Permission } from "../_domain/entity/permission"
 import { PermissionGroupListFilter } from "../_types/user"
 
 const CreateUserPage = () => {
@@ -68,15 +67,9 @@ const CreateUserPage = () => {
       username: "",
       email: "",
       password: "CHANGETHISAFTERWARDS",
-      role: "user",
       permissions: []
     }
   })
-
-  const roleOptions = [
-    { label: "User", id: "user" },
-    { label: "Admin", id: "admin" }
-  ]
 
   const handleSearch: TextFieldProps["onChange"] = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -270,21 +263,6 @@ const CreateUserPage = () => {
                   name="password"
                   id="password"
                   autoComplete="current-password"
-                  required
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  disabled={createUserMutation.isPending}
-                />
-              </div>
-              <div>
-                <FormLabel className="font-semibold" required htmlFor="role">
-                  Role
-                </FormLabel>
-                <SelectElement
-                  name="role"
-                  id="role"
-                  options={roleOptions}
                   required
                   fullWidth
                   variant="outlined"
