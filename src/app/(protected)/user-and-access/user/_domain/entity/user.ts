@@ -4,7 +4,8 @@ export type User = {
   id?: string
   username?: string
   email?: string
-  permissions?: PermissionGroup[]
+  roles?: PermissionGroup[]
+  permissionCodes?: string[]
   createdAt?: Date
   updatedAt?: Date
 }

@@ -29,13 +29,17 @@ import {
   GridPaginationModel,
   GridRenderCellParams
 } from "@mui/x-data-grid"
+import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import ChipOverflowList from "components/ChipOverflowList"
+import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { deletePermissionGroupApi, getPermissionGroupListApi } from "service/permission"
+import { User } from "../user/_domain/entity/user"
+import { PermissionCode } from "./_const/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
 import { PermissionGroupListFilter } from "./_type/permission-group"
 
@@ -121,6 +125,7 @@ const RoleList = () => {
 
   const tableRef = useRef<HTMLDivElement>(null)
 
+  const { data: identity } = useGetIdentity<User>()
   const queryClient = useQueryClient()
   const { data: permissionGroupsData, isLoading } = useQuery({
     queryKey: ["permission-groups", permissionGroupListFilter],
@@ -301,6 +306,16 @@ const RoleList = () => {
       }
     }
   ]
+
+  if (
+    identity &&
+    (!identity.permissionCodes?.includes(PermissionCode.PERMISSION_GROUP_MANAGE) ||
+      !identity.permissionCodes?.includes(PermissionCode.PERMISSION_GROUP_VIEW))
+  ) {
+    return (
+      <State.Forbidden description="Only users with permission to view and manage role can access this page." />
+    )
+  }
 
   return (
     <>

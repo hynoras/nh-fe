@@ -58,6 +58,13 @@ export const authProvider: AuthProvider = {
       }
     }
   },
+  getIdentity: async () => {
+    const response = await getMeApi()
+    if (response.success) {
+      return response.data
+    }
+    return null
+  },
   onError: async (error) => {
     console.error(error)
     return { error }

@@ -18,15 +18,19 @@ import {
   Tabs,
   Typography
 } from "@mui/material"
+import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { deleteUserApi, getUserDetailApi } from "service/user"
 import { a11yProps } from "utils/accessibility"
+import { PermissionCode } from "../../role/_const/permission"
 import DeleteUserDialog from "../_components/DeleteUserDialog"
 import Profile from "../_components/Profile"
 import RoleAndPermission from "../_components/RoleAndPermission"
+import { User } from "../_domain/entity/user"
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -51,6 +55,9 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
 const UserDetailPage = () => {
   const { userId } = useParams<{ userId: string }>()
   const router = useRouter()
+
+  const { data: identity } = useGetIdentity<User>()
+
   const queryClient = useQueryClient()
 
   const { data: userDetail } = useQuery({
@@ -134,6 +141,12 @@ const UserDetailPage = () => {
   // Tab handler
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
+  }
+
+  if (identity && !identity.permissionCodes?.includes(PermissionCode.USER_MANAGE)) {
+    return (
+      <State.Forbidden description="Only users with permission to manage user can access this page." />
+    )
   }
 
   return (

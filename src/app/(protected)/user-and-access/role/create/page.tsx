@@ -20,17 +20,22 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import CustomForm from "components/form"
+import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
 import { createPermissionGroupApi, getPermissionListApi } from "service/permission"
+import { User } from "../../user/_domain/entity/user"
+import { PermissionCode } from "../_const/permission"
 import { CreatePermissionGroupDto } from "../_domain/dto/permission"
 import { Permission } from "../_domain/entity/permission"
 
 const CreateRolePage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [searchFilter, setSearchFilter] = useState("")
+
+  const { data: identity } = useGetIdentity<User>()
   const queryClient = useQueryClient()
   const router = useRouter()
 
@@ -126,6 +131,15 @@ const CreateRolePage = () => {
       flex: 0.7
     }
   ]
+
+  if (
+    identity &&
+    !identity.permissionCodes?.includes(PermissionCode.PERMISSION_GROUP_MANAGE)
+  ) {
+    return (
+      <State.Forbidden description="Only users with permission to manage role can access this page." />
+    )
+  }
 
   return (
     <>
@@ -292,3 +306,6 @@ const CreateRolePage = () => {
 }
 
 export default CreateRolePage
+function useGetIdentity<T>(): { data: any } {
+  throw new Error("Function not implemented.")
+}

@@ -17,3 +17,12 @@ export type UserDetailModel = {
   created_at: Date
   updated_at: Date
 }
+
+export type MeModel = {
+  id: string
+  username: string
+  email: string
+  permissions: string[]
+  created_at: Date
+  updated_at: Date
+}
