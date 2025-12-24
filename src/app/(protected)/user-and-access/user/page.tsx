@@ -9,13 +9,9 @@ import {
   Box,
   Button,
   Chip,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  MenuItem,
   Popover,
-  Select,
   Snackbar,
   Stack,
   TextField,
@@ -29,13 +25,16 @@ import {
   GridPaginationModel,
   GridRenderCellParams
 } from "@mui/x-data-grid"
+import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { deleteUserApi, getUserListApi } from "service/user"
+import { PermissionCode } from "../role/_const/permission"
 import { Permission } from "../role/_domain/entity/permission"
 import DeleteUserDialog from "./_components/DeleteUserDialog"
 import { User } from "./_domain/entity/user"
@@ -47,7 +46,6 @@ const UserPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
     search: "",
-    role: "",
     page: 1,
     pageSize: 10
   })
@@ -63,15 +61,11 @@ const UserPage = () => {
   const { data: usersData, isLoading } = useQuery({
     queryKey: ["users", userListFilter],
     queryFn: () =>
-      getUserListApi(
-        userListFilter.search,
-        userListFilter.role,
-        userListFilter.page,
-        userListFilter.pageSize
-      ),
+      getUserListApi(userListFilter.search, userListFilter.page, userListFilter.pageSize),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000
   })
+  const { data: identity } = useGetIdentity<User>()
 
   const deleteUserMutation = useMutation({
     mutationFn: (userId: string[]) => deleteUserApi(userId),
@@ -187,10 +181,9 @@ const UserPage = () => {
         )
       }
     },
-    { field: "role", headerName: "Role", sortable: false, resizable: true, flex: 0.4 },
     {
-      field: "permissions",
-      headerName: "Permissions",
+      field: "roles",
+      headerName: "Assigned Roles",
       sortable: false,
       resizable: false,
       flex: 1,
@@ -280,6 +273,16 @@ const UserPage = () => {
     }
   ]
 
+  if (
+    identity &&
+    (!identity.permissionCodes?.includes(PermissionCode.USER_VIEW) ||
+      !identity.permissionCodes?.includes(PermissionCode.USER_MANAGE))
+  ) {
+    return (
+      <State.Forbidden description="Only users with permission to view and manage user can access this page." />
+    )
+  }
+
   return (
     <>
       <Snackbar
@@ -325,22 +328,6 @@ const UserPage = () => {
                   }
                 }}
               />
-              <FormControl sx={{ minWidth: 150 }} size="small">
-                <InputLabel id="select-role-label">Select Role</InputLabel>
-                <Select
-                  size="small"
-                  labelId="select-role-label"
-                  label="Select Role"
-                  value={userListFilter.role}
-                  onChange={(e) =>
-                    setUserListFilter((prev) => ({ ...prev, role: e.target.value }))
-                  }
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value={"admin"}>Admin</MenuItem>
-                  <MenuItem value={"user"}>User</MenuItem>
-                </Select>
-              </FormControl>
             </Stack>
             <Button
               variant="contained"

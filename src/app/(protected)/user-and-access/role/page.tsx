@@ -8,7 +8,6 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,11 +15,11 @@ import {
   DialogTitle,
   IconButton,
   InputAdornment,
-  Popover,
   Snackbar,
   Stack,
   TextField,
   TextFieldProps,
+  Tooltip,
   Typography,
   debounce
 } from "@mui/material"
@@ -30,13 +29,17 @@ import {
   GridPaginationModel,
   GridRenderCellParams
 } from "@mui/x-data-grid"
+import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import ChipOverflowList from "components/ChipOverflowList"
+import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
-import Overflow from "rc-overflow"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { deletePermissionGroupApi, getPermissionGroupListApi } from "service/permission"
+import { User } from "../user/_domain/entity/user"
+import { PermissionCode } from "./_const/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
 import { PermissionGroupListFilter } from "./_type/permission-group"
 
@@ -119,13 +122,10 @@ const RoleList = () => {
       pageSize: 10
     })
   const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [anchorPermissionPopper, setAnchorPermissionPopper] =
-    useState<null | HTMLElement>(null)
 
   const tableRef = useRef<HTMLDivElement>(null)
 
-  const open = Boolean(anchorPermissionPopper)
-
+  const { data: identity } = useGetIdentity<User>()
   const queryClient = useQueryClient()
   const { data: permissionGroupsData, isLoading } = useQuery({
     queryKey: ["permission-groups", permissionGroupListFilter],
@@ -172,14 +172,6 @@ const RoleList = () => {
 
   const handleCreatePermissionGroup = () => {
     router.push(navigationRoutes.userAndAccess.role.create)
-  }
-
-  const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorPermissionPopper(event.currentTarget)
-  }
-
-  const handleClosePermissionPopover = () => {
-    setAnchorPermissionPopper(null)
   }
 
   const handlePaginationChange = (model: GridPaginationModel) => {
@@ -257,42 +249,11 @@ const RoleList = () => {
       renderCell: (params: GridRenderCellParams<PermissionGroup, Permission[]>) => {
         const permissions = params.value || []
         return (
-          <Overflow
-            className="flex gap-2"
-            data={permissions}
-            renderItem={(item: Permission) => <Chip key={item.id} label={item.name} />}
-            renderRest={(omittedItems) => (
-              <>
-                <Popover
-                  id="permission-popper"
-                  className="pointer-events-none flex gap-2"
-                  open={open}
-                  anchorEl={anchorPermissionPopper}
-                  onClose={handleClosePermissionPopover}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left"
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left"
-                  }}
-                >
-                  {omittedItems.map((item) => (
-                    <Chip key={item.id} label={item.name} />
-                  ))}
-                </Popover>
-                <Chip
-                  aria-owns={open ? "permission-popper" : undefined}
-                  aria-haspopup="true"
-                  label={`+${omittedItems.length}`}
-                  onMouseEnter={handleOpenPermissionPopover}
-                  onMouseLeave={handleClosePermissionPopover}
-                />
-              </>
-            )}
-            maxCount={"responsive"}
-            component={Box}
+          <ChipOverflowList
+            items={permissions}
+            getItemId={(item) => item.id ?? ""}
+            getItemLabel={(item) => item.name ?? ""}
+            popoverId={`permissions-popover-${params.row.id}`}
           />
         )
       }
@@ -331,14 +292,30 @@ const RoleList = () => {
             <IconButton onClick={() => handleNavigateToEditRole(params.row.id as string)}>
               <EditIcon />
             </IconButton>
-            <IconButton color="error" onClick={() => handleClickOpen(params.row)}>
-              <DeleteIcon />
-            </IconButton>
+            <Tooltip title="This role can not be deleted">
+              <IconButton
+                color="error"
+                onClick={() => handleClickOpen(params.row)}
+                disabled={params.row.name === "Super Admin"}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
         )
       }
     }
   ]
+
+  if (
+    identity &&
+    (!identity.permissionCodes?.includes(PermissionCode.PERMISSION_GROUP_MANAGE) ||
+      !identity.permissionCodes?.includes(PermissionCode.PERMISSION_GROUP_VIEW))
+  ) {
+    return (
+      <State.Forbidden description="Only users with permission to view and manage role can access this page." />
+    )
+  }
 
   return (
     <>

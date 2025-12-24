@@ -19,28 +19,30 @@ import {
   debounce
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
+import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import CustomForm from "components/form"
+import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
 import { useCallback, useState } from "react"
-import {
-  FormContainer,
-  SelectElement,
-  TextFieldElement,
-  useForm
-} from "react-hook-form-mui"
+import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
 import { getPermissionGroupListApi } from "service/permission"
 import { createUserApi } from "../../../../../service/user"
+import { PermissionCode } from "../../role/_const/permission"
+import { Permission } from "../../role/_domain/entity/permission"
 import { CreateUserDto } from "../_domain/dto/user"
-import { Permission } from "../_domain/entity/permission"
+import { User } from "../_domain/entity/user"
 import { PermissionGroupListFilter } from "../_types/user"
 
 const CreateUserPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [anchorPermissionPopper, setAnchorPermissionPopper] =
     useState<null | HTMLElement>(null)
+
+  const { data: identity } = useGetIdentity<User>()
+
   const queryClient = useQueryClient()
   const router = useRouter()
 
@@ -68,15 +70,9 @@ const CreateUserPage = () => {
       username: "",
       email: "",
       password: "CHANGETHISAFTERWARDS",
-      role: "user",
       permissions: []
     }
   })
-
-  const roleOptions = [
-    { label: "User", id: "user" },
-    { label: "Admin", id: "admin" }
-  ]
 
   const handleSearch: TextFieldProps["onChange"] = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -198,6 +194,12 @@ const CreateUserPage = () => {
     }
   ]
 
+  if (identity && !identity.permissionCodes?.includes(PermissionCode.USER_MANAGE)) {
+    return (
+      <State.Forbidden description="Only users with permission to manage user can access this page." />
+    )
+  }
+
   return (
     <>
       <Snackbar
@@ -270,21 +272,6 @@ const CreateUserPage = () => {
                   name="password"
                   id="password"
                   autoComplete="current-password"
-                  required
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  disabled={createUserMutation.isPending}
-                />
-              </div>
-              <div>
-                <FormLabel className="font-semibold" required htmlFor="role">
-                  Role
-                </FormLabel>
-                <SelectElement
-                  name="role"
-                  id="role"
-                  options={roleOptions}
                   required
                   fullWidth
                   variant="outlined"

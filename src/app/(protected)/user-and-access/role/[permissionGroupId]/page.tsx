@@ -20,8 +20,10 @@ import {
   debounce
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
+import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import CustomForm from "components/form"
+import State from "components/state"
 import { useParams, useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
@@ -30,6 +32,8 @@ import {
   getPermissionListApi,
   updatePermissionGroupApi
 } from "service/permission"
+import { User } from "../../user/_domain/entity/user"
+import { PermissionCode } from "../_const/permission"
 import { UpdatePermissionGroupDto } from "../_domain/dto/permission"
 import { Permission } from "../_domain/entity/permission"
 
@@ -49,6 +53,8 @@ const EditRolePage = () => {
     permissions: []
   })
   const [isInitialized, setIsInitialized] = useState(false)
+
+  const { data: identity } = useGetIdentity<User>()
   const router = useRouter()
   const queryClient = useQueryClient()
 
@@ -227,6 +233,15 @@ const EditRolePage = () => {
 
   if (isLoadingDetail) {
     return <div>Loading...</div>
+  }
+
+  if (
+    identity &&
+    !identity.permissionCodes?.includes(PermissionCode.PERMISSION_GROUP_MANAGE)
+  ) {
+    return (
+      <State.Forbidden description="Only users with permission to manage role can access this page." />
+    )
   }
 
   return (

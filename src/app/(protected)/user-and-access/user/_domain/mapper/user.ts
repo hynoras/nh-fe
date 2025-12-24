@@ -1,14 +1,13 @@
+import { permissionGroupMapper } from "app/(protected)/user-and-access/role/_domain/mapper/permission"
 import { User } from "../entity/user"
-import { UserDetailModel, UserListModel } from "../model/user"
-import { permissionGroupMapper } from "./permission"
+import { MeModel, UserDetailModel, UserListModel } from "../model/user"
 
 export const userListMapper = (model: UserListModel[]): User[] => {
   return model.map((user) => ({
     id: user.id,
     username: user.username,
     email: user.email,
-    role: user.role,
-    permissions: user.permission_groups?.map(permissionGroupMapper) || [],
+    roles: user.permission_groups?.map(permissionGroupMapper) || [],
     createdAt: user.created_at,
     updatedAt: user.updated_at
   }))
@@ -19,8 +18,18 @@ export const userDetailMapper = (model: UserDetailModel): User => {
     id: model.id,
     username: model.username,
     email: model.email,
-    role: model.role,
-    permissions: model.permission_groups?.map(permissionGroupMapper) || [],
+    roles: model.permission_groups?.map(permissionGroupMapper) || [],
+    createdAt: model.created_at,
+    updatedAt: model.updated_at
+  }
+}
+
+export const meMapper = (model: MeModel): User => {
+  return {
+    id: model.id,
+    username: model.username,
+    email: model.email,
+    permissionCodes: model.permissions || [],
     createdAt: model.created_at,
     updatedAt: model.updated_at
   }

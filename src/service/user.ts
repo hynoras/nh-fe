@@ -7,31 +7,29 @@ import {
 } from "../app/(protected)/user-and-access/user/_domain/dto/user"
 import { User } from "../app/(protected)/user-and-access/user/_domain/entity/user"
 import {
+  meMapper,
   userDetailMapper,
   userListMapper
 } from "../app/(protected)/user-and-access/user/_domain/mapper/user"
 import {
+  MeModel,
   UserDetailModel,
   UserListModel
 } from "../app/(protected)/user-and-access/user/_domain/model/user"
 
 export const getUserListApi = async (
   search: string,
-  role: string,
   page: number,
   pageSize: number
 ): Promise<ApiResponse<User[]>> => {
   return await handleRequest<User[], UserListModel[]>(
-    api.get(userPaths.getList(search, role, page, pageSize)),
+    api.get(userPaths.getList(search, page, pageSize)),
     userListMapper
   )
 }
 
 export const getMeApi = async (): Promise<ApiResponse<User>> => {
-  return await handleRequest<User, UserDetailModel>(
-    api.get(userPaths.getMe),
-    userDetailMapper
-  )
+  return await handleRequest<User, MeModel>(api.get(userPaths.getMe), meMapper)
 }
 
 export const getUserDetailApi = async (userId: string): Promise<ApiResponse<User>> => {

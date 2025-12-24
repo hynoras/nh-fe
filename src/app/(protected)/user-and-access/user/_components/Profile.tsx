@@ -167,10 +167,6 @@ const UserProfile = () => {
       )
     },
     {
-      label: "Role",
-      value: userDetail?.data?.role
-    },
-    {
       label: "Created At",
       value: format(userDetail?.data?.createdAt || new Date(), "dd/MM/yyyy HH:mm") ?? "-"
     },

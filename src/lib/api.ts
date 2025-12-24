@@ -2,7 +2,7 @@ import ky from "ky"
 import { ApiResponse } from "types/response"
 
 const api = ky.create({
-  prefixUrl: "http://localhost:8080/api/v1/",
+  prefixUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
   credentials: "include",
   hooks: {
     beforeRequest: [

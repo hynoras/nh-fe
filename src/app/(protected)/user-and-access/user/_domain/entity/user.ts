@@ -1,11 +1,11 @@
-import { PermissionGroup } from "./permission"
+import { PermissionGroup } from "app/(protected)/user-and-access/role/_domain/entity/permission"
 
 export type User = {
   id?: string
   username?: string
   email?: string
-  role?: string
-  permissions?: PermissionGroup[]
+  roles?: PermissionGroup[]
+  permissionCodes?: string[]
   createdAt?: Date
   updatedAt?: Date
 }
