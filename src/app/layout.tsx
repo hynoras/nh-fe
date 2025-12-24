@@ -34,7 +34,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider theme={theme} storageManager={null}>
+          <ThemeProvider theme={theme}>
             <RefineProvider>{children}</RefineProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
