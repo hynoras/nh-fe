@@ -17,14 +17,14 @@ type DeleteConfirmationProps = {
     name: string
     type?: string
   }
-  handleDeleteUser: () => void
+  handleDelete: () => void
 }
 
 const DeleteConfirmation = ({
   open,
   onClose,
   instance,
-  handleDeleteUser
+  handleDelete
 }: DeleteConfirmationProps) => {
   const [disableDeleteButton, setDisableDeleteButton] = useState(true)
 
@@ -66,7 +66,7 @@ const DeleteConfirmation = ({
         <Button
           variant="outlined"
           color="error"
-          onClick={handleDeleteUser}
+          onClick={handleDelete}
           autoFocus
           disabled={disableDeleteButton}
         >

@@ -27,6 +27,7 @@ import {
 } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
@@ -36,7 +37,6 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { deleteUserApi, getUserListApi } from "service/user"
 import { PermissionCode } from "../role/_const/permission"
 import { Permission } from "../role/_domain/entity/permission"
-import DeleteUserDialog from "./_components/DeleteUserDialog"
 import { User } from "./_domain/entity/user"
 import { UserListFilter } from "./_types/user"
 
@@ -302,10 +302,10 @@ const UserPage = () => {
             : "User deleted successfully"}
         </Alert>
       </Snackbar>
-      <DeleteUserDialog
+      <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
-        selectedUser={selectedUser}
+        instance={{ name: selectedUser?.username || "", type: "user" }}
         handleDeleteUser={handleDeleteUser}
       />
       <Box sx={{ width: "100%" }}>

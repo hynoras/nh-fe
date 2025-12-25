@@ -8,11 +8,6 @@ import {
   Alert,
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   InputAdornment,
   Snackbar,
@@ -20,7 +15,6 @@ import {
   TextField,
   TextFieldProps,
   Tooltip,
-  Typography,
   debounce
 } from "@mui/material"
 import {
@@ -32,6 +26,7 @@ import {
 import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import ChipOverflowList from "components/ChipOverflowList"
+import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
@@ -42,73 +37,6 @@ import { User } from "../user/_domain/entity/user"
 import { PermissionCode } from "./_const/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
 import { PermissionGroupListFilter } from "./_type/permission-group"
-
-type DeletePermissionGroupDialogProps = {
-  open: boolean
-  onClose: () => void
-  selectedPermissionGroup: PermissionGroup | null
-  handleDeletePermissionGroup: () => void
-}
-
-const DeletePermissionGroupDialog = ({
-  open,
-  onClose,
-  selectedPermissionGroup,
-  handleDeletePermissionGroup
-}: DeletePermissionGroupDialogProps) => {
-  const [disableDeleteButton, setDisableDeleteButton] = useState(true)
-
-  const handleConfirmDeleteInputChange = (value: string) => {
-    setDisableDeleteButton(value !== selectedPermissionGroup?.name)
-  }
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {`Deleting ${selectedPermissionGroup?.name}`}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Are you sure about deleting this permission group? This action can not be
-          undone.
-        </DialogContentText>
-        <DialogContentText id="alert-dialog-description">
-          <Typography variant="caption" color="text">
-            Type "{selectedPermissionGroup?.name}" to confirm.
-          </Typography>
-        </DialogContentText>
-        <TextField
-          fullWidth
-          id="confirm-delete-input"
-          placeholder="Type permission group name to confirm"
-          variant="outlined"
-          size="small"
-          autoFocus
-          onChange={(e) => handleConfirmDeleteInputChange(e.target.value as string)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} variant="contained" color="primary">
-          Cancel
-        </Button>
-        <Button
-          variant="outlined"
-          color="error"
-          onClick={handleDeletePermissionGroup}
-          autoFocus
-          disabled={disableDeleteButton}
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
-}
 
 const RoleList = () => {
   const [tableHeight, setTableHeight] = useState<number>(0)
@@ -336,11 +264,11 @@ const RoleList = () => {
             : "Permission group deleted successfully"}
         </Alert>
       </Snackbar>
-      <DeletePermissionGroupDialog
+      <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
-        selectedPermissionGroup={selectedPermissionGroup}
-        handleDeletePermissionGroup={handleDeletePermissionGroup}
+        instance={{ name: selectedPermissionGroup?.name || "", type: "permission group" }}
+        handleDelete={handleDeletePermissionGroup}
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>

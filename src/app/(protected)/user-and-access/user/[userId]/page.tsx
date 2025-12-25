@@ -20,6 +20,7 @@ import {
 } from "@mui/material"
 import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { useParams, useRouter } from "next/navigation"
@@ -27,7 +28,6 @@ import { useState } from "react"
 import { deleteUserApi, getUserDetailApi } from "service/user"
 import { a11yProps } from "utils/accessibility"
 import { PermissionCode } from "../../role/_const/permission"
-import DeleteUserDialog from "../_components/DeleteUserDialog"
 import Profile from "../_components/Profile"
 import RoleAndPermission from "../_components/RoleAndPermission"
 import { User } from "../_domain/entity/user"
@@ -151,6 +151,12 @@ const UserDetailPage = () => {
 
   return (
     <>
+      <Popup.DeleteConfirmation
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        instance={{ name: userDetail?.data?.username || "", type: "user" }}
+        handleDelete={handleDeleteUser}
+      />
       <Stack className="h-[82vh] overflow-y-scroll" direction="column">
         {/* Header */}
         <Stack
@@ -220,14 +226,6 @@ const UserDetailPage = () => {
           <RoleAndPermission />
         </TabPanel>
       </Stack>
-
-      {/* Delete User Dialog */}
-      <DeleteUserDialog
-        open={openDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        selectedUser={userDetail?.data || null}
-        handleDeleteUser={handleDeleteUser}
-      />
 
       {/* Snackbar for notifications */}
       <Snackbar
