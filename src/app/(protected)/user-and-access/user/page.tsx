@@ -306,7 +306,7 @@ const UserPage = () => {
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
         instance={{ name: selectedUser?.username || "", type: "user" }}
-        handleDeleteUser={handleDeleteUser}
+        handleDelete={handleDeleteUser}
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>

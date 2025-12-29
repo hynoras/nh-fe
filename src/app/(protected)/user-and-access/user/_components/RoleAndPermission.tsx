@@ -64,8 +64,8 @@ const RoleAndPermission = () => {
   // Initialize permissions when both user detail and permission groups are loaded
   useEffect(() => {
     if (userDetail?.data && permissionGroups?.data && !isInitialized) {
-      const permissionIds = userDetail.data.permissions
-        ? (userDetail.data.permissions.map((pg) => pg.id).filter(Boolean) as string[])
+      const permissionIds = userDetail.data.roles
+        ? (userDetail.data.roles.map((role) => role.id).filter(Boolean) as string[])
         : []
       setSelectedPermissions(permissionIds)
       setOriginalPermissions(permissionIds)
