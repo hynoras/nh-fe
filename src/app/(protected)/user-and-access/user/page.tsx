@@ -1,23 +1,17 @@
 "use client"
 
-import { Search } from "@mui/icons-material"
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import {
   Alert,
   Box,
-  Button,
   Chip,
   IconButton,
-  InputAdornment,
   Popover,
   Snackbar,
   Stack,
-  TextField,
-  TextFieldProps,
-  Typography,
-  debounce
+  Typography
 } from "@mui/material"
 import {
   DataGrid,
@@ -27,13 +21,14 @@ import {
 } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { deleteUserApi, getUserListApi } from "service/user"
 import { PermissionCode } from "../role/_const/permission"
 import { Permission } from "../role/_domain/entity/permission"
@@ -80,19 +75,6 @@ const UserPage = () => {
     }
   })
   const router = useRouter()
-
-  const handleSearch: TextFieldProps["onChange"] = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setUserListFilter((prev) => ({ ...prev, search: e.target.value }))
-  }
-
-  const debouncedHandleSearch = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      handleSearch(e)
-    }, 500),
-    [handleSearch]
-  )
 
   const handleCreateUser = () => {
     router.push(navigationRoutes.userAndAccess.user.create)
@@ -310,34 +292,18 @@ const UserPage = () => {
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>
-          <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-            <Stack direction={"row"} spacing={1}>
-              <TextField
-                id="outlined-basic"
-                placeholder="Search by email"
-                variant="outlined"
-                size="small"
-                onChange={(e) => debouncedHandleSearch(e)}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search />
-                      </InputAdornment>
-                    )
-                  }
-                }}
-              />
-            </Stack>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={handleCreateUser}
-            >
-              Create User
-            </Button>
-          </Stack>
+          <TableToolbar
+            filter={userListFilter}
+            setFilter={setUserListFilter}
+            searchBar={{
+              placeholder: "Search by email"
+            }}
+            primaryButton={{
+              children: "Create User",
+              startIcon: <AddIcon />,
+              onClick: handleCreateUser
+            }}
+          />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
             <DataGrid
               rows={usersData?.data || []}

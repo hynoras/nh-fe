@@ -1,22 +1,9 @@
 "use client"
 
-import { Search } from "@mui/icons-material"
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import {
-  Alert,
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  Snackbar,
-  Stack,
-  TextField,
-  TextFieldProps,
-  Tooltip,
-  debounce
-} from "@mui/material"
+import { Alert, Box, IconButton, Snackbar, Stack, Tooltip } from "@mui/material"
 import {
   DataGrid,
   GridColDef,
@@ -26,12 +13,13 @@ import {
 import { useGetIdentity } from "@refinedev/core"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import ChipOverflowList from "components/ChipOverflowList"
+import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { deletePermissionGroupApi, getPermissionGroupListApi } from "service/permission"
 import { User } from "../user/_domain/entity/user"
 import { PermissionCode } from "./_const/permission"
@@ -81,22 +69,6 @@ const RoleList = () => {
     }
   })
   const router = useRouter()
-
-  const handleSearch: TextFieldProps["onChange"] = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setPermissionGroupListFilter((prev) => ({
-      ...prev,
-      search: e.target.value
-    }))
-  }
-
-  const debouncedHandleSearch = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      handleSearch(e)
-    }, 500),
-    [handleSearch]
-  )
 
   const handleCreatePermissionGroup = () => {
     router.push(navigationRoutes.userAndAccess.role.create)
@@ -272,34 +244,18 @@ const RoleList = () => {
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>
-          <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-            <Stack direction={"row"} spacing={1}>
-              <TextField
-                id="outlined-basic"
-                placeholder="Search by name"
-                variant="outlined"
-                size="small"
-                onChange={(e) => debouncedHandleSearch(e)}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search />
-                      </InputAdornment>
-                    )
-                  }
-                }}
-              />
-            </Stack>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={handleCreatePermissionGroup}
-            >
-              Create Permission Group
-            </Button>
-          </Stack>
+          <TableToolbar
+            filter={permissionGroupListFilter}
+            setFilter={setPermissionGroupListFilter}
+            searchBar={{
+              placeholder: "Search by name"
+            }}
+            primaryButton={{
+              children: "Create Role",
+              startIcon: <AddIcon />,
+              onClick: handleCreatePermissionGroup
+            }}
+          />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
             <DataGrid
               rows={permissionGroupsData?.data || []}
