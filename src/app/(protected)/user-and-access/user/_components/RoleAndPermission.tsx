@@ -13,19 +13,16 @@ import {
   debounce
 } from "@mui/material"
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import ChipOverflowList from "components/ChipOverflowList"
+import { usePermissionGroups, useUpdateUser, useUserDetail } from "hooks/queries/user"
 import { useParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
-import { getPermissionGroupListApi } from "service/permission"
-import { getUserDetailApi, updateUserApi } from "service/user"
 import { Permission, PermissionGroup } from "../../role/_domain/entity/permission"
 import { UpdateUserDto } from "../_domain/dto/user"
 import { PermissionGroupListFilter } from "../_types/user"
 
 const RoleAndPermission = () => {
   const { userId } = useParams<{ userId: string }>()
-  const queryClient = useQueryClient()
 
   // State Management
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -46,20 +43,10 @@ const RoleAndPermission = () => {
     })
 
   // Queries
-  const { data: userDetail } = useQuery({
-    queryKey: ["userDetail", userId as string],
-    queryFn: () => getUserDetailApi(userId as string)
-  })
+  const { data: userDetail } = useUserDetail(userId as string)
 
-  const { data: permissionGroups, isLoading: isLoadingPermissionGroups } = useQuery({
-    queryKey: ["permissionGroups", permissionGroupFilter],
-    queryFn: () =>
-      getPermissionGroupListApi(
-        permissionGroupFilter.search,
-        permissionGroupFilter.page,
-        permissionGroupFilter.pageSize
-      )
-  })
+  const { data: permissionGroups, isLoading: isLoadingPermissionGroups } =
+    usePermissionGroups(permissionGroupFilter)
 
   // Initialize permissions when both user detail and permission groups are loaded
   useEffect(() => {
@@ -100,27 +87,7 @@ const RoleAndPermission = () => {
   }, [hasUnsavedChanges])
 
   // Mutation
-  const updatePermissionsMutation = useMutation({
-    mutationFn: (newPermissions: string[]) =>
-      updateUserApi(userId as string, { permissions: newPermissions } as UpdateUserDto),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userDetail", userId as string] })
-      setOriginalPermissions(selectedPermissions) // Update original state after successful save
-      setSnackbarMessage({
-        type: "success",
-        message: "Permissions updated successfully"
-      })
-      setSnackbarOpen(true)
-    },
-    onError: (error: any) => {
-      setSnackbarMessage({
-        type: "error",
-        message: error.message || "Failed to update permissions"
-      })
-      setSnackbarOpen(true)
-      // Keep current selection on error (don't reset)
-    }
-  })
+  const updatePermissionsMutation = useUpdateUser(userId as string)
 
   // Handlers
   const handleSearch: TextFieldProps["onChange"] = (
@@ -145,7 +112,27 @@ const RoleAndPermission = () => {
   }
 
   const handleSave = () => {
-    updatePermissionsMutation.mutate(selectedPermissions)
+    updatePermissionsMutation.mutate(
+      { permissions: selectedPermissions } as UpdateUserDto,
+      {
+        onSuccess: () => {
+          setOriginalPermissions(selectedPermissions) // Update original state after successful save
+          setSnackbarMessage({
+            type: "success",
+            message: "Permissions updated successfully"
+          })
+          setSnackbarOpen(true)
+        },
+        onError: (error: any) => {
+          setSnackbarMessage({
+            type: "error",
+            message: error.message || "Failed to update permissions"
+          })
+          setSnackbarOpen(true)
+          // Keep current selection on error (don't reset)
+        }
+      }
+    )
   }
 
   const handleDiscard = () => {

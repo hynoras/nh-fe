@@ -19,13 +19,12 @@ import {
   Typography
 } from "@mui/material"
 import { useGetIdentity } from "@refinedev/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
+import { useDeleteUser, useUserDetail } from "hooks/queries/user"
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
-import { deleteUserApi, getUserDetailApi } from "service/user"
 import { a11yProps } from "utils/accessibility"
 import { PermissionCode } from "../../role/_const/permission"
 import Profile from "../_components/Profile"
@@ -58,12 +57,7 @@ const UserDetailPage = () => {
 
   const { data: identity } = useGetIdentity<User>()
 
-  const queryClient = useQueryClient()
-
-  const { data: userDetail } = useQuery({
-    queryKey: ["userDetail", userId as string],
-    queryFn: () => getUserDetailApi(userId as string)
-  })
+  const { data: userDetail } = useUserDetail(userId as string)
 
   // Tab state
   const [value, setValue] = useState<number>(0)
@@ -83,29 +77,7 @@ const UserDetailPage = () => {
   }>({ type: "success", message: "" })
 
   // Delete mutation
-  const deleteUserMutation = useMutation({
-    mutationFn: (userId: string[]) => deleteUserApi(userId),
-    onSuccess: () => {
-      setOpenDeleteDialog(false)
-      setSnackbarMessage({
-        type: "success",
-        message: "User deleted successfully"
-      })
-      setSnackbarOpen(true)
-      queryClient.invalidateQueries({ queryKey: ["users"] })
-      // Navigate to user list page after a short delay
-      setTimeout(() => {
-        router.push(navigationRoutes.userAndAccess.user.list)
-      }, 1500)
-    },
-    onError: (error: any) => {
-      setSnackbarMessage({
-        type: "error",
-        message: error.message || "Failed to delete user"
-      })
-      setSnackbarOpen(true)
-    }
-  })
+  const deleteUserMutation = useDeleteUser()
 
   // Menu handlers
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -128,7 +100,27 @@ const UserDetailPage = () => {
 
   const handleDeleteUser = () => {
     if (userDetail?.data?.id) {
-      deleteUserMutation.mutate([userDetail.data.id])
+      deleteUserMutation.mutate([userDetail.data.id], {
+        onSuccess: () => {
+          setOpenDeleteDialog(false)
+          setSnackbarMessage({
+            type: "success",
+            message: "User deleted successfully"
+          })
+          setSnackbarOpen(true)
+          // Navigate to user list page after a short delay
+          setTimeout(() => {
+            router.push(navigationRoutes.userAndAccess.user.list)
+          }, 1500)
+        },
+        onError: (error: any) => {
+          setSnackbarMessage({
+            type: "error",
+            message: error.message || "Failed to delete user"
+          })
+          setSnackbarOpen(true)
+        }
+      })
     }
   }
 

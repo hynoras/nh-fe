@@ -20,16 +20,15 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
+import { useDeleteUser, useUserList } from "hooks/queries/user"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
 import { useEffect, useRef, useState } from "react"
-import { deleteUserApi, getUserListApi } from "service/user"
 import { PermissionCode } from "../role/_const/permission"
 import { Permission } from "../role/_domain/entity/permission"
 import { User } from "./_domain/entity/user"
@@ -52,28 +51,10 @@ const UserPage = () => {
 
   const open = Boolean(anchorPermissionPopper)
 
-  const queryClient = useQueryClient()
-  const { data: usersData, isLoading } = useQuery({
-    queryKey: ["users", userListFilter],
-    queryFn: () =>
-      getUserListApi(userListFilter.search, userListFilter.page, userListFilter.pageSize),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000
-  })
+  const { data: usersData, isLoading } = useUserList(userListFilter)
   const { data: identity } = useGetIdentity<User>()
 
-  const deleteUserMutation = useMutation({
-    mutationFn: (userId: string[]) => deleteUserApi(userId),
-    onSuccess: () => {
-      handleCloseDeleteDialog()
-      setSnackbarOpen(true)
-      queryClient.invalidateQueries({ queryKey: ["users"] })
-    },
-    onError: (error) => {
-      setSnackbarOpen(true)
-      console.error(error)
-    }
-  })
+  const deleteUserMutation = useDeleteUser()
   const router = useRouter()
 
   const handleCreateUser = () => {
@@ -116,7 +97,16 @@ const UserPage = () => {
 
   const handleDeleteUser = () => {
     if (selectedUser) {
-      deleteUserMutation.mutate([selectedUser.id as string])
+      deleteUserMutation.mutate([selectedUser.id as string], {
+        onSuccess: () => {
+          handleCloseDeleteDialog()
+          setSnackbarOpen(true)
+        },
+        onError: (error) => {
+          setSnackbarOpen(true)
+          console.error(error)
+        }
+      })
     }
   }
 
@@ -137,7 +127,7 @@ const UserPage = () => {
     // Update on window resize
     window.addEventListener("resize", updateHeight)
     return () => window.removeEventListener("resize", updateHeight)
-  }, [window.innerHeight, tableRef])
+  }, [tableRef])
 
   const columns: GridColDef[] = [
     {

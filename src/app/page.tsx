@@ -6,7 +6,14 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 export default function IndexPage() {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: 10 * 60 * 1000 // 10 minutes
+      }
+    }
+  })
   const { data, isLoading } = useIsAuthenticated()
   const router = useRouter()
 

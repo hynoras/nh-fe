@@ -20,16 +20,14 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import CustomForm from "components/form"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
+import { useCreateUser, usePermissionGroups } from "hooks/queries/user"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
 import { useCallback, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { getPermissionGroupListApi } from "service/permission"
-import { createUserApi } from "../../../../../service/user"
 import { PermissionCode } from "../../role/_const/permission"
 import { Permission } from "../../role/_domain/entity/permission"
 import { CreateUserDto } from "../_domain/dto/user"
@@ -43,7 +41,6 @@ const CreateUserPage = () => {
 
   const { data: identity } = useGetIdentity<User>()
 
-  const queryClient = useQueryClient()
   const router = useRouter()
 
   const open = Boolean(anchorPermissionPopper)
@@ -55,15 +52,8 @@ const CreateUserPage = () => {
       pageSize: 100
     })
 
-  const { data: permissionGroups, isLoading: isLoadingPermissionGroups } = useQuery({
-    queryKey: ["permissionGroups", permissionGroupFilter],
-    queryFn: () =>
-      getPermissionGroupListApi(
-        permissionGroupFilter.search,
-        permissionGroupFilter.page,
-        permissionGroupFilter.pageSize
-      )
-  })
+  const { data: permissionGroups, isLoading: isLoadingPermissionGroups } =
+    usePermissionGroups(permissionGroupFilter)
 
   const formContext = useForm<CreateUserDto>({
     defaultValues: {
@@ -90,36 +80,34 @@ const CreateUserPage = () => {
     [handleSearch]
   )
 
-  const createUserMutation = useMutation({
-    mutationFn: createUserApi,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] })
-      setSnackbarOpen(true)
-      formContext.reset()
-      setTimeout(() => {
-        router.push(navigationRoutes.userAndAccess.user.list)
-      }, 500)
-    },
-    onError: (error: any) => {
-      setSnackbarOpen(true)
-      const errorMessage = error.message?.toLowerCase() || ""
-      if (errorMessage.includes("username") && errorMessage.includes("already exist")) {
-        formContext.setError("username", {
-          type: "manual",
-          message: "Username is already taken"
-        })
-      }
-      if (errorMessage.includes("email") && errorMessage.includes("already exist")) {
-        formContext.setError("email", {
-          type: "manual",
-          message: "Email is already registered"
-        })
-      }
-    }
-  })
+  const createUserMutation = useCreateUser()
 
   const handleCreateUser = (data: CreateUserDto) => {
-    createUserMutation.mutate(data)
+    createUserMutation.mutate(data, {
+      onSuccess: () => {
+        setSnackbarOpen(true)
+        formContext.reset()
+        setTimeout(() => {
+          router.push(navigationRoutes.userAndAccess.user.list)
+        }, 500)
+      },
+      onError: (error: any) => {
+        setSnackbarOpen(true)
+        const errorMessage = error.message?.toLowerCase() || ""
+        if (errorMessage.includes("username") && errorMessage.includes("already exist")) {
+          formContext.setError("username", {
+            type: "manual",
+            message: "Username is already taken"
+          })
+        }
+        if (errorMessage.includes("email") && errorMessage.includes("already exist")) {
+          formContext.setError("email", {
+            type: "manual",
+            message: "Email is already registered"
+          })
+        }
+      }
+    })
   }
 
   const handleSnackbarClose = () => {

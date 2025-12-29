@@ -11,16 +11,18 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import ChipOverflowList from "components/ChipOverflowList"
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
+import {
+  useDeletePermissionGroup,
+  usePermissionGroupList
+} from "hooks/queries/permission"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
-import { deletePermissionGroupApi, getPermissionGroupListApi } from "service/permission"
 import { User } from "../user/_domain/entity/user"
 import { PermissionCode } from "./_const/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
@@ -42,32 +44,11 @@ const RoleList = () => {
   const tableRef = useRef<HTMLDivElement>(null)
 
   const { data: identity } = useGetIdentity<User>()
-  const queryClient = useQueryClient()
-  const { data: permissionGroupsData, isLoading } = useQuery({
-    queryKey: ["permission-groups", permissionGroupListFilter],
-    queryFn: () =>
-      getPermissionGroupListApi(
-        permissionGroupListFilter.search,
-        permissionGroupListFilter.page,
-        permissionGroupListFilter.pageSize
-      ),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000
-  })
+  const { data: permissionGroupsData, isLoading } = usePermissionGroupList(
+    permissionGroupListFilter
+  )
 
-  const deletePermissionGroupMutation = useMutation({
-    mutationFn: (permissionGroupId: string) =>
-      deletePermissionGroupApi(permissionGroupId),
-    onSuccess: () => {
-      handleCloseDeleteDialog()
-      setSnackbarOpen(true)
-      queryClient.invalidateQueries({ queryKey: ["permission-groups"] })
-    },
-    onError: (error) => {
-      setSnackbarOpen(true)
-      console.error(error)
-    }
-  })
+  const deletePermissionGroupMutation = useDeletePermissionGroup()
   const router = useRouter()
 
   const handleCreatePermissionGroup = () => {
@@ -102,7 +83,16 @@ const RoleList = () => {
 
   const handleDeletePermissionGroup = () => {
     if (selectedPermissionGroup) {
-      deletePermissionGroupMutation.mutate(selectedPermissionGroup.id as string)
+      deletePermissionGroupMutation.mutate(selectedPermissionGroup.id as string, {
+        onSuccess: () => {
+          handleCloseDeleteDialog()
+          setSnackbarOpen(true)
+        },
+        onError: (error) => {
+          setSnackbarOpen(true)
+          console.error(error)
+        }
+      })
     }
   }
 
@@ -123,7 +113,7 @@ const RoleList = () => {
     // Update on window resize
     window.addEventListener("resize", updateHeight)
     return () => window.removeEventListener("resize", updateHeight)
-  }, [window.innerHeight, tableRef])
+  }, [tableRef])
 
   const columns: GridColDef[] = [
     {

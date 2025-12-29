@@ -18,14 +18,14 @@ import {
   debounce
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useGetIdentity } from "@refinedev/core"
 import CustomForm from "components/form"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
+import { useCreatePermissionGroup, usePermissions } from "hooks/queries/permission"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { createPermissionGroupApi, getPermissionListApi } from "service/permission"
 import { User } from "../../user/_domain/entity/user"
 import { PermissionCode } from "../_const/permission"
 import { CreatePermissionGroupDto } from "../_domain/dto/permission"
@@ -36,13 +36,9 @@ const CreateRolePage = () => {
   const [searchFilter, setSearchFilter] = useState("")
 
   const { data: identity } = useGetIdentity<User>()
-  const queryClient = useQueryClient()
   const router = useRouter()
 
-  const { data: permissions, isLoading: isLoadingPermissions } = useQuery({
-    queryKey: ["permissions"],
-    queryFn: () => getPermissionListApi()
-  })
+  const { data: permissions, isLoading: isLoadingPermissions } = usePermissions()
 
   const filteredPermissions = useMemo(() => {
     if (!permissions?.data) return []
@@ -89,30 +85,28 @@ const CreateRolePage = () => {
     }
   }, [watchedPermissions, formContext])
 
-  const createRoleMutation = useMutation({
-    mutationFn: createPermissionGroupApi,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["permissionGroups"] })
-      setSnackbarOpen(true)
-      formContext.reset()
-      setTimeout(() => {
-        router.push(navigationRoutes.userAndAccess.role.list)
-      }, 500)
-    },
-    onError: (error: any) => {
-      setSnackbarOpen(true)
-      const errorMessage = error.message?.toLowerCase() || ""
-      if (errorMessage.includes("name") && errorMessage.includes("already exist")) {
-        formContext.setError("name", {
-          type: "manual",
-          message: "Role name is already taken"
-        })
-      }
-    }
-  })
+  const createRoleMutation = useCreatePermissionGroup()
 
   const handleCreateRole = (data: CreatePermissionGroupDto) => {
-    createRoleMutation.mutate(data)
+    createRoleMutation.mutate(data, {
+      onSuccess: () => {
+        setSnackbarOpen(true)
+        formContext.reset()
+        setTimeout(() => {
+          router.push(navigationRoutes.userAndAccess.role.list)
+        }, 500)
+      },
+      onError: (error: any) => {
+        setSnackbarOpen(true)
+        const errorMessage = error.message?.toLowerCase() || ""
+        if (errorMessage.includes("name") && errorMessage.includes("already exist")) {
+          formContext.setError("name", {
+            type: "manual",
+            message: "Role name is already taken"
+          })
+        }
+      }
+    })
   }
 
   const handleSnackbarClose = () => {
@@ -306,6 +300,3 @@ const CreateRolePage = () => {
 }
 
 export default CreateRolePage
-function useGetIdentity<T>(): { data: any } {
-  throw new Error("Function not implemented.")
-}

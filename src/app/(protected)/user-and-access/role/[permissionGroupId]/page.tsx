@@ -21,17 +21,16 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import CustomForm from "components/form"
 import State from "components/state"
+import {
+  usePermissionGroupDetail,
+  usePermissions,
+  useUpdatePermissionGroup
+} from "hooks/queries/permission"
 import { useParams, useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import {
-  getPermissionGroupDetailApi,
-  getPermissionListApi,
-  updatePermissionGroupApi
-} from "service/permission"
 import { User } from "../../user/_domain/entity/user"
 import { PermissionCode } from "../_const/permission"
 import { UpdatePermissionGroupDto } from "../_domain/dto/permission"
@@ -56,20 +55,13 @@ const EditRolePage = () => {
 
   const { data: identity } = useGetIdentity<User>()
   const router = useRouter()
-  const queryClient = useQueryClient()
 
   // Fetch permission group detail
-  const { data: permissionGroupDetail, isLoading: isLoadingDetail } = useQuery({
-    queryKey: ["permissionGroupDetail", permissionGroupId],
-    queryFn: () => getPermissionGroupDetailApi(permissionGroupId as string),
-    enabled: !!permissionGroupId
-  })
+  const { data: permissionGroupDetail, isLoading: isLoadingDetail } =
+    usePermissionGroupDetail(permissionGroupId as string)
 
   // Fetch all permissions
-  const { data: permissions, isLoading: isLoadingPermissions } = useQuery({
-    queryKey: ["permissions"],
-    queryFn: () => getPermissionListApi()
-  })
+  const { data: permissions, isLoading: isLoadingPermissions } = usePermissions()
 
   const filteredPermissions = useMemo(() => {
     if (!permissions?.data) return []
@@ -173,36 +165,30 @@ const EditRolePage = () => {
     }
   }, [hasUnsavedChanges])
 
-  const updateRoleMutation = useMutation({
-    mutationFn: (data: UpdatePermissionGroupDto) =>
-      updatePermissionGroupApi(permissionGroupId as string, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["permissionGroups"] })
-      queryClient.invalidateQueries({
-        queryKey: ["permissionGroupDetail", permissionGroupId]
-      })
-      setSnackbarOpen(true)
-      // Update original values after successful save
-      setOriginalValues({
-        name: watchedName || "",
-        description: watchedDescription || "",
-        permissions: watchedPermissions || []
-      })
-    },
-    onError: (error: any) => {
-      setSnackbarOpen(true)
-      const errorMessage = error.message?.toLowerCase() || ""
-      if (errorMessage.includes("name") && errorMessage.includes("already exist")) {
-        formContext.setError("name", {
-          type: "manual",
-          message: "Role name is already taken"
-        })
-      }
-    }
-  })
+  const updateRoleMutation = useUpdatePermissionGroup(permissionGroupId as string)
 
   const handleSave = (data: UpdatePermissionGroupDto) => {
-    updateRoleMutation.mutate(data)
+    updateRoleMutation.mutate(data, {
+      onSuccess: () => {
+        setSnackbarOpen(true)
+        // Update original values after successful save
+        setOriginalValues({
+          name: watchedName || "",
+          description: watchedDescription || "",
+          permissions: watchedPermissions || []
+        })
+      },
+      onError: (error: any) => {
+        setSnackbarOpen(true)
+        const errorMessage = error.message?.toLowerCase() || ""
+        if (errorMessage.includes("name") && errorMessage.includes("already exist")) {
+          formContext.setError("name", {
+            type: "manual",
+            message: "Role name is already taken"
+          })
+        }
+      }
+    })
   }
 
   const handleDiscard = () => {
