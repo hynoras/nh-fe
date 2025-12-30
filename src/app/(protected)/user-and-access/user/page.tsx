@@ -26,16 +26,16 @@ import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
 import { useDeleteUser, useUserList } from "hooks/queries/user"
+import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { PermissionCode } from "../role/_const/permission"
 import { Permission } from "../role/_domain/entity/permission"
 import { User } from "./_domain/entity/user"
 import { UserListFilter } from "./_types/user"
 
 const UserPage = () => {
-  const [tableHeight, setTableHeight] = useState<number>(0)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
@@ -48,6 +48,7 @@ const UserPage = () => {
     useState<null | HTMLElement>(null)
 
   const tableRef = useRef<HTMLDivElement>(null)
+  const tableHeight = useResponsiveHeight(tableRef)
 
   const open = Boolean(anchorPermissionPopper)
 
@@ -109,25 +110,6 @@ const UserPage = () => {
       })
     }
   }
-
-  useEffect(() => {
-    if (!tableRef.current) return
-
-    const updateHeight = () => {
-      const rect = tableRef.current?.getBoundingClientRect()
-      if (rect) {
-        const topOffset = rect.top
-        const bottomPadding = 20
-        const calculated = window.innerHeight - topOffset - bottomPadding
-        setTableHeight(calculated)
-      }
-    }
-
-    updateHeight()
-    // Update on window resize
-    window.addEventListener("resize", updateHeight)
-    return () => window.removeEventListener("resize", updateHeight)
-  }, [tableRef])
 
   const columns: GridColDef[] = [
     {

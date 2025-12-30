@@ -21,15 +21,15 @@ import {
   useDeletePermissionGroup,
   usePermissionGroupList
 } from "hooks/queries/permission"
+import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { User } from "../user/_domain/entity/user"
 import { PermissionCode } from "./_const/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
 import { PermissionGroupListFilter } from "./_type/permission-group"
 
 const RoleList = () => {
-  const [tableHeight, setTableHeight] = useState<number>(0)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedPermissionGroup, setSelectedPermissionGroup] =
     useState<PermissionGroup | null>(null)
@@ -42,6 +42,7 @@ const RoleList = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
 
   const tableRef = useRef<HTMLDivElement>(null)
+  const tableHeight = useResponsiveHeight(tableRef)
 
   const { data: identity } = useGetIdentity<User>()
   const { data: permissionGroupsData, isLoading } = usePermissionGroupList(
@@ -95,25 +96,6 @@ const RoleList = () => {
       })
     }
   }
-
-  useEffect(() => {
-    if (!tableRef.current) return
-
-    const updateHeight = () => {
-      const rect = tableRef.current?.getBoundingClientRect()
-      if (rect) {
-        const topOffset = rect.top
-        const bottomPadding = 20
-        const calculated = window.innerHeight - topOffset - bottomPadding
-        setTableHeight(calculated)
-      }
-    }
-
-    updateHeight()
-    // Update on window resize
-    window.addEventListener("resize", updateHeight)
-    return () => window.removeEventListener("resize", updateHeight)
-  }, [tableRef])
 
   const columns: GridColDef[] = [
     {
