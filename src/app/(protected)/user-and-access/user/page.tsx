@@ -1,23 +1,17 @@
 "use client"
 
-import { Search } from "@mui/icons-material"
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import {
   Alert,
   Box,
-  Button,
   Chip,
   IconButton,
-  InputAdornment,
   Popover,
   Snackbar,
   Stack,
-  TextField,
-  TextFieldProps,
-  Typography,
-  debounce
+  Typography
 } from "@mui/material"
 import {
   DataGrid,
@@ -26,22 +20,22 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import TableToolbar from "components/filter/TableToolbar"
+import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
+import { useDeleteUser, useUserList } from "hooks/queries/user"
+import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import Overflow from "rc-overflow"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { deleteUserApi, getUserListApi } from "service/user"
+import { useRef, useState } from "react"
 import { PermissionCode } from "../role/_const/permission"
 import { Permission } from "../role/_domain/entity/permission"
-import DeleteUserDialog from "./_components/DeleteUserDialog"
 import { User } from "./_domain/entity/user"
 import { UserListFilter } from "./_types/user"
 
 const UserPage = () => {
-  const [tableHeight, setTableHeight] = useState<number>(0)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
@@ -54,45 +48,15 @@ const UserPage = () => {
     useState<null | HTMLElement>(null)
 
   const tableRef = useRef<HTMLDivElement>(null)
+  const tableHeight = useResponsiveHeight(tableRef)
 
   const open = Boolean(anchorPermissionPopper)
 
-  const queryClient = useQueryClient()
-  const { data: usersData, isLoading } = useQuery({
-    queryKey: ["users", userListFilter],
-    queryFn: () =>
-      getUserListApi(userListFilter.search, userListFilter.page, userListFilter.pageSize),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000
-  })
+  const { data: usersData, isLoading } = useUserList(userListFilter)
   const { data: identity } = useGetIdentity<User>()
 
-  const deleteUserMutation = useMutation({
-    mutationFn: (userId: string[]) => deleteUserApi(userId),
-    onSuccess: () => {
-      handleCloseDeleteDialog()
-      setSnackbarOpen(true)
-      queryClient.invalidateQueries({ queryKey: ["users"] })
-    },
-    onError: (error) => {
-      setSnackbarOpen(true)
-      console.error(error)
-    }
-  })
+  const deleteUserMutation = useDeleteUser()
   const router = useRouter()
-
-  const handleSearch: TextFieldProps["onChange"] = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setUserListFilter((prev) => ({ ...prev, search: e.target.value }))
-  }
-
-  const debouncedHandleSearch = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      handleSearch(e)
-    }, 500),
-    [handleSearch]
-  )
 
   const handleCreateUser = () => {
     router.push(navigationRoutes.userAndAccess.user.create)
@@ -134,28 +98,18 @@ const UserPage = () => {
 
   const handleDeleteUser = () => {
     if (selectedUser) {
-      deleteUserMutation.mutate([selectedUser.id as string])
+      deleteUserMutation.mutate([selectedUser.id as string], {
+        onSuccess: () => {
+          handleCloseDeleteDialog()
+          setSnackbarOpen(true)
+        },
+        onError: (error) => {
+          setSnackbarOpen(true)
+          console.error(error)
+        }
+      })
     }
   }
-
-  useEffect(() => {
-    if (!tableRef.current) return
-
-    const updateHeight = () => {
-      const rect = tableRef.current?.getBoundingClientRect()
-      if (rect) {
-        const topOffset = rect.top
-        const bottomPadding = 20
-        const calculated = window.innerHeight - topOffset - bottomPadding
-        setTableHeight(calculated)
-      }
-    }
-
-    updateHeight()
-    // Update on window resize
-    window.addEventListener("resize", updateHeight)
-    return () => window.removeEventListener("resize", updateHeight)
-  }, [window.innerHeight, tableRef])
 
   const columns: GridColDef[] = [
     {
@@ -302,42 +256,26 @@ const UserPage = () => {
             : "User deleted successfully"}
         </Alert>
       </Snackbar>
-      <DeleteUserDialog
+      <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
-        selectedUser={selectedUser}
-        handleDeleteUser={handleDeleteUser}
+        instance={{ name: selectedUser?.username || "", type: "user" }}
+        handleDelete={handleDeleteUser}
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>
-          <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-            <Stack direction={"row"} spacing={1}>
-              <TextField
-                id="outlined-basic"
-                placeholder="Search by email"
-                variant="outlined"
-                size="small"
-                onChange={(e) => debouncedHandleSearch(e)}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search />
-                      </InputAdornment>
-                    )
-                  }
-                }}
-              />
-            </Stack>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={handleCreateUser}
-            >
-              Create User
-            </Button>
-          </Stack>
+          <TableToolbar
+            filter={userListFilter}
+            setFilter={setUserListFilter}
+            searchBar={{
+              placeholder: "Search by email"
+            }}
+            primaryButton={{
+              children: "Create User",
+              startIcon: <AddIcon />,
+              onClick: handleCreateUser
+            }}
+          />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
             <DataGrid
               rows={usersData?.data || []}

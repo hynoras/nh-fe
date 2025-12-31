@@ -4,11 +4,10 @@ import VisibilityIcon from "@mui/icons-material/Visibility"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import { Alert, IconButton, Snackbar, Stack, TextField, Typography } from "@mui/material"
 import Grid from "@mui/material/Grid2"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
+import { useUpdateUser, useUserDetail } from "hooks/queries/user"
 import { useParams } from "next/navigation"
 import { Fragment, ReactNode, useState } from "react"
-import { getUserDetailApi, updateUserApi } from "service/user"
 import { UpdateUserDto } from "../_domain/dto/user"
 
 interface IDescriptionItem {
@@ -18,12 +17,8 @@ interface IDescriptionItem {
 
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>()
-  const queryClient = useQueryClient()
 
-  const { data: userDetail } = useQuery({
-    queryKey: ["userDetail", userId as string],
-    queryFn: () => getUserDetailApi(userId as string)
-  })
+  const { data: userDetail } = useUserDetail(userId as string)
 
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState<{
@@ -34,23 +29,7 @@ const UserProfile = () => {
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [editedEmail, setEditedEmail] = useState("")
 
-  const updateEmailMutation = useMutation({
-    mutationFn: (newEmail: string) =>
-      updateUserApi(userId as string, { email: newEmail } as UpdateUserDto),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userDetail", userId as string] })
-      setIsEditingEmail(false)
-      setEditedEmail("")
-    },
-    onError: (error: any) => {
-      setSnackbarMessage({
-        type: "error",
-        message: error.message || "Failed to update email"
-      })
-      setSnackbarOpen(true)
-      // Keep isEditingEmail as true to stay in edit mode
-    }
-  })
+  const updateEmailMutation = useUpdateUser(userId as string)
 
   const handleCopyUserInfo = (value: string, label: string) => {
     navigator.clipboard
@@ -82,7 +61,20 @@ const UserProfile = () => {
       return
     }
     // Trigger mutation
-    updateEmailMutation.mutate(editedEmail)
+    updateEmailMutation.mutate({ email: editedEmail } as UpdateUserDto, {
+      onSuccess: () => {
+        setIsEditingEmail(false)
+        setEditedEmail("")
+      },
+      onError: (error: any) => {
+        setSnackbarMessage({
+          type: "error",
+          message: error.message || "Failed to update email"
+        })
+        setSnackbarOpen(true)
+        // Keep isEditingEmail as true to stay in edit mode
+      }
+    })
   }
 
   const handleCancelEdit = () => {

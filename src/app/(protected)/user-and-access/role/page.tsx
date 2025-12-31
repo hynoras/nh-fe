@@ -1,28 +1,9 @@
 "use client"
 
-import { Search } from "@mui/icons-material"
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import {
-  Alert,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  InputAdornment,
-  Snackbar,
-  Stack,
-  TextField,
-  TextFieldProps,
-  Tooltip,
-  Typography,
-  debounce
-} from "@mui/material"
+import { Alert, Box, IconButton, Snackbar, Stack, Tooltip } from "@mui/material"
 import {
   DataGrid,
   GridColDef,
@@ -30,88 +11,25 @@ import {
   GridRenderCellParams
 } from "@mui/x-data-grid"
 import { useGetIdentity } from "@refinedev/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import ChipOverflowList from "components/ChipOverflowList"
+import TableToolbar from "components/filter/TableToolbar"
+import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
+import {
+  useDeletePermissionGroup,
+  usePermissionGroupList
+} from "hooks/queries/permission"
+import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { deletePermissionGroupApi, getPermissionGroupListApi } from "service/permission"
+import { useRef, useState } from "react"
 import { User } from "../user/_domain/entity/user"
 import { PermissionCode } from "./_const/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
 import { PermissionGroupListFilter } from "./_type/permission-group"
 
-type DeletePermissionGroupDialogProps = {
-  open: boolean
-  onClose: () => void
-  selectedPermissionGroup: PermissionGroup | null
-  handleDeletePermissionGroup: () => void
-}
-
-const DeletePermissionGroupDialog = ({
-  open,
-  onClose,
-  selectedPermissionGroup,
-  handleDeletePermissionGroup
-}: DeletePermissionGroupDialogProps) => {
-  const [disableDeleteButton, setDisableDeleteButton] = useState(true)
-
-  const handleConfirmDeleteInputChange = (value: string) => {
-    setDisableDeleteButton(value !== selectedPermissionGroup?.name)
-  }
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {`Deleting ${selectedPermissionGroup?.name}`}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Are you sure about deleting this permission group? This action can not be
-          undone.
-        </DialogContentText>
-        <DialogContentText id="alert-dialog-description">
-          <Typography variant="caption" color="text">
-            Type "{selectedPermissionGroup?.name}" to confirm.
-          </Typography>
-        </DialogContentText>
-        <TextField
-          fullWidth
-          id="confirm-delete-input"
-          placeholder="Type permission group name to confirm"
-          variant="outlined"
-          size="small"
-          autoFocus
-          onChange={(e) => handleConfirmDeleteInputChange(e.target.value as string)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} variant="contained" color="primary">
-          Cancel
-        </Button>
-        <Button
-          variant="outlined"
-          color="error"
-          onClick={handleDeletePermissionGroup}
-          autoFocus
-          disabled={disableDeleteButton}
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
-}
-
 const RoleList = () => {
-  const [tableHeight, setTableHeight] = useState<number>(0)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedPermissionGroup, setSelectedPermissionGroup] =
     useState<PermissionGroup | null>(null)
@@ -124,51 +42,15 @@ const RoleList = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
 
   const tableRef = useRef<HTMLDivElement>(null)
+  const tableHeight = useResponsiveHeight(tableRef)
 
   const { data: identity } = useGetIdentity<User>()
-  const queryClient = useQueryClient()
-  const { data: permissionGroupsData, isLoading } = useQuery({
-    queryKey: ["permission-groups", permissionGroupListFilter],
-    queryFn: () =>
-      getPermissionGroupListApi(
-        permissionGroupListFilter.search,
-        permissionGroupListFilter.page,
-        permissionGroupListFilter.pageSize
-      ),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000
-  })
-
-  const deletePermissionGroupMutation = useMutation({
-    mutationFn: (permissionGroupId: string) =>
-      deletePermissionGroupApi(permissionGroupId),
-    onSuccess: () => {
-      handleCloseDeleteDialog()
-      setSnackbarOpen(true)
-      queryClient.invalidateQueries({ queryKey: ["permission-groups"] })
-    },
-    onError: (error) => {
-      setSnackbarOpen(true)
-      console.error(error)
-    }
-  })
-  const router = useRouter()
-
-  const handleSearch: TextFieldProps["onChange"] = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setPermissionGroupListFilter((prev) => ({
-      ...prev,
-      search: e.target.value
-    }))
-  }
-
-  const debouncedHandleSearch = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      handleSearch(e)
-    }, 500),
-    [handleSearch]
+  const { data: permissionGroupsData, isLoading } = usePermissionGroupList(
+    permissionGroupListFilter
   )
+
+  const deletePermissionGroupMutation = useDeletePermissionGroup()
+  const router = useRouter()
 
   const handleCreatePermissionGroup = () => {
     router.push(navigationRoutes.userAndAccess.role.create)
@@ -202,28 +84,18 @@ const RoleList = () => {
 
   const handleDeletePermissionGroup = () => {
     if (selectedPermissionGroup) {
-      deletePermissionGroupMutation.mutate(selectedPermissionGroup.id as string)
+      deletePermissionGroupMutation.mutate(selectedPermissionGroup.id as string, {
+        onSuccess: () => {
+          handleCloseDeleteDialog()
+          setSnackbarOpen(true)
+        },
+        onError: (error) => {
+          setSnackbarOpen(true)
+          console.error(error)
+        }
+      })
     }
   }
-
-  useEffect(() => {
-    if (!tableRef.current) return
-
-    const updateHeight = () => {
-      const rect = tableRef.current?.getBoundingClientRect()
-      if (rect) {
-        const topOffset = rect.top
-        const bottomPadding = 20
-        const calculated = window.innerHeight - topOffset - bottomPadding
-        setTableHeight(calculated)
-      }
-    }
-
-    updateHeight()
-    // Update on window resize
-    window.addEventListener("resize", updateHeight)
-    return () => window.removeEventListener("resize", updateHeight)
-  }, [window.innerHeight, tableRef])
 
   const columns: GridColDef[] = [
     {
@@ -336,42 +208,26 @@ const RoleList = () => {
             : "Permission group deleted successfully"}
         </Alert>
       </Snackbar>
-      <DeletePermissionGroupDialog
+      <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
-        selectedPermissionGroup={selectedPermissionGroup}
-        handleDeletePermissionGroup={handleDeletePermissionGroup}
+        instance={{ name: selectedPermissionGroup?.name || "", type: "permission group" }}
+        handleDelete={handleDeletePermissionGroup}
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>
-          <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-            <Stack direction={"row"} spacing={1}>
-              <TextField
-                id="outlined-basic"
-                placeholder="Search by name"
-                variant="outlined"
-                size="small"
-                onChange={(e) => debouncedHandleSearch(e)}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search />
-                      </InputAdornment>
-                    )
-                  }
-                }}
-              />
-            </Stack>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={handleCreatePermissionGroup}
-            >
-              Create Permission Group
-            </Button>
-          </Stack>
+          <TableToolbar
+            filter={permissionGroupListFilter}
+            setFilter={setPermissionGroupListFilter}
+            searchBar={{
+              placeholder: "Search by name"
+            }}
+            primaryButton={{
+              children: "Create Role",
+              startIcon: <AddIcon />,
+              onClick: handleCreatePermissionGroup
+            }}
+          />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
             <DataGrid
               rows={permissionGroupsData?.data || []}

@@ -9,25 +9,27 @@ import {
   Typography
 } from "@mui/material"
 import { useState } from "react"
-import { User } from "../_domain/entity/user"
 
-type DeleteUserDialogProps = {
+type DeleteConfirmationProps = {
   open: boolean
   onClose: () => void
-  selectedUser: User | null
-  handleDeleteUser: () => void
+  instance: {
+    name: string
+    type?: string
+  }
+  handleDelete: () => void
 }
 
-const DeleteUserDialog = ({
+const DeleteConfirmation = ({
   open,
   onClose,
-  selectedUser,
-  handleDeleteUser
-}: DeleteUserDialogProps) => {
+  instance,
+  handleDelete
+}: DeleteConfirmationProps) => {
   const [disableDeleteButton, setDisableDeleteButton] = useState(true)
 
   const handleConfirmDeleteInputChange = (value: string) => {
-    setDisableDeleteButton(value !== selectedUser?.username)
+    setDisableDeleteButton(value !== instance.name)
   }
 
   return (
@@ -37,20 +39,20 @@ const DeleteUserDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{`Deleting ${selectedUser?.username}`}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{`Deleting ${instance.name}`}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Are you sure about deleting this user? This action can not be undone.
+          {`Are you sure about deleting this ${instance.type ?? "instance"}? This action can not be undone.`}
         </DialogContentText>
         <DialogContentText id="alert-dialog-description">
           <Typography variant="caption" color="text">
-            Type "{selectedUser?.username}" to confirm.
+            Type "{instance.name}" to confirm.
           </Typography>
         </DialogContentText>
         <TextField
           fullWidth
           id="confirm-delete-input"
-          placeholder="Type username to confirm"
+          placeholder={`Type ${instance.name} to confirm`}
           variant="outlined"
           size="small"
           autoFocus
@@ -64,7 +66,7 @@ const DeleteUserDialog = ({
         <Button
           variant="outlined"
           color="error"
-          onClick={handleDeleteUser}
+          onClick={handleDelete}
           autoFocus
           disabled={disableDeleteButton}
         >
@@ -75,4 +77,4 @@ const DeleteUserDialog = ({
   )
 }
 
-export default DeleteUserDialog
+export default DeleteConfirmation
