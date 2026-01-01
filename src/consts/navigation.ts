@@ -4,6 +4,11 @@ export const navigationKeys = {
 }
 
 export const navigationRoutes = {
+  experiment: {
+    list: "/experiment",
+    create: "/experiment/create",
+    detail: (experimentId: string) => `/experiment/${experimentId}`
+  },
   userAndAccess: {
     user: {
       create: `${navigationKeys.userAndAccess}/user/create`,
