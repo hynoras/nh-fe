@@ -34,3 +34,13 @@ export const permissionGroupPaths = {
   update: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
   delete: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`
 }
+
+const experimentPath = "experiments"
+export const experimentPaths = {
+  getList: (search: string, page: number, pageSize: number) =>
+    `${experimentPath}?search=${search}&page=${page}&pageSize=${pageSize}`,
+  getDetail: (experimentId: string) => `${experimentPath}/${experimentId}`,
+  create: `${experimentPath}`,
+  update: (experimentId: string) => `${experimentPath}/${experimentId}`,
+  delete: (experimentId: string) => `${experimentPath}/${experimentId}`
+}
