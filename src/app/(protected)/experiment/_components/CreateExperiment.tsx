@@ -7,13 +7,14 @@ import {
   DialogContent,
   DialogTitle,
   FormLabel,
-  Modal,
-  Stack
+  Stack,
+  Typography
 } from "@mui/material"
 import { useEffect, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
 import { CreateExperimentDto } from "../_domain/dto/experiment"
 import AddIcon from "@mui/icons-material/Add"
+import Grid from "@mui/material/Grid2"
 
 type CreateExperimentProps = {
   open: boolean
@@ -72,11 +73,13 @@ const CreateExperiment = ({
         handleSubmit={formContext.handleSubmit(handleCreateExperiment)}
       >
         <DialogContent>
-          <Stack direction="column" spacing={2}>
-            <div>
-              <FormLabel className="font-semibold" required htmlFor="email">
-                Experiment title
+          <Grid container spacing={4}>
+            <Grid size={3}>
+              <FormLabel className="font-bold" required htmlFor="email">
+                Title
               </FormLabel>
+            </Grid>
+            <Grid size={9}>
               <TextFieldElement
                 id="title"
                 type="text"
@@ -89,47 +92,51 @@ const CreateExperiment = ({
                 size="small"
                 disabled={disabled}
               />
-            </div>
-            <div>
-              <FormLabel className="font-semibold" required htmlFor="email">
+            </Grid>
+            <Grid size={3}>
+              <FormLabel className="font-bold" required htmlFor="email">
                 Objective
               </FormLabel>
+              <Typography variant="body2" color="textSecondary">
+                What do you want to achieve with this experiment?
+              </Typography>
+            </Grid>
+            <Grid size={9}>
               <TextFieldElement
                 id="objective"
                 type="text"
                 name="objective"
                 placeholder="Experiment objective"
-                autoComplete="email"
                 required
                 fullWidth
+                multiline
+                rows={4}
                 variant="outlined"
                 size="small"
                 disabled={disabled}
               />
-            </div>
-          </Stack>
+            </Grid>
+          </Grid>
           <Collapse in={showError && !!error}>
             <Alert severity="error" onClose={handleCloseError} sx={{ mt: 2 }}>
               {error}
             </Alert>
           </Collapse>
-          <DialogActions>
-            <Button onClick={handleClose} variant="contained" color="primary">
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              size="small"
-              className="mt-4 font-bold"
-              startIcon={<AddIcon />}
-              loading={loading}
-              disabled={disabled || !formContext.formState.isValid}
-            >
-              Create
-            </Button>
-          </DialogActions>
         </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            startIcon={<AddIcon />}
+            loading={loading}
+            disabled={disabled || !formContext.formState.isValid}
+          >
+            Create
+          </Button>
+        </DialogActions>
       </FormContainer>
     </Dialog>
   )
