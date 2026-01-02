@@ -3,16 +3,7 @@
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import {
-  Alert,
-  Box,
-  Chip,
-  IconButton,
-  Popover,
-  Snackbar,
-  Stack,
-  Typography
-} from "@mui/material"
+import { Alert, Box, IconButton, Snackbar, Stack, Typography } from "@mui/material"
 import {
   DataGrid,
   GridColDef,
@@ -25,19 +16,24 @@ import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
-import { useDeleteUser, useUserList } from "hooks/queries/user"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
-import Overflow from "rc-overflow"
-import { useRef, useState } from "react"
+import { useRef, useState, useMemo, useEffect } from "react"
 import { ExperimentListFilter } from "./_types/experiment"
 import { Experiment } from "./_domain/entity/experiment"
 import { User } from "../user-and-access/user/_domain/entity/user"
-import { useDeleteExperiment, useExperimentList } from "hooks/queries/experiment"
+import {
+  useCreateExperiment,
+  useDeleteExperiment,
+  useExperimentList
+} from "hooks/queries/experiment"
 import { PermissionCode } from "../user-and-access/role/_const/permission"
+import CreateExperiment from "./_components/CreateExperiment"
+import { CreateExperimentDto } from "./_domain/dto/experiment"
 
 const ExperimentPage = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [openCreateDialog, setOpenCreateDialog] = useState(false)
   const [selectedExperiment, setSelectedExperiment] = useState<Experiment | null>(null)
   const [experimentListFilter, setExperimentListFilter] = useState<ExperimentListFilter>({
     search: "",
@@ -45,31 +41,19 @@ const ExperimentPage = () => {
     pageSize: 10
   })
   const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [anchorPermissionPopper, setAnchorPermissionPopper] =
-    useState<null | HTMLElement>(null)
-
   const tableRef = useRef<HTMLDivElement>(null)
   const tableHeight = useResponsiveHeight(tableRef)
 
-  const open = Boolean(anchorPermissionPopper)
-
   const { data: experimentsData, isLoading } = useExperimentList(experimentListFilter)
+
+  useEffect(() => {
+    console.log(experimentsData)
+  }, [experimentsData])
+
   const { data: identity } = useGetIdentity<User>()
 
   const deleteExperimentMutation = useDeleteExperiment()
   const router = useRouter()
-
-  const handleCreateExperiment = () => {
-    router.push(navigationRoutes.experiment.create)
-  }
-
-  const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorPermissionPopper(event.currentTarget)
-  }
-
-  const handleClosePermissionPopover = () => {
-    setAnchorPermissionPopper(null)
-  }
 
   const handlePaginationChange = (model: GridPaginationModel) => {
     setExperimentListFilter((prev) => ({
@@ -91,6 +75,28 @@ const ExperimentPage = () => {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false)
+  }
+
+  const createExperimentMutation = useCreateExperiment()
+
+  // Stabilize error message to prevent infinite loops
+  const errorMessage = useMemo(
+    () => createExperimentMutation.error?.message ?? null,
+    [createExperimentMutation.error?.message]
+  )
+
+  const handleCloseCreateDialog = () => {
+    setOpenCreateDialog(false)
+    createExperimentMutation.reset()
+  }
+
+  const handleCreateExperiment = (data: CreateExperimentDto) => {
+    createExperimentMutation.mutate(data, {
+      onSuccess: () => {
+        setSnackbarOpen(true)
+        setOpenCreateDialog(false)
+      }
+    })
   }
 
   const handleEditExperiment = (experimentId: string) => {
@@ -198,6 +204,14 @@ const ExperimentPage = () => {
             : "User deleted successfully"}
         </Alert>
       </Snackbar>
+      <CreateExperiment
+        open={openCreateDialog}
+        onClose={handleCloseCreateDialog}
+        onSubmit={handleCreateExperiment}
+        loading={createExperimentMutation.isPending}
+        disabled={createExperimentMutation.isPending}
+        error={errorMessage}
+      />
       <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
@@ -216,7 +230,7 @@ const ExperimentPage = () => {
             primaryButton={{
               children: "Create Experiment",
               startIcon: <AddIcon />,
-              onClick: handleCreateExperiment
+              onClick: () => setOpenCreateDialog(true)
             }}
           />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
@@ -227,7 +241,7 @@ const ExperimentPage = () => {
               paginationMode="server"
               rowCount={experimentsData?.length || 0}
               paginationModel={{
-                page: experimentListFilter?.page || 1 - 1,
+                page: (experimentListFilter?.page || 1) - 1,
                 pageSize: experimentListFilter?.pageSize || 10
               }}
               onPaginationModelChange={handlePaginationChange}
