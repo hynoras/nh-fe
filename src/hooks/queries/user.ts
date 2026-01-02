@@ -23,7 +23,8 @@ import {
 export const useUserList = (filter: UserListFilter) => {
   return useQuery({
     queryKey: queryKey.users(filter),
-    queryFn: () => getUserListApi(filter.search, filter.page, filter.pageSize)
+    queryFn: () =>
+      getUserListApi(filter.search || "", filter.page || 1, filter.pageSize || 10)
   })
 }
 
@@ -86,6 +87,11 @@ export const useDeleteUser = () => {
 export const usePermissionGroups = (filter: PermissionGroupListFilter) => {
   return useQuery({
     queryKey: queryKey.permissionGroups(filter),
-    queryFn: () => getPermissionGroupListApi(filter.search, filter.page, filter.pageSize)
+    queryFn: () =>
+      getPermissionGroupListApi(
+        filter.search || "",
+        filter.page || 1,
+        filter.pageSize || 10
+      )
   })
 }

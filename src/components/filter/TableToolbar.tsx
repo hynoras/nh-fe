@@ -58,6 +58,7 @@ const TableToolbar = <T extends { search?: string }>({
             placeholder={searchBar?.placeholder || "Search"}
             variant="outlined"
             size={searchBar?.size || "small"}
+            value={filter.search || ""}
             onChange={(e) => debouncedHandleSearch(e)}
             sx={searchBar?.width ? { width: searchBar.width } : undefined}
             slotProps={{
