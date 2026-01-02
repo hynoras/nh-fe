@@ -23,6 +23,7 @@ type CreateExperimentProps = {
   loading?: boolean
   disabled?: boolean
   error?: string | null
+  success?: boolean
 }
 
 const CreateExperiment = ({
@@ -31,7 +32,8 @@ const CreateExperiment = ({
   onSubmit,
   loading,
   disabled,
-  error
+  error,
+  success
 }: CreateExperimentProps) => {
   const formContext = useForm<CreateExperimentDto>({
     defaultValues: {
@@ -64,6 +66,14 @@ const CreateExperiment = ({
       setShowError(false)
     }
   }, [error])
+
+  // Reset form when success prop changes to true
+  useEffect(() => {
+    if (success) {
+      formContext.reset()
+      setShowError(false)
+    }
+  }, [success, formContext])
 
   return (
     <Dialog open={open} onClose={handleClose}>

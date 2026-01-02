@@ -211,6 +211,7 @@ const ExperimentPage = () => {
         loading={createExperimentMutation.isPending}
         disabled={createExperimentMutation.isPending}
         error={errorMessage}
+        success={createExperimentMutation.isSuccess}
       />
       <Popup.DeleteConfirmation
         open={openDeleteDialog}
