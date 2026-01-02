@@ -4,6 +4,7 @@ export enum PermissionCode {
   COMPOUND_MANAGE = "compound:manage",
   COMPOUND_VIEW = "compound:view",
   EXPERIMENT_VIEW = "experiment:view",
+  EXPERIMENT_MANAGE = "experiment:manage",
   INVENTORY_MANAGE = "inventory:manage",
   PERMISSION_GROUP_MANAGE = "permission_group:manage",
   PERMISSION_GROUP_VIEW = "permission_group:view",

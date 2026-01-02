@@ -284,8 +284,8 @@ const UserPage = () => {
               paginationMode="server"
               rowCount={usersData?.length || 0}
               paginationModel={{
-                page: userListFilter.page - 1,
-                pageSize: userListFilter.pageSize
+                page: userListFilter?.page || 1 - 1,
+                pageSize: userListFilter?.pageSize || 10
               }}
               onPaginationModelChange={handlePaginationChange}
               pageSizeOptions={[5, 10, 25, 50, 100]}
