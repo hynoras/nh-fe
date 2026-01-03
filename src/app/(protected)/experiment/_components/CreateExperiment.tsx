@@ -1,3 +1,4 @@
+import AddIcon from "@mui/icons-material/Add"
 import {
   Alert,
   Button,
@@ -7,14 +8,17 @@ import {
   DialogContent,
   DialogTitle,
   FormLabel,
-  Stack,
   Typography
 } from "@mui/material"
-import { useEffect, useState } from "react"
-import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { CreateExperimentDto } from "../_domain/dto/experiment"
-import AddIcon from "@mui/icons-material/Add"
 import Grid from "@mui/material/Grid2"
+import { useEffect, useState } from "react"
+import {
+  FormContainer,
+  RadioButtonGroup,
+  TextFieldElement,
+  useForm
+} from "react-hook-form-mui"
+import { CreateExperimentDto } from "../_domain/dto/experiment"
 
 type CreateExperimentProps = {
   open: boolean
@@ -38,7 +42,8 @@ const CreateExperiment = ({
   const formContext = useForm<CreateExperimentDto>({
     defaultValues: {
       title: "",
-      objective: ""
+      objective: "",
+      type: ""
     }
   })
   const [showError, setShowError] = useState(false)
@@ -104,6 +109,24 @@ const CreateExperiment = ({
               />
             </Grid>
             <Grid size={3}>
+              <FormLabel className="font-bold" required htmlFor="type">
+                Type
+              </FormLabel>
+              <Typography variant="body2" color="textSecondary">
+                Choose the type of experiment
+              </Typography>
+            </Grid>
+            <Grid size={9}>
+              <RadioButtonGroup
+                name="type"
+                options={[
+                  { id: "exploratory", label: "Exploratory" },
+                  { id: "confirmatory", label: "Confirmatory" }
+                ]}
+                row
+              />
+            </Grid>
+            <Grid size={3}>
               <FormLabel className="font-bold" required htmlFor="email">
                 Objective
               </FormLabel>
@@ -125,7 +148,7 @@ const CreateExperiment = ({
                 size="small"
                 disabled={disabled}
               />
-            </Grid>
+            </Grid>{" "}
           </Grid>
           <Collapse in={showError && !!error}>
             <Alert severity="error" onClose={handleCloseError} sx={{ mt: 2 }}>

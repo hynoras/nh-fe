@@ -16,20 +16,20 @@ import Popup from "components/popup"
 import State from "components/state"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
-import { useResponsiveHeight } from "hooks/responsive"
-import { useRouter } from "next/navigation"
-import { useRef, useState, useMemo, useEffect } from "react"
-import { ExperimentListFilter } from "./_types/experiment"
-import { Experiment } from "./_domain/entity/experiment"
-import { User } from "../user-and-access/user/_domain/entity/user"
 import {
   useCreateExperiment,
   useDeleteExperiment,
   useExperimentList
 } from "hooks/queries/experiment"
+import { useResponsiveHeight } from "hooks/responsive"
+import { useRouter } from "next/navigation"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { PermissionCode } from "../user-and-access/role/_const/permission"
+import { User } from "../user-and-access/user/_domain/entity/user"
 import CreateExperiment from "./_components/CreateExperiment"
 import { CreateExperimentDto } from "./_domain/dto/experiment"
+import { Experiment } from "./_domain/entity/experiment"
+import { ExperimentListFilter } from "./_types/experiment"
 
 const ExperimentPage = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
@@ -124,21 +124,28 @@ const ExperimentPage = () => {
       headerName: "Title",
       sortable: true,
       resizable: true,
-      flex: 1
+      flex: 0.6
     },
     {
       field: "status",
       headerName: "Status",
       sortable: false,
       resizable: false,
-      flex: 1
+      flex: 0.4
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      sortable: false,
+      resizable: false,
+      flex: 0.4
     },
     {
       field: "objective",
       headerName: "Objective",
       sortable: false,
       resizable: false,
-      flex: 1
+      flex: 0.6
     },
     {
       field: "createdAt",
