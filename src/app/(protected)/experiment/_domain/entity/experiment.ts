@@ -3,6 +3,7 @@ export type Experiment = {
   title?: string
   objective?: string
   status?: string
+  type?: string
   createdBy?: string
   createdAt?: string
   updatedAt?: string
