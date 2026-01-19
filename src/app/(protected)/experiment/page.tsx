@@ -27,6 +27,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { PermissionCode } from "../user-and-access/role/_const/permission"
 import { User } from "../user-and-access/user/_domain/entity/user"
 import CreateExperiment from "./_components/CreateExperiment"
+import ExperimentStatus from "./_components/ExperimentStatus"
 import { CreateExperimentDto } from "./_domain/dto/experiment"
 import { Experiment } from "./_domain/entity/experiment"
 import { ExperimentListFilter } from "./_types/experiment"
@@ -124,14 +125,23 @@ const ExperimentPage = () => {
       headerName: "Title",
       sortable: true,
       resizable: true,
-      flex: 0.6
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      sortable: false,
-      resizable: false,
-      flex: 0.4
+      flex: 0.6,
+      renderCell: (params: GridRenderCellParams<Experiment, string>) => {
+        return (
+          <Stack
+            height={"100%"}
+            direction={"row"}
+            justifyContent={"flex-start"}
+            alignItems={"center"}
+            spacing={1}
+          >
+            <ExperimentStatus status={params.row.status || "running"} />
+            <Typography variant="body2" color="textSecondary">
+              {params.value}
+            </Typography>
+          </Stack>
+        )
+      }
     },
     {
       field: "type",
@@ -150,7 +160,7 @@ const ExperimentPage = () => {
     {
       field: "createdAt",
       headerName: "Created At",
-      flex: 0.6,
+      flex: 0.4,
       valueGetter: (_, row) => {
         return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
       }
