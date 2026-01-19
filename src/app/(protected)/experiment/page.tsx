@@ -23,7 +23,7 @@ import {
 } from "hooks/queries/experiment"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { PermissionCode } from "../user-and-access/role/_const/permission"
 import { User } from "../user-and-access/user/_domain/entity/user"
 import CreateExperiment from "./_components/CreateExperiment"
@@ -46,10 +46,6 @@ const ExperimentPage = () => {
   const tableHeight = useResponsiveHeight(tableRef)
 
   const { data: experimentsData, isLoading } = useExperimentList(experimentListFilter)
-
-  useEffect(() => {
-    console.log(experimentsData)
-  }, [experimentsData])
 
   const { data: identity } = useGetIdentity<User>()
 
