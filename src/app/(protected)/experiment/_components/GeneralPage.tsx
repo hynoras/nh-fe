@@ -1,9 +1,15 @@
 "use client"
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
+import CategoryIcon from "@mui/icons-material/Category"
 import EditIcon from "@mui/icons-material/Edit"
+import FlagIcon from "@mui/icons-material/Flag"
 import {
   Alert,
   Button,
-  Divider,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
   IconButton,
   Snackbar,
   Stack,
@@ -62,7 +68,7 @@ const GeneralPage = () => {
     })
   }
 
-  const renderContent = () => {
+  const renderObjectiveContent = () => {
     if (isEditing === false) {
       return <Typography>{experiment?.data?.objective}</Typography>
     }
@@ -129,66 +135,91 @@ const GeneralPage = () => {
         </Alert>
       </Snackbar>
       <Stack direction="column" justifyContent="flex-start" spacing={2}>
-        <div>
-          <Stack
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="center"
-            spacing={2}
-          >
-            <Typography variant="h6">Objective</Typography>
-            {isEditing === false && (
-              <IconButton
-                aria-label="edit-objective"
-                onClick={() => setIsEditing(true)}
-                size="small"
-              >
-                <EditIcon />
-              </IconButton>
-            )}
-          </Stack>
-          {renderContent()}
-        </div>
-        <Divider />
-        <Typography variant="h6">About this experiment</Typography>
+        {/* Objective */}
         <Grid container spacing={2}>
+          <Grid size={7}>
+            <Card className="h-[100%]" variant="outlined">
+              <CardHeader
+                avatar={<FlagIcon aria-label="recipe" />}
+                action={
+                  isEditing === false ? (
+                    <IconButton
+                      aria-label="edit-objective"
+                      onClick={() => setIsEditing(true)}
+                      size="small"
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  ) : null
+                }
+                title="Objective"
+              />
+              <CardContent>{renderObjectiveContent()}</CardContent>
+            </Card>
+          </Grid>
+
+          {/* Timeline */}
           <Grid size={2}>
-            <Typography variant="body1">Created at</Typography>
+            <Card variant="outlined" className="h-[100%]">
+              <CardHeader
+                avatar={<CalendarMonthIcon aria-label="timeline" />}
+                title="Timeline"
+              />
+              <CardContent>
+                <Stack direction="column" justifyContent="flex-start" spacing={2}>
+                  <div>
+                    <Typography variant="body1" fontWeight="bold">
+                      Start date
+                    </Typography>
+                    <Typography variant="body2">
+                      {experiment?.data?.createdAt
+                        ? formatDate(experiment?.data?.createdAt, "MMM dd, yyyy")
+                        : "-"}
+                    </Typography>
+                  </div>
+                  <div>
+                    <Typography variant="body1" fontWeight="bold">
+                      End date
+                    </Typography>
+                    <Typography variant="body2">
+                      {experiment?.data?.completedAt
+                        ? formatDate(experiment?.data?.completedAt, "MMM dd, yyyy")
+                        : "-"}
+                    </Typography>
+                  </div>
+                  <div>
+                    <Typography variant="body1" fontWeight="bold">
+                      Last update
+                    </Typography>
+                    <Typography variant="body2">
+                      {experiment?.data?.updatedAt
+                        ? formatDate(experiment?.data?.updatedAt, "MMM dd, yyyy")
+                        : "-"}
+                    </Typography>
+                  </div>
+                </Stack>
+              </CardContent>
+            </Card>
           </Grid>
-          <Grid size={10}>
-            <Typography variant="body1">
-              {formatDate(experiment?.data?.createdAt || "-", "MMM dd, yyyy")}
-            </Typography>
-          </Grid>
-          <Grid size={2}>
-            <Typography variant="body1">Last updated</Typography>
-          </Grid>
-          <Grid size={10}>
-            <Typography variant="body1">
-              {experiment?.data?.updatedAt
-                ? formatDate(experiment?.data?.updatedAt, "MMM dd, yyyy")
-                : "-"}
-            </Typography>
-          </Grid>
-          <Grid size={2}>
-            <Typography variant="body1">Started at</Typography>
-          </Grid>
-          <Grid size={10}>
-            <Typography variant="body1">
-              {experiment?.data?.startedAt
-                ? formatDate(experiment?.data?.startedAt, "MMM dd, yyyy")
-                : "-"}
-            </Typography>
-          </Grid>
-          <Grid size={2}>
-            <Typography variant="body1">Completed at</Typography>
-          </Grid>
-          <Grid size={10}>
-            <Typography variant="body1">
-              {experiment?.data?.completedAt
-                ? formatDate(experiment?.data?.completedAt, "MMM dd, yyyy")
-                : "-"}
-            </Typography>
+
+          {/* Experiment Type */}
+          <Grid size={3}>
+            <Card className="h-[100%] flex flex-col" variant="outlined">
+              <CardHeader
+                avatar={<CategoryIcon aria-label="type" />}
+                title="Experiment Type"
+              />
+              <CardContent>
+                <Typography variant="h5" fontWeight="bold" textTransform="capitalize">
+                  {experiment?.data?.type}
+                </Typography>
+              </CardContent>
+              <CardActions className="mt-auto">
+                <Button className="normal-case" variant="text" size="medium">
+                  {`Change to ${experiment?.data?.type === "exploratory" ? "confirmatory" : "exploratory"}`}
+                </Button>
+              </CardActions>
+            </Card>
           </Grid>
         </Grid>
       </Stack>

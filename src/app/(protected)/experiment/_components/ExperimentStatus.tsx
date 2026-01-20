@@ -1,54 +1,73 @@
 import CheckIcon from "@mui/icons-material/Check"
+import Circle from "@mui/icons-material/Circle"
+import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn"
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord"
-import HelpIcon from "@mui/icons-material/Help"
 import LightbulbIcon from "@mui/icons-material/Lightbulb"
-import NoteAltIcon from "@mui/icons-material/NoteAlt"
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline"
-import { Tooltip } from "@mui/material"
+import { Chip, Tooltip } from "@mui/material"
 
 type ExperimentStatusProps = {
   status: string
+  isChip?: boolean
+  size?: "small" | "medium"
 }
 
-const ExperimentStatus = ({ status }: ExperimentStatusProps) => {
-  switch (status) {
-    case "draft":
-      return (
-        <Tooltip title="Draft" placement="top" arrow>
-          <LightbulbIcon color="disabled" fontSize="small" />
-        </Tooltip>
-      )
-    case "planning":
-      return (
-        <Tooltip title="Planning" placement="top" arrow>
-          <NoteAltIcon color="info" fontSize="small" />
-        </Tooltip>
-      )
-    case "running":
-      return (
-        <Tooltip title="Running" placement="top" arrow>
-          <FiberManualRecordIcon color="warning" fontSize="small" />
-        </Tooltip>
-      )
-    case "completed":
-      return (
-        <Tooltip title="Completed" placement="top" arrow>
-          <CheckIcon color="success" fontSize="small" />
-        </Tooltip>
-      )
-    case "cancelled":
-      return (
-        <Tooltip title="Cancelled" placement="top" arrow>
-          <RemoveCircleOutlineIcon color="error" fontSize="small" />
-        </Tooltip>
-      )
-    default:
-      return (
-        <Tooltip title="Unknown status" placement="top" arrow>
-          <HelpIcon color="disabled" fontSize="small" />
-        </Tooltip>
-      )
+const ExperimentStatus = ({
+  status,
+  isChip = false,
+  size = "small"
+}: ExperimentStatusProps) => {
+  const renderStatusElement = (
+    status: string
+  ): {
+    color: "default" | "info" | "warning" | "success" | "error"
+    icon: React.ReactElement
+  } => {
+    switch (status) {
+      case "draft":
+        return {
+          color: "default",
+          icon: <LightbulbIcon fontSize="small" />
+        }
+      case "planning":
+        return {
+          color: "info",
+          icon: <FiberManualRecordIcon fontSize="small" />
+        }
+      case "running":
+        return {
+          color: "warning",
+          icon: <Circle fontSize="small" />
+        }
+      case "completed":
+        return {
+          color: "success",
+          icon: <CheckIcon fontSize="small" />
+        }
+      case "cancelled":
+        return {
+          color: "error",
+          icon: <DoDisturbOnIcon fontSize="small" />
+        }
+      default:
+        return {
+          color: "default",
+          icon: <LightbulbIcon fontSize="small" />
+        }
+    }
   }
+  return isChip ? (
+    <Chip
+      icon={renderStatusElement(status).icon}
+      label={status}
+      color={renderStatusElement(status).color}
+      size={size}
+      variant="outlined"
+    />
+  ) : (
+    <Tooltip title={status} placement="top" arrow>
+      {renderStatusElement(status).icon}
+    </Tooltip>
+  )
 }
 
 export default ExperimentStatus

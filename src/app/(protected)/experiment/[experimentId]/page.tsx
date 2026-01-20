@@ -1,5 +1,5 @@
 "use client"
-import { Avatar, Box, Chip, Skeleton, Stack, Tab, Tabs, Typography } from "@mui/material"
+import { Box, Button, Skeleton, Stack, Tab, Tabs, Typography } from "@mui/material"
 import { useExperimentDetail } from "hooks/queries/experiment"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -93,21 +93,34 @@ const ExperimentDetailPage = () => {
   }
 
   return (
-    <Stack className="h-[82vh] overflow-y-scroll" direction="column">
+    <Stack className="h-[82vh]" direction="column">
       {/* Header */}
-      <Stack direction={"row"} spacing={2} alignItems={"center"}>
-        <Avatar>
-          <ExperimentStatus status={experiment?.data?.status || "running"} />
-        </Avatar>
-        <Typography variant="h5">{experiment?.data?.title}</Typography>
-        <Chip label={experiment?.data?.type} size="small" />
+      <Stack
+        direction={"row"}
+        spacing={2}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
+        <Stack direction={"row"} spacing={2} alignItems={"center"}>
+          <Typography variant="h5" fontWeight="bold">
+            {experiment?.data?.title}
+          </Typography>
+          <ExperimentStatus
+            status={experiment?.data?.status || "running"}
+            size="medium"
+            isChip
+          />
+        </Stack>
+        <Button className="normal-case" variant="outlined">
+          Start planning
+        </Button>
       </Stack>
 
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="experiment tabs">
-          <Tab label="General" {...a11yProps(0)} />
-          <Tab label="Procedure" {...a11yProps(1)} />
+          <Tab className="normal-case" label="Overview" {...a11yProps(0)} />
+          <Tab className="normal-case" label="Procedure" {...a11yProps(1)} />
         </Tabs>
       </Box>
 
