@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { a11yProps } from "utils/accessibility"
 import ExperimentStatus from "../_components/ExperimentStatus"
-import GeneralPage from "../_components/GeneralPage"
+import GeneralPage from "./GeneralPage"
 
 interface TabPanelProps {
   children?: React.ReactNode
