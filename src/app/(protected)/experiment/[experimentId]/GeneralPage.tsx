@@ -12,6 +12,7 @@ import {
   CardHeader,
   IconButton,
   Link,
+  Skeleton,
   Snackbar,
   Stack,
   Tooltip,
@@ -27,10 +28,29 @@ import { UpdateExperimentDto } from "../_domain/dto/experiment"
 import { Experiment } from "../_domain/entity/experiment"
 
 const ExperimentObjectiveCard = ({
-  experiment
+  experiment,
+  isLoading
 }: {
   experiment: Experiment | undefined
+  isLoading?: boolean
 }) => {
+  if (isLoading) {
+    return (
+      <Card className="h-[100%]" variant="outlined">
+        <CardHeader avatar={<FlagIcon aria-label="recipe" />} title="Objective" />
+        <CardContent>
+          <Stack spacing={1}>
+            <Skeleton variant="text" width="100%" height={24} />
+            <Skeleton variant="text" width="95%" height={24} />
+            <Skeleton variant="text" width="98%" height={24} />
+            <Skeleton variant="text" width="90%" height={24} />
+            <Skeleton variant="text" width="85%" height={24} />
+          </Stack>
+        </CardContent>
+      </Card>
+    )
+  }
+
   const params = useParams<{ experimentId: string }>()
   const experimentId = params.experimentId
 
@@ -162,7 +182,27 @@ const ExperimentObjectiveCard = ({
   )
 }
 
-const ExperimentTypeCard = ({ experiment }: { experiment: Experiment | undefined }) => {
+const ExperimentTypeCard = ({
+  experiment,
+  isLoading
+}: {
+  experiment: Experiment | undefined
+  isLoading?: boolean
+}) => {
+  if (isLoading) {
+    return (
+      <Card className="h-[100%] flex flex-col" variant="outlined">
+        <CardHeader avatar={<CategoryIcon aria-label="type" />} title="Experiment Type" />
+        <CardContent>
+          <Skeleton variant="text" width="60%" height={40} />
+        </CardContent>
+        <CardActions className="mt-auto">
+          <Skeleton variant="rectangular" width={200} height={36} />
+        </CardActions>
+      </Card>
+    )
+  }
+
   const params = useParams<{ experimentId: string }>()
   const experimentId = params.experimentId
 
@@ -318,6 +358,81 @@ const ExperimentTypeCard = ({ experiment }: { experiment: Experiment | undefined
   )
 }
 
+const ExperimentTimelineCard = ({
+  experiment,
+  isLoading
+}: {
+  experiment: Experiment | undefined
+  isLoading?: boolean
+}) => {
+  if (isLoading) {
+    return (
+      <Card variant="outlined" className="h-[100%]">
+        <CardHeader
+          avatar={<CalendarMonthIcon aria-label="timeline" />}
+          title="Timeline"
+        />
+        <CardContent>
+          <Stack direction="column" justifyContent="flex-start" spacing={2}>
+            <div>
+              <Skeleton variant="text" width="40%" height={24} />
+              <Skeleton variant="text" width="60%" height={20} />
+            </div>
+            <div>
+              <Skeleton variant="text" width="40%" height={24} />
+              <Skeleton variant="text" width="60%" height={20} />
+            </div>
+            <div>
+              <Skeleton variant="text" width="40%" height={24} />
+              <Skeleton variant="text" width="60%" height={20} />
+            </div>
+          </Stack>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card variant="outlined" className="h-[100%]">
+      <CardHeader avatar={<CalendarMonthIcon aria-label="timeline" />} title="Timeline" />
+      <CardContent>
+        <Stack direction="column" justifyContent="flex-start" spacing={2}>
+          <div>
+            <Typography variant="body1" fontWeight="bold">
+              Start date
+            </Typography>
+            <Typography variant="body2">
+              {experiment?.createdAt
+                ? formatDate(experiment?.createdAt, "MMM dd, yyyy")
+                : "-"}
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="body1" fontWeight="bold">
+              End date
+            </Typography>
+            <Typography variant="body2">
+              {experiment?.completedAt
+                ? formatDate(experiment?.completedAt, "MMM dd, yyyy")
+                : "-"}
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="body1" fontWeight="bold">
+              Last update
+            </Typography>
+            <Typography variant="body2">
+              {experiment?.updatedAt
+                ? formatDate(experiment?.updatedAt, "MMM dd, yyyy")
+                : "-"}
+            </Typography>
+          </div>
+        </Stack>
+      </CardContent>
+    </Card>
+  )
+}
+
 const GeneralPage = () => {
   const params = useParams<{ experimentId: string }>()
   const experimentId = params.experimentId
@@ -328,56 +443,17 @@ const GeneralPage = () => {
       <Grid container spacing={2}>
         {/* Objective */}
         <Grid size={6}>
-          <ExperimentObjectiveCard experiment={experiment?.data} />
+          <ExperimentObjectiveCard experiment={experiment?.data} isLoading={isLoading} />
         </Grid>
 
         {/* Timeline */}
         <Grid size={2}>
-          <Card variant="outlined" className="h-[100%]">
-            <CardHeader
-              avatar={<CalendarMonthIcon aria-label="timeline" />}
-              title="Timeline"
-            />
-            <CardContent>
-              <Stack direction="column" justifyContent="flex-start" spacing={2}>
-                <div>
-                  <Typography variant="body1" fontWeight="bold">
-                    Start date
-                  </Typography>
-                  <Typography variant="body2">
-                    {experiment?.data?.createdAt
-                      ? formatDate(experiment?.data?.createdAt, "MMM dd, yyyy")
-                      : "-"}
-                  </Typography>
-                </div>
-                <div>
-                  <Typography variant="body1" fontWeight="bold">
-                    End date
-                  </Typography>
-                  <Typography variant="body2">
-                    {experiment?.data?.completedAt
-                      ? formatDate(experiment?.data?.completedAt, "MMM dd, yyyy")
-                      : "-"}
-                  </Typography>
-                </div>
-                <div>
-                  <Typography variant="body1" fontWeight="bold">
-                    Last update
-                  </Typography>
-                  <Typography variant="body2">
-                    {experiment?.data?.updatedAt
-                      ? formatDate(experiment?.data?.updatedAt, "MMM dd, yyyy")
-                      : "-"}
-                  </Typography>
-                </div>
-              </Stack>
-            </CardContent>
-          </Card>
+          <ExperimentTimelineCard experiment={experiment?.data} isLoading={isLoading} />
         </Grid>
 
         {/* Experiment Type */}
         <Grid size={4}>
-          <ExperimentTypeCard experiment={experiment?.data} />
+          <ExperimentTypeCard experiment={experiment?.data} isLoading={isLoading} />
         </Grid>
       </Grid>
     </Stack>

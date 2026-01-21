@@ -65,63 +65,53 @@ const ExperimentDetailPage = () => {
     router.push(`?${params.toString()}`, { scroll: false })
   }
 
-  if (isLoading) {
-    return (
-      <Stack className="h-[82vh] overflow-y-scroll" direction="column">
-        {/* Header Skeleton */}
-        <Stack direction={"row"} spacing={2} alignItems={"center"}>
-          <Skeleton variant="circular" width={40} height={40} />
-          <Skeleton variant="text" width={300} height={40} />
-          <Skeleton variant="rounded" width={80} height={24} />
+  return (
+    <Stack className="h-[82vh]" direction="column">
+      {/* Header */}
+      {isLoading ? (
+        <Stack
+          direction={"row"}
+          spacing={2}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Stack direction={"row"} spacing={2} alignItems={"center"}>
+            <Skeleton variant="text" width={300} height={32} />
+            <Skeleton variant="rounded" width={80} height={24} />
+          </Stack>
+          <Skeleton variant="rounded" width={120} height={24} />
         </Stack>
+      ) : (
+        <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
+          <Stack direction={"row"} spacing={2} alignItems={"center"}>
+            <Typography variant="h5" fontWeight="bold">
+              {experiment?.data?.title}
+            </Typography>
+            <ExperimentStatus
+              status={experiment?.data?.status || "running"}
+              size="medium"
+              isChip
+            />
+          </Stack>
+          <Button className="normal-case" variant="outlined">
+            Start planning
+          </Button>
+        </Stack>
+      )}
 
-        {/* Tabs Skeleton */}
-        <Box sx={{ borderBottom: 1, borderColor: "divider", mt: 2 }}>
+      {/* Tabs */}
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        {isLoading ? (
           <Stack direction="row" spacing={2}>
             <Skeleton variant="text" width={100} height={48} />
             <Skeleton variant="text" width={100} height={48} />
           </Stack>
-        </Box>
-
-        {/* Content Skeleton */}
-        <Box sx={{ pt: 3 }}>
-          <Skeleton variant="text" width={200} height={32} sx={{ mb: 2 }} />
-          <Skeleton variant="rectangular" width="100%" height={200} />
-        </Box>
-      </Stack>
-    )
-  }
-
-  return (
-    <Stack className="h-[82vh]" direction="column">
-      {/* Header */}
-      <Stack
-        direction={"row"}
-        spacing={2}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <Stack direction={"row"} spacing={2} alignItems={"center"}>
-          <Typography variant="h5" fontWeight="bold">
-            {experiment?.data?.title}
-          </Typography>
-          <ExperimentStatus
-            status={experiment?.data?.status || "running"}
-            size="medium"
-            isChip
-          />
-        </Stack>
-        <Button className="normal-case" variant="outlined">
-          Start planning
-        </Button>
-      </Stack>
-
-      {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="experiment tabs">
-          <Tab className="normal-case" label="Overview" {...a11yProps(0)} />
-          <Tab className="normal-case" label="Procedure" {...a11yProps(1)} />
-        </Tabs>
+        ) : (
+          <Tabs value={value} onChange={handleChange} aria-label="experiment tabs">
+            <Tab className="normal-case" label="Overview" {...a11yProps(0)} />
+            <Tab className="normal-case" label="Procedure" {...a11yProps(1)} />
+          </Tabs>
+        )}
       </Box>
 
       <TabPanel value={value} index={0}>
