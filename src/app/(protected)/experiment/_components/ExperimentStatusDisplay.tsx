@@ -4,46 +4,47 @@ import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn"
 import LightbulbIcon from "@mui/icons-material/Lightbulb"
 import NoteAltIcon from "@mui/icons-material/NoteAlt"
 import { Chip, Tooltip } from "@mui/material"
+import { ExperimentStatus } from "../_domain/entity/experiment"
 
-type ExperimentStatusProps = {
-  status: string
+type ExperimentStatusDisplayProps = {
+  status: ExperimentStatus
   isChip?: boolean
   size?: "small" | "medium"
 }
 
-const ExperimentStatus = ({
+const ExperimentStatusDisplay = ({
   status,
   isChip = false,
   size = "small"
-}: ExperimentStatusProps) => {
+}: ExperimentStatusDisplayProps) => {
   const renderStatusElement = (
-    status: string
+    status: ExperimentStatus
   ): {
     color: "default" | "info" | "warning" | "success" | "error"
     icon: React.ReactElement
   } => {
     switch (status) {
-      case "draft":
+      case ExperimentStatus.DRAFT:
         return {
           color: "default",
           icon: <LightbulbIcon fontSize="small" color="disabled" />
         }
-      case "planning":
+      case ExperimentStatus.PLANNING:
         return {
           color: "info",
           icon: <NoteAltIcon fontSize="small" color="info" />
         }
-      case "running":
+      case ExperimentStatus.RUNNING:
         return {
           color: "warning",
           icon: <Circle fontSize="small" color="warning" />
         }
-      case "completed":
+      case ExperimentStatus.COMPLETED:
         return {
           color: "success",
           icon: <CheckIcon fontSize="small" color="success" />
         }
-      case "cancelled":
+      case ExperimentStatus.ABORTED:
         return {
           color: "error",
           icon: <DoDisturbOnIcon fontSize="small" color="error" />
@@ -71,4 +72,4 @@ const ExperimentStatus = ({
   )
 }
 
-export default ExperimentStatus
+export default ExperimentStatusDisplay

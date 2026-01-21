@@ -27,9 +27,9 @@ import { useMemo, useRef, useState } from "react"
 import { PermissionCode } from "../user-and-access/role/_const/permission"
 import { User } from "../user-and-access/user/_domain/entity/user"
 import CreateExperiment from "./_components/CreateExperiment"
-import ExperimentStatus from "./_components/ExperimentStatus"
+import ExperimentStatusDisplay from "./_components/ExperimentStatusDisplay"
 import { CreateExperimentDto } from "./_domain/dto/experiment"
-import { Experiment } from "./_domain/entity/experiment"
+import { Experiment, ExperimentStatus } from "./_domain/entity/experiment"
 import { ExperimentListFilter } from "./_types/experiment"
 
 const ExperimentPage = () => {
@@ -131,7 +131,9 @@ const ExperimentPage = () => {
             alignItems={"center"}
             spacing={1}
           >
-            <ExperimentStatus status={params.row.status || "running"} />
+            <ExperimentStatusDisplay
+              status={params.row.status || ExperimentStatus.DRAFT}
+            />
             <Typography variant="body2" color="textSecondary">
               {params.value}
             </Typography>

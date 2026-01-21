@@ -17,8 +17,9 @@ import { useExperimentDetail, useUpdateExperiment } from "hooks/queries/experime
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { a11yProps } from "utils/accessibility"
-import ExperimentStatus from "../_components/ExperimentStatus"
+import ExperimentStatusDisplay from "../_components/ExperimentStatusDisplay"
 import { UpdateExperimentDto } from "../_domain/dto/experiment"
+import { ExperimentStatus } from "../_domain/entity/experiment"
 import GeneralPage from "./GeneralPage"
 
 interface TabPanelProps {
@@ -189,8 +190,8 @@ const ExperimentDetailPage = () => {
                   <Typography variant="h5" fontWeight="bold">
                     {experiment?.data?.title}
                   </Typography>
-                  <ExperimentStatus
-                    status={experiment?.data?.status || "running"}
+                  <ExperimentStatusDisplay
+                    status={experiment?.data?.status || ExperimentStatus.DRAFT}
                     size="medium"
                     isChip
                   />
