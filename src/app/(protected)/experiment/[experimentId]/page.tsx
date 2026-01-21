@@ -172,7 +172,7 @@ const ExperimentDetailPage = () => {
           </Stack>
         ) : (
           <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+            <Stack direction={"row"} spacing={2}>
               {isEditing ? (
                 <TextField
                   value={titleValue}

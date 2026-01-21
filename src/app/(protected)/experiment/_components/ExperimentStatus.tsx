@@ -1,9 +1,9 @@
-import CheckIcon from "@mui/icons-material/Check";
-import Circle from "@mui/icons-material/Circle";
-import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
-import LightbulbIcon from "@mui/icons-material/Lightbulb";
-import NoteAltIcon from '@mui/icons-material/NoteAlt';
-import { Chip, Tooltip } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check"
+import Circle from "@mui/icons-material/Circle"
+import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn"
+import LightbulbIcon from "@mui/icons-material/Lightbulb"
+import NoteAltIcon from "@mui/icons-material/NoteAlt"
+import { Chip, Tooltip } from "@mui/material"
 
 type ExperimentStatusProps = {
   status: string
@@ -57,6 +57,7 @@ const ExperimentStatus = ({
   }
   return isChip ? (
     <Chip
+      className="capitalize"
       icon={renderStatusElement(status).icon}
       label={status}
       color={renderStatusElement(status).color}
