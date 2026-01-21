@@ -1,9 +1,9 @@
-import CheckIcon from "@mui/icons-material/Check"
-import Circle from "@mui/icons-material/Circle"
-import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn"
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord"
-import LightbulbIcon from "@mui/icons-material/Lightbulb"
-import { Chip, Tooltip } from "@mui/material"
+import CheckIcon from "@mui/icons-material/Check";
+import Circle from "@mui/icons-material/Circle";
+import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
+import LightbulbIcon from "@mui/icons-material/Lightbulb";
+import NoteAltIcon from '@mui/icons-material/NoteAlt';
+import { Chip, Tooltip } from "@mui/material";
 
 type ExperimentStatusProps = {
   status: string
@@ -26,32 +26,32 @@ const ExperimentStatus = ({
       case "draft":
         return {
           color: "default",
-          icon: <LightbulbIcon fontSize="small" />
+          icon: <LightbulbIcon fontSize="small" color="disabled" />
         }
       case "planning":
         return {
           color: "info",
-          icon: <FiberManualRecordIcon fontSize="small" />
+          icon: <NoteAltIcon fontSize="small" color="info" />
         }
       case "running":
         return {
           color: "warning",
-          icon: <Circle fontSize="small" />
+          icon: <Circle fontSize="small" color="warning" />
         }
       case "completed":
         return {
           color: "success",
-          icon: <CheckIcon fontSize="small" />
+          icon: <CheckIcon fontSize="small" color="success" />
         }
       case "cancelled":
         return {
           color: "error",
-          icon: <DoDisturbOnIcon fontSize="small" />
+          icon: <DoDisturbOnIcon fontSize="small" color="error" />
         }
       default:
         return {
           color: "default",
-          icon: <LightbulbIcon fontSize="small" />
+          icon: <LightbulbIcon fontSize="small" color="disabled" />
         }
     }
   }
