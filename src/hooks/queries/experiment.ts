@@ -5,11 +5,13 @@ import {
   deleteExperimentApi,
   getExperimentDetailApi,
   getExperimentListApi,
-  updateExperimentApi
+  updateExperimentApi,
+  updateExperimentStatusApi
 } from "service/experiment"
 import {
   CreateExperimentDto,
-  UpdateExperimentDto
+  UpdateExperimentDto,
+  UpdateExperimentStatusDto
 } from "../../app/(protected)/experiment/_domain/dto/experiment"
 import { ExperimentListFilter } from "../../app/(protected)/experiment/_types/experiment"
 
@@ -58,6 +60,21 @@ export const useUpdateExperiment = (experimentId: string) => {
   return useMutation({
     mutationFn: (experiment: UpdateExperimentDto) =>
       updateExperimentApi(experimentId, experiment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKey.experiments() })
+      queryClient.invalidateQueries({
+        queryKey: queryKey.experimentDetail(experimentId)
+      })
+    }
+  })
+}
+
+export const useUpdateStatusExperiment = (experimentId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (status: UpdateExperimentStatusDto) =>
+      updateExperimentStatusApi(experimentId, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKey.experiments() })
       queryClient.invalidateQueries({

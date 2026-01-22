@@ -3,3 +3,11 @@ export type ExperimentListFilter = {
   page?: number
   pageSize?: number
 }
+
+export interface StatusTransitionMetadata {
+  buttonText: string
+  notification: {
+    title: string
+    message: string
+  }
+}

@@ -1,7 +1,9 @@
-import api, { handleRequest } from "lib/api"
+import {
+  CreateExperimentDto,
+  UpdateExperimentDto,
+  UpdateExperimentStatusDto
+} from "app/(protected)/experiment/_domain/dto/experiment"
 import { Experiment } from "app/(protected)/experiment/_domain/entity/experiment"
-import { ApiResponse } from "types/response"
-import { experimentPaths } from "consts/api"
 import {
   experimentListMapper,
   experimentMapper
@@ -10,10 +12,9 @@ import {
   ExperimentListModel,
   ExperimentModel
 } from "app/(protected)/experiment/_domain/model/experiment"
-import {
-  CreateExperimentDto,
-  UpdateExperimentDto
-} from "app/(protected)/experiment/_domain/dto/experiment"
+import { experimentPaths } from "consts/api"
+import api, { handleRequest } from "lib/api"
+import { ApiResponse } from "types/response"
 
 export const getExperimentListApi = async (
   search: string,
@@ -54,6 +55,20 @@ export const updateExperimentApi = async (
 ): Promise<ApiResponse<Experiment>> => {
   const response = await handleRequest<Experiment, ExperimentModel>(
     api.put(experimentPaths.update(experimentId), { json: experiment }),
+    (data: any) => data
+  )
+  if (!response.success) {
+    throw new Error(response.message)
+  }
+  return response
+}
+
+export const updateExperimentStatusApi = async (
+  experimentId: string,
+  status: UpdateExperimentStatusDto
+): Promise<ApiResponse<Experiment>> => {
+  const response = await handleRequest<Experiment, ExperimentModel>(
+    api.put(experimentPaths.updateStatus(experimentId), { json: status }),
     (data: any) => data
   )
   if (!response.success) {

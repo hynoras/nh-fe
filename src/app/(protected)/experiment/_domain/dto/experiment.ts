@@ -9,3 +9,7 @@ export type UpdateExperimentDto = {
   objective?: string
   type?: string
 }
+
+export type UpdateExperimentStatusDto = {
+  status: string
+}

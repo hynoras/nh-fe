@@ -42,5 +42,6 @@ export const experimentPaths = {
   getDetail: (experimentId: string) => `${experimentPath}/${experimentId}`,
   create: `${experimentPath}`,
   update: (experimentId: string) => `${experimentPath}/${experimentId}`,
+  updateStatus: (experimentId: string) => `${experimentPath}/${experimentId}/status`,
   delete: (experimentId: string) => `${experimentPath}/${experimentId}`
 }

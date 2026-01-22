@@ -4,6 +4,10 @@ import {
   Alert,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Skeleton,
   Snackbar,
@@ -13,14 +17,69 @@ import {
   TextField,
   Typography
 } from "@mui/material"
-import { useExperimentDetail, useUpdateExperiment } from "hooks/queries/experiment"
+import {
+  useExperimentDetail,
+  useUpdateExperiment,
+  useUpdateStatusExperiment
+} from "hooks/queries/experiment"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { a11yProps } from "utils/accessibility"
 import ExperimentStatusDisplay from "../_components/ExperimentStatusDisplay"
-import { UpdateExperimentDto } from "../_domain/dto/experiment"
+import { statusMetadata } from "../_const/experiment"
+import { UpdateExperimentDto, UpdateExperimentStatusDto } from "../_domain/dto/experiment"
 import { ExperimentStatus } from "../_domain/entity/experiment"
+import { StatusTransitionMetadata } from "../_types/experiment"
 import GeneralPage from "./GeneralPage"
+
+const renderStatusMetadata = (status: ExperimentStatus): StatusTransitionMetadata[] => {
+  switch (status) {
+    case ExperimentStatus.DRAFT:
+      return [statusMetadata[ExperimentStatus.PLANNING]]
+    case ExperimentStatus.PLANNING:
+      return [statusMetadata[ExperimentStatus.RUNNING]]
+    case ExperimentStatus.RUNNING:
+      return [
+        statusMetadata[ExperimentStatus.COMPLETED],
+        statusMetadata[ExperimentStatus.ABORTED]
+      ]
+    default:
+      return []
+  }
+}
+
+type TransitionStatusConfirmationProps = {
+  status: ExperimentStatus
+  open: boolean
+  onClose: () => void
+  onConfirm: (data: UpdateExperimentStatusDto) => void
+}
+
+const TransitionStatusConfirmation = ({
+  status,
+  open,
+  onClose,
+  onConfirm
+}: TransitionStatusConfirmationProps) => {
+  const handleConfirm = () => {
+    onConfirm({ status })
+    onClose()
+  }
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{statusMetadata[status].notification.title}</DialogTitle>
+      <DialogContent>{statusMetadata[status].notification.message}</DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleConfirm}>
+          {statusMetadata[status].buttonText}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -60,9 +119,16 @@ const ExperimentDetailPage = () => {
   const searchParams = useSearchParams()
 
   const updateExperimentMutation = useUpdateExperiment(experimentId)
+  const updateExperimentStatusMutation = useUpdateStatusExperiment(experimentId)
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [titleValue, setTitleValue] = useState<string>("")
+  const [open, setOpen] = useState<boolean>(false)
+  const [transitionStatuses, setTransitionStatuses] = useState<ExperimentStatus[]>([])
+  const [selectedStatus, setSelectedStatus] = useState<ExperimentStatus>(
+    ExperimentStatus.DRAFT
+  )
+
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState<{
     type: "success" | "error"
@@ -74,17 +140,21 @@ const ExperimentDetailPage = () => {
     return getTabIndexFromName(tabParam)
   })
 
-  useEffect(() => {
-    const tabParam = searchParams.get("tab")
-    const tabIndex = getTabIndexFromName(tabParam)
-    if (tabIndex !== value) {
-      setValue(tabIndex)
+  const handleSetTransitionStatuses = (status: ExperimentStatus) => {
+    switch (status) {
+      case ExperimentStatus.DRAFT:
+        setTransitionStatuses([ExperimentStatus.PLANNING])
+        break
+      case ExperimentStatus.PLANNING:
+        setTransitionStatuses([ExperimentStatus.RUNNING])
+        break
+      case ExperimentStatus.RUNNING:
+        setTransitionStatuses([ExperimentStatus.COMPLETED, ExperimentStatus.ABORTED])
+        break
+      default:
+        setTransitionStatuses([])
     }
-  }, [searchParams, value])
-
-  useEffect(() => {
-    setTitleValue(experiment?.data?.title || "")
-  }, [experiment])
+  }
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false)
@@ -111,6 +181,15 @@ const ExperimentDetailPage = () => {
     }
   }
 
+  const handleClickOpen = (key: ExperimentStatus) => {
+    setSelectedStatus(key)
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   const handleUpdateExperiment = (data: UpdateExperimentDto) => {
     updateExperimentMutation.mutate(data, {
       onSuccess: () => {
@@ -131,6 +210,26 @@ const ExperimentDetailPage = () => {
     })
   }
 
+  const handleUpdateExperimentStatus = (data: UpdateExperimentStatusDto) => {
+    updateExperimentStatusMutation.mutate(data, {
+      onSuccess: () => {
+        setIsEditing(false)
+        setSnackbarMessage({
+          type: "success",
+          message: "Experiment status updated successfully"
+        })
+        setSnackbarOpen(true)
+      },
+      onError: (error: any) => {
+        setSnackbarMessage({
+          type: "error",
+          message: error.message || "Failed to update experiment status"
+        })
+        setSnackbarOpen(true)
+      }
+    })
+  }
+
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
     const tabName = TAB_NAMES[newValue]
@@ -138,6 +237,19 @@ const ExperimentDetailPage = () => {
     params.set("tab", tabName)
     router.push(`?${params.toString()}`, { scroll: false })
   }
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab")
+    const tabIndex = getTabIndexFromName(tabParam)
+    if (tabIndex !== value) {
+      setValue(tabIndex)
+    }
+  }, [searchParams, value])
+
+  useEffect(() => {
+    setTitleValue(experiment?.data?.title || "")
+    handleSetTransitionStatuses(experiment?.data?.status || ExperimentStatus.DRAFT)
+  }, [experiment])
 
   return (
     <>
@@ -156,6 +268,12 @@ const ExperimentDetailPage = () => {
           {snackbarMessage.message}
         </Alert>
       </Snackbar>
+      <TransitionStatusConfirmation
+        status={selectedStatus}
+        open={open}
+        onConfirm={handleUpdateExperimentStatus}
+        onClose={handleClose}
+      />
       <Stack className="h-[82vh]" direction="column">
         {/* Header */}
         {isLoading ? (
@@ -199,10 +317,18 @@ const ExperimentDetailPage = () => {
                     <EditIcon />
                   </IconButton>
                 </>
-              )}{" "}
+              )}
             </Stack>
-            <Button className="normal-case" variant="outlined">
-              Start planning
+            <Button
+              className="normal-case"
+              variant="outlined"
+              onClick={() => handleClickOpen(transitionStatuses[0])}
+            >
+              {
+                renderStatusMetadata(
+                  experiment?.data?.status || ExperimentStatus.DRAFT
+                )[0].buttonText
+              }
             </Button>
           </Stack>
         )}
