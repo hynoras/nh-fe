@@ -13,6 +13,7 @@ export type ExperimentModel = {
   title: string
   objective: string
   type: string
+  version: number
   status: string
   created_by: string
   created_at: string

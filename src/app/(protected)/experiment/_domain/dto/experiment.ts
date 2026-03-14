@@ -12,4 +12,5 @@ export type UpdateExperimentDto = {
 
 export type UpdateExperimentStatusDto = {
   status: string
+  version: number
 }
