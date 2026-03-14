@@ -28,7 +28,7 @@ import { a11yProps } from "utils/accessibility"
 import ExperimentStatusDisplay from "../_components/ExperimentStatusDisplay"
 import { statusMetadata } from "../_const/experiment"
 import { UpdateExperimentDto, UpdateExperimentStatusDto } from "../_domain/dto/experiment"
-import { ExperimentStatus } from "../_domain/entity/experiment"
+import { Experiment, ExperimentStatus } from "../_domain/entity/experiment"
 import { StatusTransitionMetadata } from "../_types/experiment"
 import GeneralPage from "./GeneralPage"
 
@@ -49,32 +49,34 @@ const renderStatusMetadata = (status: ExperimentStatus): StatusTransitionMetadat
 }
 
 type TransitionStatusConfirmationProps = {
-  status: ExperimentStatus
+  selectedStatus: ExperimentStatus
+  experiment: Experiment
   open: boolean
   onClose: () => void
   onConfirm: (data: UpdateExperimentStatusDto) => void
 }
 
 const TransitionStatusConfirmation = ({
-  status,
+  selectedStatus,
+  experiment,
   open,
   onClose,
   onConfirm
 }: TransitionStatusConfirmationProps) => {
   const handleConfirm = () => {
-    onConfirm({ status })
+    onConfirm({ status: selectedStatus, version: experiment?.version || 1 })
     onClose()
   }
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{statusMetadata[status].notification.title}</DialogTitle>
-      <DialogContent>{statusMetadata[status].notification.message}</DialogContent>
+      <DialogTitle>{statusMetadata[selectedStatus].notification.title}</DialogTitle>
+      <DialogContent>{statusMetadata[selectedStatus].notification.message}</DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={onClose}>
           Cancel
         </Button>
         <Button variant="contained" onClick={handleConfirm}>
-          {statusMetadata[status].buttonText}
+          {statusMetadata[selectedStatus].buttonText}
         </Button>
       </DialogActions>
     </Dialog>
@@ -269,7 +271,8 @@ const ExperimentDetailPage = () => {
         </Alert>
       </Snackbar>
       <TransitionStatusConfirmation
-        status={selectedStatus}
+        selectedStatus={selectedStatus}
+        experiment={experiment?.data || {}}
         open={open}
         onConfirm={handleUpdateExperimentStatus}
         onClose={handleClose}

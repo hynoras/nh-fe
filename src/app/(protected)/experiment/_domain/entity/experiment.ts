@@ -12,6 +12,7 @@ export type Experiment = {
   objective?: string
   status?: ExperimentStatus
   type?: string
+  version?: number
   createdBy?: string
   createdAt?: string
   updatedAt?: string
