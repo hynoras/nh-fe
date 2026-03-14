@@ -5,7 +5,7 @@ import RefreshIcon from "@mui/icons-material/Refresh"
 import { Button, InputAdornment, Stack, TextField, debounce } from "@mui/material"
 import { useCallback } from "react"
 
-interface TableToolbarProps<T extends { search: string }> {
+interface TableToolbarProps<T extends { search?: string }> {
   filter: T
   setFilter: React.Dispatch<React.SetStateAction<T>>
   searchBar?: {
@@ -28,7 +28,7 @@ interface TableToolbarProps<T extends { search: string }> {
   }
 }
 
-const TableToolbar = <T extends { search: string }>({
+const TableToolbar = <T extends { search?: string }>({
   filter,
   setFilter,
   searchBar,
@@ -58,6 +58,7 @@ const TableToolbar = <T extends { search: string }>({
             placeholder={searchBar?.placeholder || "Search"}
             variant="outlined"
             size={searchBar?.size || "small"}
+            value={filter.search || ""}
             onChange={(e) => debouncedHandleSearch(e)}
             sx={searchBar?.width ? { width: searchBar.width } : undefined}
             slotProps={{

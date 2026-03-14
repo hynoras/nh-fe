@@ -1,4 +1,5 @@
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts"
+import ScienceIcon from "@mui/icons-material/Science"
 import {
   Divider,
   Drawer,
@@ -12,6 +13,7 @@ import { navigationRoutes } from "consts/navigation"
 import { useRouter } from "next/navigation"
 
 type MenuItem = {
+  type: "item" | "divider"
   text: string
   icon: React.ReactNode
   navigate: string
@@ -19,6 +21,19 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   {
+    type: "item",
+    text: "Experiment",
+    icon: <ScienceIcon />,
+    navigate: navigationRoutes.experiment.list
+  },
+  {
+    type: "divider",
+    text: "",
+    icon: null,
+    navigate: ""
+  },
+  {
+    type: "item",
     text: "Users & Access",
     icon: <ManageAccountsIcon />,
     navigate: navigationRoutes.userAndAccess.user.list
@@ -48,18 +63,21 @@ const Sidebar = ({ open, drawerWidth }: SidebarProps) => {
       open={open}
     >
       <List>
-        {menuItems.map((item: MenuItem) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={() => router.push(item.navigate)}>
-              <Stack direction="row" alignItems="center" gap={1}>
-                {item.icon}
-                <Typography variant="body2">{item.text}</Typography>
-              </Stack>
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {menuItems.map((item: MenuItem) =>
+          item.type === "divider" ? (
+            <Divider key="divider" />
+          ) : (
+            <ListItem key={item.text} disablePadding>
+              <ListItemButton onClick={() => router.push(item.navigate)}>
+                <Stack direction="row" alignItems="center" gap={1}>
+                  {item.icon}
+                  <Typography variant="body2">{item.text}</Typography>
+                </Stack>
+              </ListItemButton>
+            </ListItem>
+          )
+        )}
       </List>
-      <Divider />
     </Drawer>
   )
 }

@@ -8,5 +8,8 @@ export const queryKey = {
     "permissionGroupDetail",
     permissionGroupId
   ],
-  permissions: () => ["permissions"]
+  permissions: () => ["permissions"],
+  experiments: (filter?: { search?: string; page?: number; pageSize?: number }) =>
+    filter ? ["experiments", filter] : ["experiments"],
+  experimentDetail: (experimentId: string) => ["experimentDetail", experimentId]
 }
