@@ -1,8 +1,4 @@
-export type ExperimentListFilter = {
-  search?: string
-  page?: number
-  pageSize?: number
-}
+export type { ListFilter as ExperimentListFilter } from "types/pagination"
 
 export interface StatusTransitionMetadata {
   buttonText: string

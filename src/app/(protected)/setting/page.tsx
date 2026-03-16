@@ -1,19 +1,6 @@
-"use client"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { redirect } from "next/navigation"
+import { navigationRoutes } from "consts/navigation"
 
-const SettingPage = () => {
-  const router = useRouter()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    // Redirect to profile page when accessing /setting directly
-    if (pathname === "/setting") {
-      router.push("/setting/profile")
-    }
-  }, [pathname, router])
-
-  return null
+export default function SettingPage() {
+  redirect(navigationRoutes.setting.profile)
 }
-
-export default SettingPage

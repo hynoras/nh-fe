@@ -27,7 +27,7 @@ import { useRef, useState } from "react"
 import { User } from "../user/_domain/entity/user"
 import { PermissionCode } from "./_const/permission"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
-import { PermissionGroupListFilter } from "./_type/permission-group"
+import { PermissionGroupListFilter } from "./_types/permission-group"
 
 const RoleList = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
@@ -236,8 +236,10 @@ const RoleList = () => {
               paginationMode="server"
               rowCount={permissionGroupsData?.length || 0}
               paginationModel={{
-                page: permissionGroupListFilter.page - 1,
+                page: permissionGroupListFilter.page ? permissionGroupListFilter.page - 1 : 0,
                 pageSize: permissionGroupListFilter.pageSize
+                  ? permissionGroupListFilter.pageSize
+                  : 10
               }}
               onPaginationModelChange={handlePaginationChange}
               pageSizeOptions={[5, 10, 25, 50, 100]}

@@ -40,9 +40,9 @@ export const createPermissionGroupApi = async (
 }
 
 export const getPermissionGroupListApi = async (
-  search: string,
-  page: number,
-  pageSize: number
+  search?: string,
+  page?: number,
+  pageSize?: number
 ): Promise<ApiResponse<PermissionGroup[]>> => {
   return await handleRequest<PermissionGroup[], PermissionGroupModel[]>(
     api.get(permissionGroupPaths.getList(search, page, pageSize)),

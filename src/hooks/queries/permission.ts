@@ -12,7 +12,7 @@ import {
   CreatePermissionGroupDto,
   UpdatePermissionGroupDto
 } from "../../app/(protected)/user-and-access/role/_domain/dto/permission"
-import { PermissionGroupListFilter } from "../../app/(protected)/user-and-access/role/_type/permission-group"
+import { PermissionGroupListFilter } from "../../app/(protected)/user-and-access/role/_types/permission-group"
 
 /**
  * Query hook for fetching permission group list

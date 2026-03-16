@@ -1,2 +1,1 @@
-export type { ListFilter as UserListFilter } from "types/pagination"
 export type { ListFilter as PermissionGroupListFilter } from "types/pagination"

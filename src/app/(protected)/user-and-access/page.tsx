@@ -1,19 +1,6 @@
-"use client"
-import { navigationKeys, navigationRoutes } from "consts/navigation"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { redirect } from "next/navigation"
+import { navigationRoutes } from "consts/navigation"
 
-const UsersAndAccessPage = () => {
-  const router = useRouter()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    if (pathname === navigationKeys.userAndAccess) {
-      router.push(navigationRoutes.userAndAccess.user.list)
-    }
-  }, [pathname, router])
-
-  return null
+export default function UsersAndAccessPage() {
+  redirect(navigationRoutes.userAndAccess.user.list)
 }
-
-export default UsersAndAccessPage
