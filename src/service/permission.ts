@@ -16,21 +16,26 @@ import {
   PermissionModel
 } from "app/(protected)/user-and-access/role/_domain/model/permission"
 import { permissionGroupPaths, permissionPaths } from "consts/api"
-import api, { handleRequest } from "lib/api"
+import { handleRequest } from "lib/handleRequest"
+import { clientHttp } from "lib/http.client"
 import { ApiResponse } from "types/response"
+import type { KyInstance } from "ky"
 
-export const getPermissionListApi = async (): Promise<ApiResponse<Permission[]>> => {
+export const getPermissionListApi = async (
+  httpClient: KyInstance = clientHttp
+): Promise<ApiResponse<Permission[]>> => {
   return await handleRequest<Permission[], PermissionModel[]>(
-    api.get(permissionPaths.getList),
+    httpClient.get(permissionPaths.getList),
     permissionListMapper
   )
 }
 
 export const createPermissionGroupApi = async (
-  permissionGroup: CreatePermissionGroupDto
+  permissionGroup: CreatePermissionGroupDto,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<PermissionGroup>> => {
   const response = await handleRequest<PermissionGroup, PermissionGroupModel>(
-    api.post(permissionGroupPaths.create, { json: permissionGroup }),
+    httpClient.post(permissionGroupPaths.create, { json: permissionGroup }),
     permissionGroupMapper
   )
   if (!response.success) {
@@ -42,29 +47,32 @@ export const createPermissionGroupApi = async (
 export const getPermissionGroupListApi = async (
   search?: string,
   page?: number,
-  pageSize?: number
+  pageSize?: number,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<PermissionGroup[]>> => {
   return await handleRequest<PermissionGroup[], PermissionGroupModel[]>(
-    api.get(permissionGroupPaths.getList(search, page, pageSize)),
+    httpClient.get(permissionGroupPaths.getList(search, page, pageSize)),
     permissionGroupListMapper
   )
 }
 
 export const getPermissionGroupDetailApi = async (
-  permissionGroupId: string
+  permissionGroupId: string,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<PermissionGroup>> => {
   return await handleRequest<PermissionGroup, PermissionGroupModel>(
-    api.get(permissionGroupPaths.getDetail(permissionGroupId)),
+    httpClient.get(permissionGroupPaths.getDetail(permissionGroupId)),
     permissionGroupMapper
   )
 }
 
 export const updatePermissionGroupApi = async (
   permissionGroupId: string,
-  permissionGroup: UpdatePermissionGroupDto
+  permissionGroup: UpdatePermissionGroupDto,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<PermissionGroup>> => {
   const response = await handleRequest<PermissionGroup, PermissionGroupModel>(
-    api.put(permissionGroupPaths.update(permissionGroupId), { json: permissionGroup }),
+    httpClient.put(permissionGroupPaths.update(permissionGroupId), { json: permissionGroup }),
     permissionGroupMapper
   )
   if (!response.success) {
@@ -74,10 +82,11 @@ export const updatePermissionGroupApi = async (
 }
 
 export const deletePermissionGroupApi = async (
-  permissionGroupId: string
+  permissionGroupId: string,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<boolean>> => {
   const response = await handleRequest(
-    api.delete(permissionGroupPaths.delete(permissionGroupId)),
+    httpClient.delete(permissionGroupPaths.delete(permissionGroupId)),
     (data: any) => data
   )
   if (!response.success) {

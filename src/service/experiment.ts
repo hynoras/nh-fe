@@ -13,34 +13,39 @@ import {
   ExperimentModel
 } from "app/(protected)/experiment/_domain/model/experiment"
 import { experimentPaths } from "consts/api"
-import api, { handleRequest } from "lib/api"
+import { handleRequest } from "lib/handleRequest"
+import { clientHttp } from "lib/http.client"
 import { ApiResponse } from "types/response"
+import type { KyInstance } from "ky"
 
 export const getExperimentListApi = async (
   search: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<Experiment[]>> => {
   return await handleRequest<Experiment[], ExperimentListModel[]>(
-    api.get(experimentPaths.getList(search, page, pageSize)),
+    httpClient.get(experimentPaths.getList(search, page, pageSize)),
     experimentListMapper
   )
 }
 
 export const getExperimentDetailApi = async (
-  experimentId: string
+  experimentId: string,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<Experiment>> => {
   return await handleRequest<Experiment, ExperimentModel>(
-    api.get(experimentPaths.getDetail(experimentId)),
+    httpClient.get(experimentPaths.getDetail(experimentId)),
     experimentMapper
   )
 }
 
 export const createExperimentApi = async (
-  experiment: CreateExperimentDto
+  experiment: CreateExperimentDto,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<Experiment>> => {
   const response = await handleRequest<Experiment, ExperimentModel>(
-    api.post(experimentPaths.create, { json: experiment }),
+    httpClient.post(experimentPaths.create, { json: experiment }),
     (data: any) => data
   )
   if (!response.success) {
@@ -51,10 +56,11 @@ export const createExperimentApi = async (
 
 export const updateExperimentApi = async (
   experimentId: string,
-  experiment: UpdateExperimentDto
+  experiment: UpdateExperimentDto,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<Experiment>> => {
   const response = await handleRequest<Experiment, ExperimentModel>(
-    api.put(experimentPaths.update(experimentId), { json: experiment }),
+    httpClient.put(experimentPaths.update(experimentId), { json: experiment }),
     (data: any) => data
   )
   if (!response.success) {
@@ -65,10 +71,11 @@ export const updateExperimentApi = async (
 
 export const updateExperimentStatusApi = async (
   experimentId: string,
-  status: UpdateExperimentStatusDto
+  status: UpdateExperimentStatusDto,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<Experiment>> => {
   const response = await handleRequest<Experiment, ExperimentModel>(
-    api.put(experimentPaths.updateStatus(experimentId), { json: status }),
+    httpClient.put(experimentPaths.updateStatus(experimentId), { json: status }),
     (data: any) => data
   )
   if (!response.success) {
@@ -78,10 +85,11 @@ export const updateExperimentStatusApi = async (
 }
 
 export const deleteExperimentApi = async (
-  experimentId: string
+  experimentId: string,
+  httpClient: KyInstance = clientHttp
 ): Promise<ApiResponse<Experiment>> => {
   const response = await handleRequest<Experiment, ExperimentModel>(
-    api.delete(experimentPaths.delete(experimentId)),
+    httpClient.delete(experimentPaths.delete(experimentId)),
     (data: any) => data
   )
   if (!response.success) {
