@@ -1,3 +1,4 @@
+"use client"
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts"
 import ScienceIcon from "@mui/icons-material/Science"
 import {

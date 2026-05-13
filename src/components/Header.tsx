@@ -1,3 +1,4 @@
+"use client"
 import { AccountCircle, Logout, Settings } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
 import { AppBar, IconButton, ListItemIcon, Menu, MenuItem, Toolbar } from "@mui/material"
