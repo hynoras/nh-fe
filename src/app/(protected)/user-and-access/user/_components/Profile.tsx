@@ -1,3 +1,5 @@
+"use client"
+
 import ContentCopyIcon from "@mui/icons-material/ContentCopy"
 import EditIcon from "@mui/icons-material/Edit"
 import VisibilityIcon from "@mui/icons-material/Visibility"
