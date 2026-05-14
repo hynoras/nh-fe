@@ -1,19 +1,4 @@
-import ky from "ky"
 import { ApiResponse } from "types/response"
-
-const api = ky.create({
-  prefixUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
-  credentials: "include",
-  hooks: {
-    beforeRequest: [
-      (req) => {
-        // Example: attach auth token if exists
-        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-        if (token) req.headers.set("Authorization", `Bearer ${token}`)
-      }
-    ]
-  }
-})
 
 // Generic helper for cleaner try/catch with optional mapper
 export async function handleRequest<T, R = T>(
@@ -114,5 +99,3 @@ export async function handleRequest<T, R = T>(
     }
   }
 }
-
-export default api

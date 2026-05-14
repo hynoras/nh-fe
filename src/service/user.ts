@@ -1,5 +1,7 @@
 import { userPaths } from "consts/api"
-import api, { handleRequest } from "lib/api"
+import { httpClient } from "lib/api/http.client"
+import { handleRequest } from "lib/api/request"
+import { KyInstance } from "ky"
 import { ApiResponse } from "types/response"
 import {
   CreateUserDto,
@@ -20,30 +22,37 @@ import {
 export const getUserListApi = async (
   search: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<User[]>> => {
   return await handleRequest<User[], UserListModel[]>(
-    api.get(userPaths.getList(search, page, pageSize)),
+    apiClient.get(userPaths.getList(search, page, pageSize)),
     userListMapper
   )
 }
 
-export const getMeApi = async (): Promise<ApiResponse<User>> => {
-  return await handleRequest<User, MeModel>(api.get(userPaths.getMe), meMapper)
+export const getMeApi = async (
+  apiClient: KyInstance = httpClient
+): Promise<ApiResponse<User>> => {
+  return await handleRequest<User, MeModel>(apiClient.get(userPaths.getMe), meMapper)
 }
 
-export const getUserDetailApi = async (userId: string): Promise<ApiResponse<User>> => {
+export const getUserDetailApi = async (
+  userId: string,
+  apiClient: KyInstance = httpClient
+): Promise<ApiResponse<User>> => {
   return await handleRequest<User, UserDetailModel>(
-    api.get(userPaths.getDetail(userId)),
+    apiClient.get(userPaths.getDetail(userId)),
     userDetailMapper
   )
 }
 
 export const createUserApi = async (
-  user: CreateUserDto
+  user: CreateUserDto,
+  apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<boolean>> => {
   const response = await handleRequest(
-    api.post(userPaths.create, { json: user }),
+    apiClient.post(userPaths.create, { json: user }),
     (data: any) => data
   )
   if (!response.success) {
@@ -54,10 +63,11 @@ export const createUserApi = async (
 
 export const updateUserApi = async (
   userId: string,
-  user: UpdateUserDto
+  user: UpdateUserDto,
+  apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<boolean>> => {
   const response = await handleRequest(
-    api.put(userPaths.update(userId), { json: user }),
+    apiClient.put(userPaths.update(userId), { json: user }),
     (data: any) => data
   )
   if (!response.success) {
@@ -66,9 +76,12 @@ export const updateUserApi = async (
   return response
 }
 
-export const deleteUserApi = async (ids: string[]): Promise<ApiResponse<boolean>> => {
+export const deleteUserApi = async (
+  ids: string[],
+  apiClient: KyInstance = httpClient
+): Promise<ApiResponse<boolean>> => {
   const response = await handleRequest(
-    api.delete(userPaths.delete, { json: { ids } }),
+    apiClient.delete(userPaths.delete, { json: { ids } }),
     (data: any) => data
   )
   if (!response.success) {
