@@ -17,7 +17,7 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const router = useRouter()
   const logoutMutation = useMutation({
-    mutationFn: logoutApi,
+    mutationFn: () => logoutApi(),
     onSuccess: () => {
       router.push("/login")
     }

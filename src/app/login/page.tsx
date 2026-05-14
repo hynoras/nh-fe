@@ -45,7 +45,7 @@ const Login = () => {
   }
 
   const loginMutation = useMutation({
-    mutationFn: loginApi,
+    mutationFn: (data: LoginDto) => loginApi(data),
     onSuccess: () => {
       //navigate to home page
       router.push("/home")
