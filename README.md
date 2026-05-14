@@ -4,13 +4,13 @@ Frontend application for **Noheir** — a modern chemistry-focused Laboratory In
 
 Built with a scalable App Router architecture, modular feature boundaries, and production-oriented frontend patterns using Next.js, refine, and Material UI.
 
-🌐 Live: https://noheir.vercel.app
+Live: https://noheir.vercel.app
 
 ---
 
-# ✨ Features
+# Features
 
-## 🧪 Experiment Management
+## Experiment Management
 
 - Experiment creation and lifecycle tracking
 - Status transition workflow:
@@ -24,24 +24,21 @@ Built with a scalable App Router architecture, modular feature boundaries, and p
 - Experiment categorization and timeline management
 - Procedure module foundation for future workflow expansion
 
-## 🔐 Authentication & Authorization
+## Authentication & Authorization
 
-- JWT-based authentication
-- Support for:
-  - Bearer token authorization
-  - Cookie-based authentication (`credentials: include`)
+- Session-based authentication
 - Role-Based Access Control (RBAC)
 - Protected route architecture
 - Permission-aware UI rendering
 
-## 👥 User & Role Management
+## User & Role Management
 
 - User administration
 - Role management
 - Permission assignment system
 - Detail views for identity and access management
 
-## ⚙️ Settings & Preferences
+## Settings & Preferences
 
 - Profile management
 - Preference configuration
@@ -49,7 +46,7 @@ Built with a scalable App Router architecture, modular feature boundaries, and p
 
 ---
 
-# 🏗️ Architecture
+# Architecture
 
 The frontend follows a hybrid **Layered + Feature-Based Architecture** to balance scalability, encapsulation, and maintainability.
 
@@ -85,7 +82,7 @@ This structure allows features to evolve independently while maintaining shared 
 
 ---
 
-# 🛠️ Tech Stack
+# Tech Stack
 
 ## Core
 
@@ -133,7 +130,7 @@ Backend stack includes:
 
 ---
 
-# 🚀 Getting Started
+# Getting Started
 
 ## Prerequisites
 
@@ -142,7 +139,7 @@ Backend stack includes:
 
 ---
 
-# 📦 Installation
+# Installation
 
 Clone the repository:
 
@@ -158,7 +155,7 @@ pnpm install
 
 ---
 
-# 🔧 Environment Variables
+# Environment Variables
 
 Create environment files:
 
@@ -175,7 +172,7 @@ NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
 
 ---
 
-# 🧪 Development
+# Development
 
 Start the development server:
 
@@ -191,7 +188,7 @@ http://localhost:3000
 
 ---
 
-# 📜 Available Scripts
+# Available Scripts
 
 ```bash
 pnpm dev          # Start development server
@@ -203,7 +200,7 @@ pnpm type-check   # TypeScript validation
 
 ---
 
-# 🚢 Deployment
+# Deployment
 
 The frontend is optimized for deployment on Vercel.
 
@@ -216,7 +213,7 @@ Deployment pipeline currently includes:
 
 ---
 
-# 📈 Engineering Focus
+# Engineering Focus
 
 Current engineering priorities include:
 
@@ -230,11 +227,11 @@ Current engineering priorities include:
 
 ---
 
-# 🔮 Roadmap
+# Roadmap
 
 Planned future modules include:
 
-- Advanced procedure editor
+- Procedure management
 - Compound management
 - Laboratory inventory system
 - Experiment branching/versioning
@@ -245,7 +242,7 @@ Planned future modules include:
 
 ---
 
-# 📄 License
+# License
 
 This project is currently private and under active development.
 
