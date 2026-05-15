@@ -7,7 +7,7 @@ import {
   getExperimentListApi,
   updateExperimentApi,
   updateExperimentStatusApi
-} from "service/experiment"
+} from "services/experiment"
 import {
   CreateExperimentDto,
   UpdateExperimentDto,

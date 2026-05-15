@@ -14,12 +14,13 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
 import ChipOverflowList from "components/ChipOverflowList"
-import { usePermissionGroups, useUpdateUser, useUserDetail } from "hooks/queries/user"
+import { usePermissionGroupList } from "hooks/queries/permission"
+import { useUpdateUser, useUserDetail } from "hooks/queries/user"
 import { useParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { Permission, PermissionGroup } from "../../role/_domain/entity/permission"
+import { PermissionGroupListFilter } from "../../role/_types/permission-group"
 import { UpdateUserDto } from "../_domain/dto/user"
-import { PermissionGroupListFilter } from "../_types/user"
 
 const RoleAndPermission = () => {
   const { userId } = useParams<{ userId: string }>()
@@ -46,7 +47,7 @@ const RoleAndPermission = () => {
   const { data: userDetail } = useUserDetail(userId as string)
 
   const { data: permissionGroups, isLoading: isLoadingPermissionGroups } =
-    usePermissionGroups(permissionGroupFilter)
+    usePermissionGroupList(permissionGroupFilter)
 
   // Initialize permissions when both user detail and permission groups are loaded
   useEffect(() => {

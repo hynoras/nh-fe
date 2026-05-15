@@ -34,23 +34,6 @@ const ExperimentObjectiveCard = ({
   experiment: Experiment | undefined
   isLoading?: boolean
 }) => {
-  if (isLoading) {
-    return (
-      <Card className="h-[100%]" variant="outlined">
-        <CardHeader avatar={<FlagIcon aria-label="recipe" />} title="Objective" />
-        <CardContent>
-          <Stack spacing={1}>
-            <Skeleton variant="text" width="100%" height={24} />
-            <Skeleton variant="text" width="95%" height={24} />
-            <Skeleton variant="text" width="98%" height={24} />
-            <Skeleton variant="text" width="90%" height={24} />
-            <Skeleton variant="text" width="85%" height={24} />
-          </Stack>
-        </CardContent>
-      </Card>
-    )
-  }
-
   const params = useParams<{ experimentId: string }>()
   const experimentId = params.experimentId
 
@@ -143,6 +126,23 @@ const ExperimentObjectiveCard = ({
     }
   }
 
+  if (isLoading) {
+    return (
+      <Card className="h-[100%]" variant="outlined">
+        <CardHeader avatar={<FlagIcon aria-label="recipe" />} title="Objective" />
+        <CardContent>
+          <Stack spacing={1}>
+            <Skeleton variant="text" width="100%" height={24} />
+            <Skeleton variant="text" width="95%" height={24} />
+            <Skeleton variant="text" width="98%" height={24} />
+            <Skeleton variant="text" width="90%" height={24} />
+            <Skeleton variant="text" width="85%" height={24} />
+          </Stack>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <>
       <Snackbar
@@ -189,20 +189,6 @@ const ExperimentTypeCard = ({
   experiment: Experiment | undefined
   isLoading?: boolean
 }) => {
-  if (isLoading) {
-    return (
-      <Card className="h-[100%] flex flex-col" variant="outlined">
-        <CardHeader avatar={<CategoryIcon aria-label="type" />} title="Experiment Type" />
-        <CardContent>
-          <Skeleton variant="text" width="60%" height={40} />
-        </CardContent>
-        <CardActions className="mt-auto">
-          <Skeleton variant="rectangular" width={200} height={36} />
-        </CardActions>
-      </Card>
-    )
-  }
-
   const params = useParams<{ experimentId: string }>()
   const experimentId = params.experimentId
 
@@ -333,6 +319,21 @@ const ExperimentTypeCard = ({
       </Typography>
     )
   }
+
+  if (isLoading) {
+    return (
+      <Card className="h-[100%] flex flex-col" variant="outlined">
+        <CardHeader avatar={<CategoryIcon aria-label="type" />} title="Experiment Type" />
+        <CardContent>
+          <Skeleton variant="text" width="60%" height={40} />
+        </CardContent>
+        <CardActions className="mt-auto">
+          <Skeleton variant="rectangular" width={200} height={36} />
+        </CardActions>
+      </Card>
+    )
+  }
+
   return (
     <>
       <Snackbar

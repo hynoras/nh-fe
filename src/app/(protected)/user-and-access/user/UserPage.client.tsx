@@ -8,7 +8,6 @@ import {
   Box,
   Chip,
   IconButton,
-  Popover,
   Snackbar,
   Stack,
   Typography
@@ -26,7 +25,7 @@ import { format } from "date-fns"
 import { useDeleteUser, useUserList } from "hooks/queries/user"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
-import Overflow from "rc-overflow"
+import ChipOverflowList from "components/ChipOverflowList"
 import { useRef, useState } from "react"
 import { Permission } from "../role/_domain/entity/permission"
 import { User } from "./_domain/entity/user"
@@ -41,13 +40,8 @@ const UserPageClient = () => {
     pageSize: 10
   })
   const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [anchorPermissionPopper, setAnchorPermissionPopper] =
-    useState<null | HTMLElement>(null)
-
   const tableRef = useRef<HTMLDivElement>(null)
   const tableHeight = useResponsiveHeight(tableRef)
-
-  const open = Boolean(anchorPermissionPopper)
 
   const { data: usersData, isLoading } = useUserList(userListFilter)
 
@@ -56,14 +50,6 @@ const UserPageClient = () => {
 
   const handleCreateUser = () => {
     router.push(navigationRoutes.userAndAccess.user.create)
-  }
-
-  const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorPermissionPopper(event.currentTarget)
-  }
-
-  const handleClosePermissionPopover = () => {
-    setAnchorPermissionPopper(null)
   }
 
   const handlePaginationChange = (model: GridPaginationModel) => {
@@ -139,45 +125,7 @@ const UserPageClient = () => {
       flex: 1,
       renderCell: (params: GridRenderCellParams<User, Permission[]>) => {
         const permissions = params.value
-        return (
-          <Overflow
-            className="flex gap-2"
-            data={permissions}
-            renderItem={(item: Permission) => <Chip key={item.id} label={item.name} />}
-            renderRest={(omittedItems) => (
-              <>
-                <Popover
-                  id="permission-popper"
-                  className="pointer-events-none flex gap-2"
-                  open={open}
-                  anchorEl={anchorPermissionPopper}
-                  onClose={handleClosePermissionPopover}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left"
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left"
-                  }}
-                >
-                  {omittedItems.map((item) => (
-                    <Chip key={item.id} label={item.name} />
-                  ))}
-                </Popover>
-                <Chip
-                  aria-owns={open ? "permission-popper" : undefined}
-                  aria-haspopup="true"
-                  label={`+${omittedItems.length}`}
-                  onMouseEnter={handleOpenPermissionPopover}
-                  onMouseLeave={handleClosePermissionPopover}
-                />
-              </>
-            )}
-            maxCount={"responsive"}
-            component={Box}
-          />
-        )
+        return <ChipOverflowList items={permissions || []} />
       }
     },
     {

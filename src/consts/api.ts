@@ -1,3 +1,5 @@
+import { buildUrl } from "utils/api"
+
 /**
  * Auth API paths
  */
@@ -10,8 +12,8 @@ export const authPaths = {
 
 const userPath = "users"
 export const userPaths = {
-  getList: (search: string, page: number, pageSize: number) =>
-    `${userPath}?search=${search}&page=${page}&pageSize=${pageSize}`,
+  getList: (search?: string, page?: number, pageSize?: number) =>
+    buildUrl(userPath, { search, page, pageSize }),
   getMe: `${userPath}/me`,
   getDetail: (userId: string) => `${userPath}/${userId}`,
   create: `${userPath}`,
@@ -27,8 +29,8 @@ export const permissionPaths = {
 
 const permissionGroupPath = "permission-groups"
 export const permissionGroupPaths = {
-  getList: (search: string, page: number, pageSize: number) =>
-    `${permissionGroupPath}?search=${search}&page=${page}&pageSize=${pageSize}`,
+  getList: (search?: string, page?: number, pageSize?: number) =>
+    buildUrl(permissionGroupPath, { search, page, pageSize }),
   getDetail: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
   create: `${permissionGroupPath}`,
   update: (permissionGroupId: string) => `${permissionGroupPath}/${permissionGroupId}`,
@@ -38,7 +40,7 @@ export const permissionGroupPaths = {
 const experimentPath = "experiments"
 export const experimentPaths = {
   getList: (search: string, page: number, pageSize: number) =>
-    `${experimentPath}?search=${search}&page=${page}&pageSize=${pageSize}`,
+    buildUrl(experimentPath, { search, page, pageSize }),
   getDetail: (experimentId: string) => `${experimentPath}/${experimentId}`,
   create: `${experimentPath}`,
   update: (experimentId: string) => `${experimentPath}/${experimentId}`,

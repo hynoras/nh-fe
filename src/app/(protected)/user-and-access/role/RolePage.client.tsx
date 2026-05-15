@@ -23,7 +23,7 @@ import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
-import { PermissionGroupListFilter } from "./_type/permission-group"
+import { PermissionGroupListFilter } from "./_types/permission-group"
 
 const RolePageClient = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
@@ -221,8 +221,8 @@ const RolePageClient = () => {
               paginationMode="server"
               rowCount={permissionGroupsData?.length || 0}
               paginationModel={{
-                page: permissionGroupListFilter.page - 1,
-                pageSize: permissionGroupListFilter.pageSize
+                page: (permissionGroupListFilter.page || 1) - 1,
+                pageSize: permissionGroupListFilter.pageSize || 10
               }}
               onPaginationModelChange={handlePaginationChange}
               pageSizeOptions={[5, 10, 25, 50, 100]}

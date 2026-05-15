@@ -1,21 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { queryKey } from "consts/query-key"
-import { getPermissionGroupListApi } from "service/permission"
 import {
   createUserApi,
   deleteUserApi,
   getUserDetailApi,
   getUserListApi,
   updateUserApi
-} from "service/user"
+} from "services/user"
 import {
   CreateUserDto,
   UpdateUserDto
 } from "../../app/(protected)/user-and-access/user/_domain/dto/user"
-import {
-  PermissionGroupListFilter,
-  UserListFilter
-} from "../../app/(protected)/user-and-access/user/_types/user"
+import { UserListFilter } from "../../app/(protected)/user-and-access/user/_types/user"
 
 /**
  * Query hook for fetching user list
@@ -23,8 +19,7 @@ import {
 export const useUserList = (filter: UserListFilter) => {
   return useQuery({
     queryKey: queryKey.users(filter),
-    queryFn: () =>
-      getUserListApi(filter.search || "", filter.page || 1, filter.pageSize || 10)
+    queryFn: () => getUserListApi(filter.search, filter.page, filter.pageSize)
   })
 }
 
@@ -78,20 +73,5 @@ export const useDeleteUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKey.users() })
     }
-  })
-}
-
-/**
- * Query hook for fetching permission groups (used in user pages)
- */
-export const usePermissionGroups = (filter: PermissionGroupListFilter) => {
-  return useQuery({
-    queryKey: queryKey.permissionGroups(filter),
-    queryFn: () =>
-      getPermissionGroupListApi(
-        filter.search || "",
-        filter.page || 1,
-        filter.pageSize || 10
-      )
   })
 }

@@ -16,9 +16,9 @@ import {
   PermissionModel
 } from "app/(protected)/user-and-access/role/_domain/model/permission"
 import { permissionGroupPaths, permissionPaths } from "consts/api"
+import { KyInstance } from "ky"
 import { httpClient } from "lib/api/http.client"
 import { handleRequest } from "lib/api/request"
-import { KyInstance } from "ky"
 import { ApiResponse } from "types/response"
 
 export const getPermissionListApi = async (
@@ -45,9 +45,9 @@ export const createPermissionGroupApi = async (
 }
 
 export const getPermissionGroupListApi = async (
-  search: string,
-  page: number,
-  pageSize: number,
+  search: string = "",
+  page: number = 1,
+  pageSize: number = 10,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<PermissionGroup[]>> => {
   return await handleRequest<PermissionGroup[], PermissionGroupModel[]>(
@@ -72,7 +72,9 @@ export const updatePermissionGroupApi = async (
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<PermissionGroup>> => {
   const response = await handleRequest<PermissionGroup, PermissionGroupModel>(
-    apiClient.put(permissionGroupPaths.update(permissionGroupId), { json: permissionGroup }),
+    apiClient.put(permissionGroupPaths.update(permissionGroupId), {
+      json: permissionGroup
+    }),
     permissionGroupMapper
   )
   if (!response.success) {

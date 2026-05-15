@@ -11,7 +11,6 @@ import {
   Chip,
   FormLabel,
   InputAdornment,
-  Popover,
   Snackbar,
   Stack,
   TextField,
@@ -21,13 +20,14 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import CustomForm from "components/form"
 import { navigationRoutes } from "consts/navigation"
-import { useCreateUser, usePermissionGroups } from "hooks/queries/user"
+import { usePermissionGroupList } from "hooks/queries/permission"
+import { useCreateUser } from "hooks/queries/user"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
 import { Permission } from "../../role/_domain/entity/permission"
+import { PermissionGroupListFilter } from "../../role/_types/permission-group"
 import { CreateUserDto } from "../_domain/dto/user"
-import { PermissionGroupListFilter } from "../_types/user"
 
 const CreateUserPageClient = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -46,7 +46,7 @@ const CreateUserPageClient = () => {
     })
 
   const { data: permissionGroups, isLoading: isLoadingPermissionGroups } =
-    usePermissionGroups(permissionGroupFilter)
+    usePermissionGroupList(permissionGroupFilter)
 
   const formContext = useForm<CreateUserDto>({
     defaultValues: {
