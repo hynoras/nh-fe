@@ -7,8 +7,23 @@ export const serverHttp = ky.create({
     beforeRequest: [
       async (req) => {
         const cookieStore = await cookies()
-        req.headers.set("Cookie", cookieStore.toString())
+        const sessionCookie = cookieStore.get("auth_session")
+        if (sessionCookie) {
+          req.headers.set("Cookie", `auth_session=${sessionCookie.value}`)
+        }
       }
     ]
+    // Open this if we need to debug API error
+    // afterResponse: [
+    //   async (req, _, res) => {
+    //     // DEBUG LOG
+    //     if (res.status !== 200) {
+    //       const errorBody = await res
+    //         .clone()
+    //         .json()
+    //         .catch(() => ({}))
+    //     }
+    //   }
+    // ]
   }
 })
