@@ -221,8 +221,8 @@ const RolePageClient = () => {
               paginationMode="server"
               rowCount={permissionGroupsData?.length || 0}
               paginationModel={{
-                page: permissionGroupListFilter.page - 1,
-                pageSize: permissionGroupListFilter.pageSize
+                page: (permissionGroupListFilter.page || 1) - 1,
+                pageSize: permissionGroupListFilter.pageSize || 10
               }}
               onPaginationModelChange={handlePaginationChange}
               pageSizeOptions={[5, 10, 25, 50, 100]}

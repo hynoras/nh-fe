@@ -11,7 +11,6 @@ import {
   Chip,
   FormLabel,
   InputAdornment,
-  Popover,
   Snackbar,
   Stack,
   TextField,
@@ -26,8 +25,8 @@ import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
 import { Permission } from "../../role/_domain/entity/permission"
+import { PermissionGroupListFilter } from "../../role/_type/permission-group"
 import { CreateUserDto } from "../_domain/dto/user"
-import { PermissionGroupListFilter } from "../_types/user"
 
 const CreateUserPageClient = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
