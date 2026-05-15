@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { PermissionGroupListFilter } from "app/(protected)/user-and-access/role/_types/permission-group"
 import { queryKey } from "consts/query-key"
-import { getPermissionGroupListApi } from "services/permission"
 import {
   createUserApi,
   deleteUserApi,
@@ -75,20 +73,5 @@ export const useDeleteUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKey.users() })
     }
-  })
-}
-
-/**
- * Query hook for fetching permission groups (used in user pages)
- */
-export const usePermissionGroups = (filter: PermissionGroupListFilter) => {
-  return useQuery({
-    queryKey: queryKey.permissionGroups(filter),
-    queryFn: () =>
-      getPermissionGroupListApi(
-        filter.search || "",
-        filter.page || 1,
-        filter.pageSize || 10
-      )
   })
 }
