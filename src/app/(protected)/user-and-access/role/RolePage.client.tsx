@@ -23,7 +23,7 @@ import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
 import { Permission, PermissionGroup } from "./_domain/entity/permission"
-import { PermissionGroupListFilter } from "./_type/permission-group"
+import { PermissionGroupListFilter } from "./_types/permission-group"
 
 const RolePageClient = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)

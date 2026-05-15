@@ -18,7 +18,7 @@ import { usePermissionGroups, useUpdateUser, useUserDetail } from "hooks/queries
 import { useParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { Permission, PermissionGroup } from "../../role/_domain/entity/permission"
-import { PermissionGroupListFilter } from "../../role/_type/permission-group"
+import { PermissionGroupListFilter } from "../../role/_types/permission-group"
 import { UpdateUserDto } from "../_domain/dto/user"
 
 const RoleAndPermission = () => {

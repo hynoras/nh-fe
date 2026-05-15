@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { PermissionGroupListFilter } from "app/(protected)/user-and-access/role/_type/permission-group"
+import { PermissionGroupListFilter } from "app/(protected)/user-and-access/role/_types/permission-group"
 import { queryKey } from "consts/query-key"
-import { getPermissionGroupListApi } from "service/permission"
+import { getPermissionGroupListApi } from "services/permission"
 import {
   createUserApi,
   deleteUserApi,
   getUserDetailApi,
   getUserListApi,
   updateUserApi
-} from "service/user"
+} from "services/user"
 import {
   CreateUserDto,
   UpdateUserDto

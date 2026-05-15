@@ -1,5 +1,5 @@
 import State from "components/state"
-import { checkPermissionServer } from "service/permission.server"
+import { checkPermissionServer } from "services/permission.server"
 import { PermissionCode } from "../../role/_const/permission"
 import UserDetailPageClient from "./UserDetailPage.client"
 

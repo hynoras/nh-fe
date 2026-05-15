@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { checkPermissionServer } from "service/permission.server"
+import { checkPermissionServer } from "services/permission.server"
 
 const ProfilePage = async () => {
   const result = await checkPermissionServer()

@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
 import { Permission } from "../../role/_domain/entity/permission"
-import { PermissionGroupListFilter } from "../../role/_type/permission-group"
+import { PermissionGroupListFilter } from "../../role/_types/permission-group"
 import { CreateUserDto } from "../_domain/dto/user"
 
 const CreateUserPageClient = () => {
