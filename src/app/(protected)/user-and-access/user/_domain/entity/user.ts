@@ -8,4 +8,5 @@ export type User = {
   permissionCodes?: string[]
   createdAt?: Date
   updatedAt?: Date
+  version?: number
 }
