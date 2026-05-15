@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { PermissionGroupListFilter } from "app/(protected)/user-and-access/role/_type/permission-group"
 import { queryKey } from "consts/query-key"
 import { getPermissionGroupListApi } from "service/permission"
 import {
@@ -12,10 +13,7 @@ import {
   CreateUserDto,
   UpdateUserDto
 } from "../../app/(protected)/user-and-access/user/_domain/dto/user"
-import {
-  PermissionGroupListFilter,
-  UserListFilter
-} from "../../app/(protected)/user-and-access/user/_types/user"
+import { UserListFilter } from "../../app/(protected)/user-and-access/user/_types/user"
 
 /**
  * Query hook for fetching user list
@@ -23,8 +21,7 @@ import {
 export const useUserList = (filter: UserListFilter) => {
   return useQuery({
     queryKey: queryKey.users(filter),
-    queryFn: () =>
-      getUserListApi(filter.search || "", filter.page || 1, filter.pageSize || 10)
+    queryFn: () => getUserListApi(filter.search, filter.page, filter.pageSize)
   })
 }
 

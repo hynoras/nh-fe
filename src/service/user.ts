@@ -1,7 +1,7 @@
 import { userPaths } from "consts/api"
+import { KyInstance } from "ky"
 import { httpClient } from "lib/api/http.client"
 import { handleRequest } from "lib/api/request"
-import { KyInstance } from "ky"
 import { ApiResponse } from "types/response"
 import {
   CreateUserDto,
@@ -20,9 +20,9 @@ import {
 } from "../app/(protected)/user-and-access/user/_domain/model/user"
 
 export const getUserListApi = async (
-  search: string,
-  page: number,
-  pageSize: number,
+  search: string = "",
+  page: number = 1,
+  pageSize: number = 10,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<User[]>> => {
   return await handleRequest<User[], UserListModel[]>(
