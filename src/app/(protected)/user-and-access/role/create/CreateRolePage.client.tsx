@@ -5,13 +5,11 @@ import AccessibilityIcon from "@mui/icons-material/Accessibility"
 import AddIcon from "@mui/icons-material/Add"
 import InfoIcon from "@mui/icons-material/Info"
 import {
-  Alert,
   Box,
   Button,
   FormHelperText,
   FormLabel,
   InputAdornment,
-  Snackbar,
   Stack,
   TextField,
   TextFieldProps,
@@ -21,6 +19,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import CustomForm from "components/form"
 import { navigationRoutes } from "consts/navigation"
 import { useCreatePermissionGroup, usePermissions } from "hooks/queries/permission"
+import { useNotification } from "hooks/notification"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
@@ -28,10 +27,10 @@ import { CreatePermissionGroupDto } from "../_domain/dto/permission"
 import { Permission } from "../_domain/entity/permission"
 
 const CreateRolePageClient = () => {
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [searchFilter, setSearchFilter] = useState("")
 
   const router = useRouter()
+  const { notify } = useNotification()
 
   const { data: permissions, isLoading: isLoadingPermissions } = usePermissions()
 
@@ -85,14 +84,14 @@ const CreateRolePageClient = () => {
   const handleCreateRole = (data: CreatePermissionGroupDto) => {
     createRoleMutation.mutate(data, {
       onSuccess: () => {
-        setSnackbarOpen(true)
+        notify("Role created successfully", "success")
         formContext.reset()
         setTimeout(() => {
           router.push(navigationRoutes.userAndAccess.role.list)
         }, 500)
       },
       onError: (error: any) => {
-        setSnackbarOpen(true)
+        notify(error.message, "error")
         const errorMessage = error.message?.toLowerCase() || ""
         if (errorMessage.includes("name") && errorMessage.includes("already exist")) {
           formContext.setError("name", {
@@ -104,9 +103,6 @@ const CreateRolePageClient = () => {
     })
   }
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-  }
 
   const columns: GridColDef<Permission>[] = [
     {
@@ -123,23 +119,6 @@ const CreateRolePageClient = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={createRoleMutation.isError ? "error" : "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {createRoleMutation.isError
-            ? createRoleMutation.error.message
-            : "Role created successfully"}
-        </Alert>
-      </Snackbar>
       <FormContainer
         formContext={formContext}
         handleSubmit={formContext.handleSubmit(handleCreateRole)}

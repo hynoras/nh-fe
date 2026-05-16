@@ -44,14 +44,10 @@ export const createExperimentApi = async (
   experiment: CreateExperimentDto,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<Experiment>> => {
-  const response = await handleRequest<Experiment, ExperimentModel>(
+  return handleRequest<Experiment, ExperimentModel>(
     apiClient.post(experimentPaths.create, { json: experiment }),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }
 
 export const updateExperimentApi = async (
@@ -59,14 +55,10 @@ export const updateExperimentApi = async (
   experiment: UpdateExperimentDto,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<Experiment>> => {
-  const response = await handleRequest<Experiment, ExperimentModel>(
+  return handleRequest<Experiment, ExperimentModel>(
     apiClient.put(experimentPaths.update(experimentId), { json: experiment }),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }
 
 export const updateExperimentStatusApi = async (
@@ -74,26 +66,18 @@ export const updateExperimentStatusApi = async (
   status: UpdateExperimentStatusDto,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<Experiment>> => {
-  const response = await handleRequest<Experiment, ExperimentModel>(
+  return handleRequest<Experiment, ExperimentModel>(
     apiClient.put(experimentPaths.updateStatus(experimentId), { json: status }),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }
 
 export const deleteExperimentApi = async (
   experimentId: string,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<Experiment>> => {
-  const response = await handleRequest<Experiment, ExperimentModel>(
+  return handleRequest<Experiment, ExperimentModel>(
     apiClient.delete(experimentPaths.delete(experimentId)),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }

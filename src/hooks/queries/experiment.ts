@@ -20,7 +20,7 @@ import { ExperimentListFilter } from "../../app/(protected)/experiment/_types/ex
  */
 export const useExperimentList = (filter: ExperimentListFilter) => {
   return useQuery({
-    queryKey: queryKey.experiments(filter),
+    queryKey: queryKey.experiment.list(filter),
     queryFn: () =>
       getExperimentListApi(filter.search || "", filter.page || 1, filter.pageSize || 10)
   })
@@ -31,7 +31,7 @@ export const useExperimentList = (filter: ExperimentListFilter) => {
  */
 export const useExperimentDetail = (experimentId: string) => {
   return useQuery({
-    queryKey: queryKey.experimentDetail(experimentId),
+    queryKey: queryKey.experiment.detail(experimentId),
     queryFn: () => getExperimentDetailApi(experimentId),
     enabled: !!experimentId
   })
@@ -46,7 +46,7 @@ export const useCreateExperiment = () => {
   return useMutation({
     mutationFn: (experiment: CreateExperimentDto) => createExperimentApi(experiment),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.experiments() })
+      queryClient.invalidateQueries({ queryKey: queryKey.experiment.all })
     }
   })
 }
@@ -61,10 +61,7 @@ export const useUpdateExperiment = (experimentId: string) => {
     mutationFn: (experiment: UpdateExperimentDto) =>
       updateExperimentApi(experimentId, experiment),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.experiments() })
-      queryClient.invalidateQueries({
-        queryKey: queryKey.experimentDetail(experimentId)
-      })
+      queryClient.invalidateQueries({ queryKey: queryKey.experiment.all })
     }
   })
 }
@@ -76,10 +73,7 @@ export const useUpdateStatusExperiment = (experimentId: string) => {
     mutationFn: (status: UpdateExperimentStatusDto) =>
       updateExperimentStatusApi(experimentId, status),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.experiments() })
-      queryClient.invalidateQueries({
-        queryKey: queryKey.experimentDetail(experimentId)
-      })
+      queryClient.invalidateQueries({ queryKey: queryKey.experiment.all })
     }
   })
 }
@@ -93,7 +87,7 @@ export const useDeleteExperiment = () => {
   return useMutation({
     mutationFn: (experimentId: string) => deleteExperimentApi(experimentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.experiments() })
+      queryClient.invalidateQueries({ queryKey: queryKey.experiment.all })
     }
   })
 }

@@ -3,7 +3,7 @@
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import { Alert, Box, IconButton, Snackbar, Stack, Typography } from "@mui/material"
+import { Box, IconButton, Stack, Typography } from "@mui/material"
 import {
   DataGrid,
   GridColDef,
@@ -13,7 +13,7 @@ import {
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import { navigationRoutes } from "consts/navigation"
-import { format } from "date-fns"
+import { useNotification } from "hooks/notification"
 import {
   useCreateExperiment,
   useDeleteExperiment,
@@ -37,7 +37,6 @@ const ExperimentPageClient = () => {
     page: 1,
     pageSize: 10
   })
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const tableRef = useRef<HTMLDivElement>(null)
   const tableHeight = useResponsiveHeight(tableRef)
 
@@ -45,6 +44,7 @@ const ExperimentPageClient = () => {
 
   const deleteExperimentMutation = useDeleteExperiment()
   const router = useRouter()
+  const { notify } = useNotification()
 
   const handlePaginationChange = (model: GridPaginationModel) => {
     setExperimentListFilter((prev) => ({
@@ -64,10 +64,6 @@ const ExperimentPageClient = () => {
     setSelectedExperiment(null)
   }
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-  }
-
   const createExperimentMutation = useCreateExperiment()
 
   // Stabilize error message to prevent infinite loops
@@ -84,7 +80,7 @@ const ExperimentPageClient = () => {
   const handleCreateExperiment = (data: CreateExperimentDto) => {
     createExperimentMutation.mutate(data, {
       onSuccess: () => {
-        setSnackbarOpen(true)
+        notify("Experiment created successfully", "success")
         setOpenCreateDialog(false)
       }
     })
@@ -99,10 +95,10 @@ const ExperimentPageClient = () => {
       deleteExperimentMutation.mutate(selectedExperiment.id as string, {
         onSuccess: () => {
           handleCloseDeleteDialog()
-          setSnackbarOpen(true)
+          notify("Experiment deleted successfully", "success")
         },
         onError: (error) => {
-          setSnackbarOpen(true)
+          notify(error.message, "error")
           console.error(error)
         }
       })
@@ -150,14 +146,6 @@ const ExperimentPageClient = () => {
       flex: 0.6
     },
     {
-      field: "createdAt",
-      headerName: "Created At",
-      flex: 0.4,
-      valueGetter: (_, row) => {
-        return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
-      }
-    },
-    {
       field: "actions",
       headerName: "Actions",
       flex: 0.6,
@@ -186,23 +174,6 @@ const ExperimentPageClient = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={deleteExperimentMutation.isError ? "error" : "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {deleteExperimentMutation.isError
-            ? deleteExperimentMutation.error.message
-            : "User deleted successfully"}
-        </Alert>
-      </Snackbar>
       <CreateExperiment
         open={openCreateDialog}
         onClose={handleCloseCreateDialog}

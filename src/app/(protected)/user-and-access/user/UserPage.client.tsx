@@ -3,21 +3,14 @@
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import {
-  Alert,
-  Box,
-  Chip,
-  IconButton,
-  Snackbar,
-  Stack,
-  Typography
-} from "@mui/material"
+import { Alert, Box, IconButton, Snackbar, Stack, Typography } from "@mui/material"
 import {
   DataGrid,
   GridColDef,
   GridPaginationModel,
   GridRenderCellParams
 } from "@mui/x-data-grid"
+import ChipOverflowList from "components/ChipOverflowList"
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import { navigationRoutes } from "consts/navigation"
@@ -25,11 +18,11 @@ import { format } from "date-fns"
 import { useDeleteUser, useUserList } from "hooks/queries/user"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
-import ChipOverflowList from "components/ChipOverflowList"
 import { useRef, useState } from "react"
 import { Permission } from "../role/_domain/entity/permission"
 import { User } from "./_domain/entity/user"
 import { UserListFilter } from "./_types/user"
+import { useNotification } from "hooks/notification"
 
 const UserPageClient = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
@@ -39,7 +32,6 @@ const UserPageClient = () => {
     page: 1,
     pageSize: 10
   })
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const tableRef = useRef<HTMLDivElement>(null)
   const tableHeight = useResponsiveHeight(tableRef)
 
@@ -47,6 +39,7 @@ const UserPageClient = () => {
 
   const deleteUserMutation = useDeleteUser()
   const router = useRouter()
+  const { notify } = useNotification()
 
   const handleCreateUser = () => {
     router.push(navigationRoutes.userAndAccess.user.create)
@@ -70,10 +63,6 @@ const UserPageClient = () => {
     setSelectedUser(null)
   }
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-  }
-
   const handleEditUser = (userId: string) => {
     router.push(navigationRoutes.userAndAccess.user.detail(userId))
   }
@@ -83,10 +72,10 @@ const UserPageClient = () => {
       deleteUserMutation.mutate([selectedUser.id as string], {
         onSuccess: () => {
           handleCloseDeleteDialog()
-          setSnackbarOpen(true)
+          notify("User deleted successfully", "success")
         },
         onError: (error) => {
-          setSnackbarOpen(true)
+          notify(error.message, "error")
           console.error(error)
         }
       })
@@ -173,23 +162,6 @@ const UserPageClient = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={deleteUserMutation.isError ? "error" : "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {deleteUserMutation.isError
-            ? deleteUserMutation.error.message
-            : "User deleted successfully"}
-        </Alert>
-      </Snackbar>
       <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}

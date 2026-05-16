@@ -18,7 +18,7 @@ import { UserListFilter } from "../../app/(protected)/user-and-access/user/_type
  */
 export const useUserList = (filter: UserListFilter) => {
   return useQuery({
-    queryKey: queryKey.users(filter),
+    queryKey: queryKey.user.list(filter),
     queryFn: () => getUserListApi(filter.search, filter.page, filter.pageSize)
   })
 }
@@ -28,7 +28,7 @@ export const useUserList = (filter: UserListFilter) => {
  */
 export const useUserDetail = (userId: string) => {
   return useQuery({
-    queryKey: queryKey.userDetail(userId),
+    queryKey: queryKey.user.detail(userId),
     queryFn: () => getUserDetailApi(userId)
   })
 }
@@ -42,7 +42,7 @@ export const useCreateUser = () => {
   return useMutation({
     mutationFn: (user: CreateUserDto) => createUserApi(user),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.users() })
+      queryClient.invalidateQueries({ queryKey: queryKey.user.all })
     }
   })
 }
@@ -56,8 +56,7 @@ export const useUpdateUser = (userId: string) => {
   return useMutation({
     mutationFn: (user: UpdateUserDto) => updateUserApi(userId, user),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.userDetail(userId) })
-      queryClient.invalidateQueries({ queryKey: queryKey.users() })
+      queryClient.invalidateQueries({ queryKey: queryKey.user.all })
     }
   })
 }
@@ -71,7 +70,7 @@ export const useDeleteUser = () => {
   return useMutation({
     mutationFn: (userIds: string[]) => deleteUserApi(userIds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.users() })
+      queryClient.invalidateQueries({ queryKey: queryKey.user.all })
     }
   })
 }

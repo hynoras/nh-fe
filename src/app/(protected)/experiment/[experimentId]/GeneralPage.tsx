@@ -4,7 +4,6 @@ import CategoryIcon from "@mui/icons-material/Category"
 import EditIcon from "@mui/icons-material/Edit"
 import FlagIcon from "@mui/icons-material/Flag"
 import {
-  Alert,
   Button,
   Card,
   CardActions,
@@ -13,7 +12,6 @@ import {
   IconButton,
   Link,
   Skeleton,
-  Snackbar,
   Stack,
   Tooltip,
   Typography
@@ -21,6 +19,7 @@ import {
 import Grid from "@mui/material/Grid2"
 import { formatDate } from "date-fns"
 import { useExperimentDetail, useUpdateExperiment } from "hooks/queries/experiment"
+import { useNotification } from "hooks/notification"
 import { useParams } from "next/navigation"
 import { useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
@@ -40,11 +39,7 @@ const ExperimentObjectiveCard = ({
   const updateExperimentMutation = useUpdateExperiment(experimentId)
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState<{
-    type: "success" | "error"
-    message: string
-  }>({ type: "success", message: "" })
+  const { notify } = useNotification()
 
   const objectiveFormContext = useForm<UpdateExperimentDto>({
     defaultValues: {
@@ -52,27 +47,15 @@ const ExperimentObjectiveCard = ({
     }
   })
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-    setSnackbarMessage({ type: "success", message: "" })
-  }
 
   const handleUpdateExperiment = (data: UpdateExperimentDto) => {
     updateExperimentMutation.mutate(data, {
       onSuccess: () => {
         setIsEditing(false)
-        setSnackbarMessage({
-          type: "success",
-          message: "Experiment objective updated successfully"
-        })
-        setSnackbarOpen(true)
+        notify("Experiment objective updated successfully", "success")
       },
       onError: (error: any) => {
-        setSnackbarMessage({
-          type: "error",
-          message: error.message || "Failed to update experiment objective"
-        })
-        setSnackbarOpen(true)
+        notify(error.message || "Failed to update experiment objective", "error")
       }
     })
   }
@@ -145,21 +128,6 @@ const ExperimentObjectiveCard = ({
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarMessage.type}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
       <Card className="h-[100%]" variant="outlined">
         <CardHeader
           avatar={<FlagIcon aria-label="recipe" />}
@@ -195,33 +163,17 @@ const ExperimentTypeCard = ({
   const updateExperimentMutation = useUpdateExperiment(experimentId)
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState<{
-    type: "success" | "error"
-    message: string
-  }>({ type: "success", message: "" })
+  const { notify } = useNotification()
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-    setSnackbarMessage({ type: "success", message: "" })
-  }
 
   const handleUpdateExperiment = (data: UpdateExperimentDto) => {
     updateExperimentMutation.mutate(data, {
       onSuccess: () => {
         setIsEditing(false)
-        setSnackbarMessage({
-          type: "success",
-          message: `Experiment type changed to ${data.type} successfully`
-        })
-        setSnackbarOpen(true)
+        notify(`Experiment type changed to ${data.type} successfully`, "success")
       },
       onError: (error: any) => {
-        setSnackbarMessage({
-          type: "error",
-          message: error.message || "Failed to change experiment type"
-        })
-        setSnackbarOpen(true)
+        notify(error.message || "Failed to change experiment type", "error")
       }
     })
   }
@@ -336,21 +288,6 @@ const ExperimentTypeCard = ({
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarMessage.type}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
       <Card className="h-[100%] flex flex-col" variant="outlined">
         <CardHeader avatar={<CategoryIcon aria-label="type" />} title="Experiment Type" />
         {renderContent()}

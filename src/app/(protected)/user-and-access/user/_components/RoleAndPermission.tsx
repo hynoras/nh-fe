@@ -2,11 +2,9 @@
 
 import { Search } from "@mui/icons-material"
 import {
-  Alert,
   Box,
   Button,
   InputAdornment,
-  Snackbar,
   Stack,
   TextField,
   TextFieldProps,
@@ -16,6 +14,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
 import ChipOverflowList from "components/ChipOverflowList"
 import { usePermissionGroupList } from "hooks/queries/permission"
 import { useUpdateUser, useUserDetail } from "hooks/queries/user"
+import { useNotification } from "hooks/notification"
 import { useParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { Permission, PermissionGroup } from "../../role/_domain/entity/permission"
@@ -26,11 +25,6 @@ const RoleAndPermission = () => {
   const { userId } = useParams<{ userId: string }>()
 
   // State Management
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState<{
-    type: "success" | "error"
-    message: string
-  }>({ type: "success", message: "" })
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
   const [originalPermissions, setOriginalPermissions] = useState<string[]>([])
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
@@ -89,6 +83,7 @@ const RoleAndPermission = () => {
 
   // Mutation
   const updatePermissionsMutation = useUpdateUser(userId as string)
+  const { notify } = useNotification()
 
   // Handlers
   const handleSearch: TextFieldProps["onChange"] = (
@@ -107,10 +102,6 @@ const RoleAndPermission = () => {
     [handleSearch]
   )
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-    setSnackbarMessage({ type: "success", message: "" })
-  }
 
   const handleSave = () => {
     updatePermissionsMutation.mutate(
@@ -118,18 +109,10 @@ const RoleAndPermission = () => {
       {
         onSuccess: () => {
           setOriginalPermissions(selectedPermissions) // Update original state after successful save
-          setSnackbarMessage({
-            type: "success",
-            message: "Permissions updated successfully"
-          })
-          setSnackbarOpen(true)
+          notify("Permissions updated successfully", "success")
         },
         onError: (error: any) => {
-          setSnackbarMessage({
-            type: "error",
-            message: error.message || "Failed to update permissions"
-          })
-          setSnackbarOpen(true)
+          notify(error.message || "Failed to update permissions", "error")
           // Keep current selection on error (don't reset)
         }
       }
@@ -172,22 +155,6 @@ const RoleAndPermission = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarMessage.type}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
-
       <Stack direction="column" spacing={2}>
         {/* Toolbar with search and action buttons */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">

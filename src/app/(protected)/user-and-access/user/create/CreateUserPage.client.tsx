@@ -5,13 +5,11 @@ import AccessibilityIcon from "@mui/icons-material/Accessibility"
 import AddIcon from "@mui/icons-material/Add"
 import PersonIcon from "@mui/icons-material/Person"
 import {
-  Alert,
   Box,
   Button,
   Chip,
   FormLabel,
   InputAdornment,
-  Snackbar,
   Stack,
   TextField,
   TextFieldProps,
@@ -22,6 +20,7 @@ import CustomForm from "components/form"
 import { navigationRoutes } from "consts/navigation"
 import { usePermissionGroupList } from "hooks/queries/permission"
 import { useCreateUser } from "hooks/queries/user"
+import { useNotification } from "hooks/notification"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
@@ -30,11 +29,11 @@ import { PermissionGroupListFilter } from "../../role/_types/permission-group"
 import { CreateUserDto } from "../_domain/dto/user"
 
 const CreateUserPageClient = () => {
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [anchorPermissionPopper, setAnchorPermissionPopper] =
     useState<null | HTMLElement>(null)
 
   const router = useRouter()
+  const { notify } = useNotification()
 
   const open = Boolean(anchorPermissionPopper)
 
@@ -78,14 +77,14 @@ const CreateUserPageClient = () => {
   const handleCreateUser = (data: CreateUserDto) => {
     createUserMutation.mutate(data, {
       onSuccess: () => {
-        setSnackbarOpen(true)
-        formContext.reset()
+          notify("User created successfully", "success")
+          formContext.reset()
         setTimeout(() => {
           router.push(navigationRoutes.userAndAccess.user.list)
         }, 500)
       },
       onError: (error: any) => {
-        setSnackbarOpen(true)
+        notify(error.message, "error")
         const errorMessage = error.message?.toLowerCase() || ""
         if (errorMessage.includes("username") && errorMessage.includes("already exist")) {
           formContext.setError("username", {
@@ -103,9 +102,6 @@ const CreateUserPageClient = () => {
     })
   }
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-  }
 
   const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorPermissionPopper(event.currentTarget)
@@ -160,23 +156,6 @@ const CreateUserPageClient = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={createUserMutation.isError ? "error" : "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {createUserMutation.isError
-            ? createUserMutation.error.message
-            : "User created successfully"}
-        </Alert>
-      </Snackbar>
       <FormContainer
         formContext={formContext}
         handleSubmit={formContext.handleSubmit(handleCreateUser)}
