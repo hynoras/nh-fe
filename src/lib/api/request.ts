@@ -1,101 +1,36 @@
 import { ApiResponse } from "types/response"
 
-// Generic helper for cleaner try/catch with optional mapper
-export async function handleRequest<T, R = T>(
-  promise: Promise<Response>
-): Promise<ApiResponse<T>>
-
 export async function handleRequest<T, R = T>(
   promise: Promise<Response>,
-  mapper: (data: R) => T
-): Promise<ApiResponse<T>>
-
-export async function handleRequest<T, R = T>(
-  promise: Promise<Response>,
-  mapper: (data: R) => T,
-  custom: {
-    success: any
-    failure: any
-  }
-): Promise<any>
-
-export async function handleRequest<T, R = T>(
-  promise: Promise<Response>,
-  mapper?: (data: R) => T,
-  custom?: {
-    success: any
-    failure: any
-  }
-): Promise<ApiResponse<T> | any> {
+  mapper?: (data: R) => T
+): Promise<ApiResponse<T>> {
   try {
     const response = await promise
     const result = await response.json()
 
-    const data = result.data !== undefined ? result.data : result
+    const rawData = result.data
 
-    let mappedData: T
-    if (mapper) {
-      if (Array.isArray(data)) {
-        // Pass the entire array to the mapper - let the mapper handle array mapping
-        mappedData = mapper(data as R) as T
-      } else if (data !== null && typeof data === "object") {
-        mappedData = mapper(data as R)
-      } else {
-        mappedData = mapper(data as R)
-      }
-    } else {
-      mappedData = data
-    }
-
-    if (custom?.success !== undefined) {
-      return custom.success
-    }
-
-    if (result.length !== undefined && result.length > 0) {
-      return {
-        success: result.success !== undefined ? result.success : true,
-        message: result.message || "Request successful",
-        data: mappedData,
-        length: result.length
-      }
-    } else {
-      return {
-        success: result.success !== undefined ? result.success : true,
-        message: result.message || "Request successful",
-        data: mappedData
-      }
+    return {
+      success: result.success ?? true,
+      message: result.message || "",
+      data: mapper && rawData !== undefined ? mapper(rawData as R) : (rawData as T),
+      error: result.error,
+      length: result.length
     }
   } catch (error: any) {
     console.error("API Error:", error?.message || error)
 
-    if (custom?.failure !== undefined) {
-      return custom.failure
-    }
+    let message = error?.message || "Network error"
+    let detail = error
 
-    // Try to extract error and message from server response
-    let serverMessage = error?.message || "Network error"
-    let serverError = error?.message || "Network error"
-
-    if (error?.response) {
+    if (error.response) {
       try {
-        const errorResponse = await error.response.json()
-        if (errorResponse.message) {
-          serverMessage = errorResponse.message
-        }
-        if (errorResponse.error) {
-          serverError = errorResponse.error
-        } else if (errorResponse.message) {
-          serverError = errorResponse.message
-        }
-      } catch (parseError) {
-        // If parsing fails, use the original error message
-      }
+        const errorBody = await error.response.json()
+        message = errorBody.message || message
+        detail = errorBody.error || errorBody
+      } catch {}
     }
 
-    return {
-      success: false,
-      message: serverMessage,
-      error: serverError
-    }
+    return { success: false, message, error: detail }
   }
 }
