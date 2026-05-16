@@ -20,6 +20,6 @@ export const loginApi = async (
 
 export const logoutApi = async (
   apiClient: KyInstance = httpClient
-): Promise<ApiResponse<boolean>> => {
-  return await handleRequest<boolean>(apiClient.post(authPaths.logout))
+): Promise<ApiResponse<null>> => {
+  return await handleRequest<null>(apiClient.post(authPaths.logout))
 }
