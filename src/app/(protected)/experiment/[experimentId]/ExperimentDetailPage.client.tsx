@@ -2,7 +2,6 @@
 
 import EditIcon from "@mui/icons-material/Edit"
 import {
-  Alert,
   Box,
   Button,
   Dialog,
@@ -11,13 +10,13 @@ import {
   DialogTitle,
   IconButton,
   Skeleton,
-  Snackbar,
   Stack,
   Tab,
   Tabs,
   TextField,
   Typography
 } from "@mui/material"
+import { useNotification } from "hooks/notification"
 import {
   useExperimentDetail,
   useUpdateExperiment,
@@ -132,11 +131,7 @@ const ExperimentDetailPageClient = () => {
     ExperimentStatus.DRAFT
   )
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState<{
-    type: "success" | "error"
-    message: string
-  }>({ type: "success", message: "" })
+  const { notify } = useNotification()
 
   const [value, setValue] = useState<number>(() => {
     const tabParam = searchParams.get("tab")
@@ -157,11 +152,6 @@ const ExperimentDetailPageClient = () => {
       default:
         setTransitionStatuses([])
     }
-  }
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-    setSnackbarMessage({ type: "success", message: "" })
   }
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,18 +187,10 @@ const ExperimentDetailPageClient = () => {
     updateExperimentMutation.mutate(data, {
       onSuccess: () => {
         setIsEditing(false)
-        setSnackbarMessage({
-          type: "success",
-          message: "Experiment title renamed successfully"
-        })
-        setSnackbarOpen(true)
+        notify("Experiment title renamed successfully", "success")
       },
       onError: (error: any) => {
-        setSnackbarMessage({
-          type: "error",
-          message: error.message || "Failed to rename experiment title"
-        })
-        setSnackbarOpen(true)
+        notify(error.message || "Failed to rename experiment title", "error")
       }
     })
   }
@@ -217,18 +199,10 @@ const ExperimentDetailPageClient = () => {
     updateExperimentStatusMutation.mutate(data, {
       onSuccess: () => {
         setIsEditing(false)
-        setSnackbarMessage({
-          type: "success",
-          message: "Experiment status updated successfully"
-        })
-        setSnackbarOpen(true)
+        notify("Experiment status updated successfully", "success")
       },
       onError: (error: any) => {
-        setSnackbarMessage({
-          type: "error",
-          message: error.message || "Failed to update experiment status"
-        })
-        setSnackbarOpen(true)
+        notify(error.message || "Failed to update experiment status", "error")
       }
     })
   }
@@ -256,21 +230,6 @@ const ExperimentDetailPageClient = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarMessage.type}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
       <TransitionStatusConfirmation
         selectedStatus={selectedStatus}
         experiment={experiment?.data || ({} as Experiment)}

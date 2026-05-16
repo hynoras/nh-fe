@@ -5,14 +5,12 @@ import AccessibilityIcon from "@mui/icons-material/Accessibility"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import InfoIcon from "@mui/icons-material/Info"
 import {
-  Alert,
   Box,
   Button,
   FormHelperText,
   FormLabel,
   IconButton,
   InputAdornment,
-  Snackbar,
   Stack,
   TextField,
   TextFieldProps,
@@ -21,6 +19,7 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import CustomForm from "components/form"
+import { useNotification } from "hooks/notification"
 import {
   usePermissionGroupDetail,
   usePermissions,
@@ -40,7 +39,6 @@ type OriginalValues = {
 
 const EditRolePageClient = () => {
   const { permissionGroupId } = useParams<{ permissionGroupId: string }>()
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [searchFilter, setSearchFilter] = useState("")
   const [originalValues, setOriginalValues] = useState<OriginalValues>({
     name: "",
@@ -50,6 +48,7 @@ const EditRolePageClient = () => {
   const [isInitialized, setIsInitialized] = useState(false)
 
   const router = useRouter()
+  const { notify } = useNotification()
 
   // Fetch permission group detail
   const { data: permissionGroupDetail, isLoading: isLoadingDetail } =
@@ -165,7 +164,7 @@ const EditRolePageClient = () => {
   const handleSave = (data: UpdatePermissionGroupDto) => {
     updateRoleMutation.mutate(data, {
       onSuccess: () => {
-        setSnackbarOpen(true)
+        notify("Role updated successfully", "success")
         // Update original values after successful save
         setOriginalValues({
           name: watchedName || "",
@@ -174,7 +173,7 @@ const EditRolePageClient = () => {
         })
       },
       onError: (error: any) => {
-        setSnackbarOpen(true)
+        notify(error.message, "error")
         const errorMessage = error.message?.toLowerCase() || ""
         if (errorMessage.includes("name") && errorMessage.includes("already exist")) {
           formContext.setError("name", {
@@ -193,10 +192,6 @@ const EditRolePageClient = () => {
       permissions: originalValues.permissions
     })
     formContext.clearErrors()
-  }
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
   }
 
   const columns: GridColDef<Permission>[] = [
@@ -218,23 +213,6 @@ const EditRolePageClient = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={updateRoleMutation.isError ? "error" : "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {updateRoleMutation.isError
-            ? updateRoleMutation.error.message
-            : "Role updated successfully"}
-        </Alert>
-      </Snackbar>
       <Stack className="h-[82vh] overflow-y-scroll" direction="column" spacing={2}>
         <Stack direction="row" alignItems="center" spacing={2}>
           <IconButton onClick={() => router.back()} size="small">

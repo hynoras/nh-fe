@@ -6,14 +6,12 @@ import MoreVertIcon from "@mui/icons-material/MoreVert"
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar"
 import PersonIcon from "@mui/icons-material/Person"
 import {
-  Alert,
   Avatar,
   Box,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
-  Snackbar,
   Stack,
   Tab,
   Tabs,
@@ -22,6 +20,7 @@ import {
 import Popup from "components/popup"
 import { navigationRoutes } from "consts/navigation"
 import { useDeleteUser, useUserDetail } from "hooks/queries/user"
+import { useNotification } from "hooks/notification"
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { a11yProps } from "utils/accessibility"
@@ -64,15 +63,9 @@ const UserDetailPageClient = () => {
   // Delete dialog state
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
 
-  // Snackbar state
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState<{
-    type: "success" | "error"
-    message: string
-  }>({ type: "success", message: "" })
-
   // Delete mutation
   const deleteUserMutation = useDeleteUser()
+  const { notify } = useNotification()
 
   // Menu handlers
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -98,32 +91,19 @@ const UserDetailPageClient = () => {
       deleteUserMutation.mutate([userDetail.data.id], {
         onSuccess: () => {
           setOpenDeleteDialog(false)
-          setSnackbarMessage({
-            type: "success",
-            message: "User deleted successfully"
-          })
-          setSnackbarOpen(true)
+          notify("User deleted successfully", "success")
           // Navigate to user list page after a short delay
           setTimeout(() => {
             router.push(navigationRoutes.userAndAccess.user.list)
           }, 1500)
         },
         onError: (error: any) => {
-          setSnackbarMessage({
-            type: "error",
-            message: error.message || "Failed to delete user"
-          })
-          setSnackbarOpen(true)
+          notify(error.message || "Failed to delete user", "error")
         }
       })
     }
   }
 
-  // Snackbar handler
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-    setSnackbarMessage({ type: "success", message: "" })
-  }
 
   // Tab handler
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -208,22 +188,6 @@ const UserDetailPageClient = () => {
         </TabPanel>
       </Stack>
 
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarMessage.type}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
     </>
   )
 }

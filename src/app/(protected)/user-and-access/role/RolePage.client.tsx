@@ -3,7 +3,7 @@
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import { Alert, Box, IconButton, Snackbar, Stack, Tooltip } from "@mui/material"
+import { Box, IconButton, Stack, Tooltip } from "@mui/material"
 import {
   DataGrid,
   GridColDef,
@@ -19,6 +19,7 @@ import {
   useDeletePermissionGroup,
   usePermissionGroupList
 } from "hooks/queries/permission"
+import { useNotification } from "hooks/notification"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
@@ -35,7 +36,6 @@ const RolePageClient = () => {
       page: 1,
       pageSize: 10
     })
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
 
   const tableRef = useRef<HTMLDivElement>(null)
   const tableHeight = useResponsiveHeight(tableRef)
@@ -46,6 +46,7 @@ const RolePageClient = () => {
 
   const deletePermissionGroupMutation = useDeletePermissionGroup()
   const router = useRouter()
+  const { notify } = useNotification()
 
   const handleCreatePermissionGroup = () => {
     router.push(navigationRoutes.userAndAccess.role.create)
@@ -69,10 +70,6 @@ const RolePageClient = () => {
     setSelectedPermissionGroup(null)
   }
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-  }
-
   const handleNavigateToEditRole = (permissionGroupId: string) => {
     router.push(navigationRoutes.userAndAccess.role.detail(permissionGroupId))
   }
@@ -82,10 +79,10 @@ const RolePageClient = () => {
       deletePermissionGroupMutation.mutate(selectedPermissionGroup.id as string, {
         onSuccess: () => {
           handleCloseDeleteDialog()
-          setSnackbarOpen(true)
+          notify("Permission group deleted successfully", "success")
         },
         onError: (error) => {
-          setSnackbarOpen(true)
+          notify(error.message, "error")
           console.error(error)
         }
       })
@@ -176,23 +173,6 @@ const RolePageClient = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={deletePermissionGroupMutation.isError ? "error" : "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {deletePermissionGroupMutation.isError
-            ? deletePermissionGroupMutation.error.message
-            : "Permission group deleted successfully"}
-        </Alert>
-      </Snackbar>
       <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}

@@ -4,10 +4,11 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy"
 import EditIcon from "@mui/icons-material/Edit"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
-import { Alert, IconButton, Snackbar, Stack, TextField, Typography } from "@mui/material"
+import { IconButton, Stack, TextField, Typography } from "@mui/material"
 import Grid from "@mui/material/Grid2"
 import { format } from "date-fns"
 import { useUpdateUser, useUserDetail } from "hooks/queries/user"
+import { useNotification } from "hooks/notification"
 import { useParams } from "next/navigation"
 import { Fragment, ReactNode, useState } from "react"
 import { UpdateUserDto } from "../_domain/dto/user"
@@ -22,44 +23,30 @@ const UserProfile = () => {
 
   const { data: userDetail } = useUserDetail(userId as string)
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState<{
-    type: "success" | "error"
-    message: string
-  }>({ type: "success", message: "" })
   const [visibleUserId, setVisibleUserId] = useState(false)
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [editedEmail, setEditedEmail] = useState("")
 
   const updateEmailMutation = useUpdateUser(userId as string)
+  const { notify } = useNotification()
 
   const handleCopyUserInfo = (value: string, label: string) => {
     navigator.clipboard
       .writeText(value)
       .then(() => {
-        setSnackbarOpen(true)
-        setSnackbarMessage({ type: "success", message: `${label} copied to clipboard` })
+        notify(`${label} copied to clipboard`, "success")
       })
       .catch((error) => {
         console.error(error)
-        setSnackbarOpen(true)
-        setSnackbarMessage({ type: "error", message: error.message })
+        notify(error.message, "error")
       })
   }
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-    setSnackbarMessage({ type: "success", message: "" })
-  }
 
   const handleSaveEmail = () => {
     // Validate email is not empty
     if (!editedEmail.trim()) {
-      setSnackbarMessage({
-        type: "error",
-        message: "Email cannot be empty"
-      })
-      setSnackbarOpen(true)
+      notify("Email cannot be empty", "error")
       return
     }
     // Trigger mutation
@@ -69,11 +56,7 @@ const UserProfile = () => {
         setEditedEmail("")
       },
       onError: (error: any) => {
-        setSnackbarMessage({
-          type: "error",
-          message: error.message || "Failed to update email"
-        })
-        setSnackbarOpen(true)
+        notify(error.message || "Failed to update email", "error")
         // Keep isEditingEmail as true to stay in edit mode
       }
     })
@@ -172,21 +155,6 @@ const UserProfile = () => {
 
   return (
     <>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarMessage.type}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage.message}
-        </Alert>
-      </Snackbar>
       <Stack direction={"column"} spacing={2}>
         <Typography variant="h6">About this user</Typography>
         <Grid container spacing={2}>
