@@ -19,7 +19,7 @@ import { PermissionGroupListFilter } from "../../app/(protected)/user-and-access
  */
 export const usePermissionGroupList = (filter: PermissionGroupListFilter) => {
   return useQuery({
-    queryKey: queryKey.permissionGroups(filter),
+    queryKey: queryKey.permissionGroup.list(filter),
     queryFn: () => getPermissionGroupListApi(filter.search, filter.page, filter.pageSize)
   })
 }
@@ -29,7 +29,7 @@ export const usePermissionGroupList = (filter: PermissionGroupListFilter) => {
  */
 export const usePermissionGroupDetail = (permissionGroupId: string) => {
   return useQuery({
-    queryKey: queryKey.permissionGroupDetail(permissionGroupId),
+    queryKey: queryKey.permissionGroup.detail(permissionGroupId),
     queryFn: () => getPermissionGroupDetailApi(permissionGroupId),
     enabled: !!permissionGroupId
   })
@@ -40,7 +40,7 @@ export const usePermissionGroupDetail = (permissionGroupId: string) => {
  */
 export const usePermissions = () => {
   return useQuery({
-    queryKey: queryKey.permissions(),
+    queryKey: queryKey.permission.all,
     queryFn: () => getPermissionListApi()
   })
 }
@@ -55,7 +55,7 @@ export const useCreatePermissionGroup = () => {
     mutationFn: (permissionGroup: CreatePermissionGroupDto) =>
       createPermissionGroupApi(permissionGroup),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.permissionGroups() })
+      queryClient.invalidateQueries({ queryKey: queryKey.permissionGroup.all })
     }
   })
 }
@@ -70,9 +70,9 @@ export const useUpdatePermissionGroup = (permissionGroupId: string) => {
     mutationFn: (permissionGroup: UpdatePermissionGroupDto) =>
       updatePermissionGroupApi(permissionGroupId, permissionGroup),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.permissionGroups() })
+      queryClient.invalidateQueries({ queryKey: queryKey.permissionGroup.all })
       queryClient.invalidateQueries({
-        queryKey: queryKey.permissionGroupDetail(permissionGroupId)
+        queryKey: queryKey.permissionGroup.detail(permissionGroupId)
       })
     }
   })
@@ -88,7 +88,7 @@ export const useDeletePermissionGroup = () => {
     mutationFn: (permissionGroupId: string) =>
       deletePermissionGroupApi(permissionGroupId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey.permissionGroups() })
+      queryClient.invalidateQueries({ queryKey: queryKey.permissionGroup.all })
     }
   })
 }
