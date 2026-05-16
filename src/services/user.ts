@@ -51,14 +51,10 @@ export const createUserApi = async (
   user: CreateUserDto,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<boolean>> => {
-  const response = await handleRequest(
+  return handleRequest(
     apiClient.post(userPaths.create, { json: user }),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }
 
 export const updateUserApi = async (
@@ -66,26 +62,18 @@ export const updateUserApi = async (
   user: UpdateUserDto,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<boolean>> => {
-  const response = await handleRequest(
+  return handleRequest(
     apiClient.put(userPaths.update(userId), { json: user }),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }
 
 export const deleteUserApi = async (
   ids: string[],
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<boolean>> => {
-  const response = await handleRequest(
+  return handleRequest(
     apiClient.delete(userPaths.delete, { json: { ids } }),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }

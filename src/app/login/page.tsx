@@ -21,7 +21,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { FormContainer, TextFieldElement } from "react-hook-form-mui"
 import { LoginDto } from "./_domain/dto/login"
-import { loginApi } from "./_service"
+import { loginApi } from "services/auth"
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)

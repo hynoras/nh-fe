@@ -34,14 +34,10 @@ export const createPermissionGroupApi = async (
   permissionGroup: CreatePermissionGroupDto,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<PermissionGroup>> => {
-  const response = await handleRequest<PermissionGroup, PermissionGroupModel>(
+  return handleRequest<PermissionGroup, PermissionGroupModel>(
     apiClient.post(permissionGroupPaths.create, { json: permissionGroup }),
     permissionGroupMapper
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }
 
 export const getPermissionGroupListApi = async (
@@ -71,28 +67,20 @@ export const updatePermissionGroupApi = async (
   permissionGroup: UpdatePermissionGroupDto,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<PermissionGroup>> => {
-  const response = await handleRequest<PermissionGroup, PermissionGroupModel>(
+  return handleRequest<PermissionGroup, PermissionGroupModel>(
     apiClient.put(permissionGroupPaths.update(permissionGroupId), {
       json: permissionGroup
     }),
     permissionGroupMapper
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }
 
 export const deletePermissionGroupApi = async (
   permissionGroupId: string,
   apiClient: KyInstance = httpClient
 ): Promise<ApiResponse<boolean>> => {
-  const response = await handleRequest(
+  return handleRequest(
     apiClient.delete(permissionGroupPaths.delete(permissionGroupId)),
     (data: any) => data
   )
-  if (!response.success) {
-    throw new Error(response.message)
-  }
-  return response
 }

@@ -1,6 +1,6 @@
 import { AuthProvider } from "@refinedev/core"
 import { LoginDto } from "app/login/_domain/dto/login"
-import { loginApi, logoutApi } from "app/login/_service"
+import { loginApi, logoutApi } from "services/auth"
 import { getMeApi } from "services/user"
 
 export const authProvider: AuthProvider = {
@@ -9,40 +9,39 @@ export const authProvider: AuthProvider = {
       email: username,
       password: password
     }
-    const response = await loginApi(loginDto)
-    if (response.success) {
+    try {
+      await loginApi(loginDto)
       return {
         success: true,
         redirectTo: "/"
       }
-    }
-    return {
-      success: false,
-      error: new Error(response.message || "Login failed")
+    } catch (error: any) {
+      return {
+        success: false,
+        error: new Error(error.message || "Login failed")
+      }
     }
   },
   logout: async () => {
-    const response = await logoutApi()
-    if (response.success) {
+    try {
+      await logoutApi()
       return {
         success: true,
         redirectTo: "/login"
       }
-    }
-    return {
-      success: false,
-      error: new Error(response.message || "Logout failed")
+    } catch (error: any) {
+      return {
+        success: false,
+        error: new Error(error.message || "Logout failed")
+      }
     }
   },
   check: async () => {
     try {
-      const response = await getMeApi()
-
-      if (response.success) {
-        return {
-          authenticated: true,
-          logout: false
-        }
+      await getMeApi()
+      return {
+        authenticated: true,
+        logout: false
       }
       return {
         authenticated: false,
@@ -59,11 +58,12 @@ export const authProvider: AuthProvider = {
     }
   },
   getIdentity: async () => {
-    const response = await getMeApi()
-    if (response.success) {
+    try {
+      const response = await getMeApi()
       return response.data
+    } catch {
+      return null
     }
-    return null
   },
   onError: async (error) => {
     console.error(error)
