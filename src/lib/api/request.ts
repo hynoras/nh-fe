@@ -10,8 +10,14 @@ export async function handleRequest<T, R = T>(
 
     const rawData = result.data
 
+    const isSuccess = result.success ?? true
+
+    if (!isSuccess) {
+      throw new Error(result.message || "API request failed")
+    }
+
     return {
-      success: result.success ?? true,
+      success: true,
       message: result.message || "",
       data: mapper && rawData !== undefined ? mapper(rawData as R) : (rawData as T),
       error: result.error,
@@ -21,16 +27,18 @@ export async function handleRequest<T, R = T>(
     console.error("API Error:", error?.message || error)
 
     let message = error?.message || "Network error"
-    let detail = error
 
     if (error.response) {
       try {
         const errorBody = await error.response.json()
         message = errorBody.message || message
-        detail = errorBody.error || errorBody
       } catch {}
     }
 
-    return { success: false, message, error: detail }
+    throw {
+      name: "ApiError",
+      message: message,
+      response: error.response
+    }
   }
 }
