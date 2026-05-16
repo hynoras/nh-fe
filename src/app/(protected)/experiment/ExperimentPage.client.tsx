@@ -13,13 +13,12 @@ import {
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import { navigationRoutes } from "consts/navigation"
-import { format } from "date-fns"
+import { useNotification } from "hooks/notification"
 import {
   useCreateExperiment,
   useDeleteExperiment,
   useExperimentList
 } from "hooks/queries/experiment"
-import { useNotification } from "hooks/notification"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useMemo, useRef, useState } from "react"
@@ -145,14 +144,6 @@ const ExperimentPageClient = () => {
       sortable: false,
       resizable: false,
       flex: 0.6
-    },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      flex: 0.4,
-      valueGetter: (_, row) => {
-        return format(row.createdAt as Date, "dd/MM/yyyy HH:mm")
-      }
     },
     {
       field: "actions",
