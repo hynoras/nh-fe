@@ -6,7 +6,7 @@ import {
   getUserDetailApi,
   getUserListApi,
   updateUserApi
-} from "services/user"
+} from "services/user.service"
 import { UserListFilter } from "../../app/(protected)/user-and-access/user/_types/user"
 import { CreateUserDto, UpdateUserDto } from "../../domain/user/user.dto"
 

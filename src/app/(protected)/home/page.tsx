@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material"
+import { checkPermissionServer } from "lib/auth/permission.server"
 import { redirect } from "next/navigation"
-import { checkPermissionServer } from "services/permission.server"
 
 const HomePage = async () => {
   const result = await checkPermissionServer()

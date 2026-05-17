@@ -1,6 +1,6 @@
 import { User } from "domain/user/user.entity"
 import { serverHttp } from "lib/api/http.server"
-import { getMeApi } from "services/user"
+import { getMeApi } from "services/user.service"
 
 export type PermissionCheckResult =
   | { authorized: true; user: User }

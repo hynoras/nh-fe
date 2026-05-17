@@ -7,7 +7,7 @@ import {
   getExperimentListApi,
   updateExperimentApi,
   updateExperimentStatusApi
-} from "services/experiment"
+} from "services/experiment.service"
 import { ExperimentListFilter } from "../../app/(protected)/experiment/_types/experiment"
 import {
   CreateExperimentDto,
