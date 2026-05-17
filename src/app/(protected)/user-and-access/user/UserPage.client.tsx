@@ -3,7 +3,7 @@
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import { Alert, Box, IconButton, Snackbar, Stack, Typography } from "@mui/material"
+import { Box, IconButton, Stack, Typography } from "@mui/material"
 import {
   DataGrid,
   GridColDef,
@@ -15,14 +15,14 @@ import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
+import { useNotification } from "hooks/notification"
 import { useDeleteUser, useUserList } from "hooks/queries/user"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
-import { Permission } from "../role/_domain/entity/permission"
-import { User } from "./_domain/entity/user"
+import { Permission } from "../../../../domain/permission/permission.entity"
+import { User } from "../../../../domain/user/user.entity"
 import { UserListFilter } from "./_types/user"
-import { useNotification } from "hooks/notification"
 
 const UserPageClient = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)

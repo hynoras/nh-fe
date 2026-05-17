@@ -18,13 +18,13 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import CustomForm from "components/form"
 import { navigationRoutes } from "consts/navigation"
-import { useCreatePermissionGroup, usePermissions } from "hooks/queries/permission"
 import { useNotification } from "hooks/notification"
+import { useCreatePermissionGroup, usePermissions } from "hooks/queries/permission"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { CreatePermissionGroupDto } from "../_domain/dto/permission"
-import { Permission } from "../_domain/entity/permission"
+import { CreatePermissionGroupDto } from "../../../../../domain/permission/permission.dto"
+import { Permission } from "../../../../../domain/permission/permission.entity"
 
 const CreateRolePageClient = () => {
   const [searchFilter, setSearchFilter] = useState("")
@@ -102,7 +102,6 @@ const CreateRolePageClient = () => {
       }
     })
   }
-
 
   const columns: GridColDef<Permission>[] = [
     {

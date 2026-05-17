@@ -7,11 +7,8 @@ import {
   getUserListApi,
   updateUserApi
 } from "services/user"
-import {
-  CreateUserDto,
-  UpdateUserDto
-} from "../../app/(protected)/user-and-access/user/_domain/dto/user"
 import { UserListFilter } from "../../app/(protected)/user-and-access/user/_types/user"
+import { CreateUserDto, UpdateUserDto } from "../../domain/user/user.dto"
 
 /**
  * Query hook for fetching user list

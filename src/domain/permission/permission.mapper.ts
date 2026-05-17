@@ -1,5 +1,5 @@
-import { Permission, PermissionGroup } from "../entity/permission"
-import { PermissionGroupModel, PermissionModel } from "../model/permission"
+import { Permission, PermissionGroup } from "./permission.entity"
+import { PermissionGroupModel, PermissionModel } from "./permission.model"
 
 export const permissionListMapper = (model: PermissionModel[]): Permission[] => {
   return model.map(permissionMapper)

@@ -18,15 +18,15 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import CustomForm from "components/form"
 import { navigationRoutes } from "consts/navigation"
+import { useNotification } from "hooks/notification"
 import { usePermissionGroupList } from "hooks/queries/permission"
 import { useCreateUser } from "hooks/queries/user"
-import { useNotification } from "hooks/notification"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { Permission } from "../../role/_domain/entity/permission"
+import { Permission } from "../../../../../domain/permission/permission.entity"
+import { CreateUserDto } from "../../../../../domain/user/user.dto"
 import { PermissionGroupListFilter } from "../../role/_types/permission-group"
-import { CreateUserDto } from "../_domain/dto/user"
 
 const CreateUserPageClient = () => {
   const [anchorPermissionPopper, setAnchorPermissionPopper] =
@@ -77,8 +77,8 @@ const CreateUserPageClient = () => {
   const handleCreateUser = (data: CreateUserDto) => {
     createUserMutation.mutate(data, {
       onSuccess: () => {
-          notify("User created successfully", "success")
-          formContext.reset()
+        notify("User created successfully", "success")
+        formContext.reset()
         setTimeout(() => {
           router.push(navigationRoutes.userAndAccess.user.list)
         }, 500)
@@ -101,7 +101,6 @@ const CreateUserPageClient = () => {
       }
     })
   }
-
 
   const handleOpenPermissionPopover = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorPermissionPopper(event.currentTarget)

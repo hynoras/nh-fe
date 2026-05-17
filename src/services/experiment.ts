@@ -1,21 +1,18 @@
+import { experimentPaths } from "consts/api"
 import {
   CreateExperimentDto,
   UpdateExperimentDto,
   UpdateExperimentStatusDto
-} from "app/(protected)/experiment/_domain/dto/experiment"
-import { Experiment } from "app/(protected)/experiment/_domain/entity/experiment"
+} from "domain/experiment/experiment.dto"
+import { Experiment } from "domain/experiment/experiment.entity"
 import {
   experimentListMapper,
   experimentMapper
-} from "app/(protected)/experiment/_domain/mapper/experiment"
-import {
-  ExperimentListModel,
-  ExperimentModel
-} from "app/(protected)/experiment/_domain/model/experiment"
-import { experimentPaths } from "consts/api"
+} from "domain/experiment/experiment.mapper"
+import { ExperimentListModel, ExperimentModel } from "domain/experiment/experiment.model"
+import { KyInstance } from "ky"
 import { httpClient } from "lib/api/http.client"
 import { handleRequest } from "lib/api/request"
-import { KyInstance } from "ky"
 import { ApiResponse } from "types/response"
 
 export const getExperimentListApi = async (

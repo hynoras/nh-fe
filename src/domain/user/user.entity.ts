@@ -1,4 +1,4 @@
-import { PermissionGroup } from "app/(protected)/user-and-access/role/_domain/entity/permission"
+import { PermissionGroup } from "domain/permission/permission.entity"
 
 export type User = {
   id?: string

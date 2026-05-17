@@ -22,10 +22,13 @@ import {
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useMemo, useRef, useState } from "react"
+import { CreateExperimentDto } from "../../../domain/experiment/experiment.dto"
+import {
+  Experiment,
+  ExperimentStatus
+} from "../../../domain/experiment/experiment.entity"
 import CreateExperiment from "./_components/CreateExperiment"
 import ExperimentStatusDisplay from "./_components/ExperimentStatusDisplay"
-import { CreateExperimentDto } from "./_domain/dto/experiment"
-import { Experiment, ExperimentStatus } from "./_domain/entity/experiment"
 import { ExperimentListFilter } from "./_types/experiment"
 
 const ExperimentPageClient = () => {

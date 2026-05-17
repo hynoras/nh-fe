@@ -8,12 +8,12 @@ import {
   updateExperimentApi,
   updateExperimentStatusApi
 } from "services/experiment"
+import { ExperimentListFilter } from "../../app/(protected)/experiment/_types/experiment"
 import {
   CreateExperimentDto,
   UpdateExperimentDto,
   UpdateExperimentStatusDto
-} from "../../app/(protected)/experiment/_domain/dto/experiment"
-import { ExperimentListFilter } from "../../app/(protected)/experiment/_types/experiment"
+} from "../../domain/experiment/experiment.dto"
 
 /**
  * Query hook for fetching experiment list

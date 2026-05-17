@@ -28,8 +28,8 @@ import {
 import { useParams, useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { UpdatePermissionGroupDto } from "../_domain/dto/permission"
-import { Permission } from "../_domain/entity/permission"
+import { UpdatePermissionGroupDto } from "../../../../../domain/permission/permission.dto"
+import { Permission } from "../../../../../domain/permission/permission.entity"
 
 type OriginalValues = {
   name: string

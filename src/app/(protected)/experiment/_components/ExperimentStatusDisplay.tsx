@@ -4,7 +4,7 @@ import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn"
 import LightbulbIcon from "@mui/icons-material/Lightbulb"
 import NoteAltIcon from "@mui/icons-material/NoteAlt"
 import { Chip, Tooltip } from "@mui/material"
-import { ExperimentStatus } from "../_domain/entity/experiment"
+import { ExperimentStatus } from "../../../../domain/experiment/experiment.entity"
 
 type ExperimentStatusDisplayProps = {
   status: ExperimentStatus

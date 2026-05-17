@@ -15,15 +15,18 @@ import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import { navigationRoutes } from "consts/navigation"
 import { format } from "date-fns"
+import { useNotification } from "hooks/notification"
 import {
   useDeletePermissionGroup,
   usePermissionGroupList
 } from "hooks/queries/permission"
-import { useNotification } from "hooks/notification"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
-import { Permission, PermissionGroup } from "./_domain/entity/permission"
+import {
+  Permission,
+  PermissionGroup
+} from "../../../../domain/permission/permission.entity"
 import { PermissionGroupListFilter } from "./_types/permission-group"
 
 const RolePageClient = () => {

@@ -1,21 +1,15 @@
+import { permissionGroupPaths, permissionPaths } from "consts/api"
 import {
   CreatePermissionGroupDto,
   UpdatePermissionGroupDto
-} from "app/(protected)/user-and-access/role/_domain/dto/permission"
-import {
-  Permission,
-  PermissionGroup
-} from "app/(protected)/user-and-access/role/_domain/entity/permission"
+} from "domain/permission/permission.dto"
+import { Permission, PermissionGroup } from "domain/permission/permission.entity"
 import {
   permissionGroupListMapper,
   permissionGroupMapper,
   permissionListMapper
-} from "app/(protected)/user-and-access/role/_domain/mapper/permission"
-import {
-  PermissionGroupModel,
-  PermissionModel
-} from "app/(protected)/user-and-access/role/_domain/model/permission"
-import { permissionGroupPaths, permissionPaths } from "consts/api"
+} from "domain/permission/permission.mapper"
+import { PermissionGroupModel, PermissionModel } from "domain/permission/permission.model"
 import { KyInstance } from "ky"
 import { httpClient } from "lib/api/http.client"
 import { handleRequest } from "lib/api/request"

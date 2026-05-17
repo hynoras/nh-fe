@@ -18,13 +18,13 @@ import {
 } from "@mui/material"
 import Grid from "@mui/material/Grid2"
 import { formatDate } from "date-fns"
-import { useExperimentDetail, useUpdateExperiment } from "hooks/queries/experiment"
 import { useNotification } from "hooks/notification"
+import { useExperimentDetail, useUpdateExperiment } from "hooks/queries/experiment"
 import { useParams } from "next/navigation"
 import { useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { UpdateExperimentDto } from "../_domain/dto/experiment"
-import { Experiment } from "../_domain/entity/experiment"
+import { UpdateExperimentDto } from "../../../../domain/experiment/experiment.dto"
+import { Experiment } from "../../../../domain/experiment/experiment.entity"
 
 const ExperimentObjectiveCard = ({
   experiment,
@@ -46,7 +46,6 @@ const ExperimentObjectiveCard = ({
       objective: experiment?.objective
     }
   })
-
 
   const handleUpdateExperiment = (data: UpdateExperimentDto) => {
     updateExperimentMutation.mutate(data, {
@@ -164,7 +163,6 @@ const ExperimentTypeCard = ({
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const { notify } = useNotification()
-
 
   const handleUpdateExperiment = (data: UpdateExperimentDto) => {
     updateExperimentMutation.mutate(data, {

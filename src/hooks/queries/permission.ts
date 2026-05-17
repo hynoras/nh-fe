@@ -8,11 +8,11 @@ import {
   getPermissionListApi,
   updatePermissionGroupApi
 } from "services/permission"
+import { PermissionGroupListFilter } from "../../app/(protected)/user-and-access/role/_types/permission-group"
 import {
   CreatePermissionGroupDto,
   UpdatePermissionGroupDto
-} from "../../app/(protected)/user-and-access/role/_domain/dto/permission"
-import { PermissionGroupListFilter } from "../../app/(protected)/user-and-access/role/_types/permission-group"
+} from "../../domain/permission/permission.dto"
 
 /**
  * Query hook for fetching permission group list

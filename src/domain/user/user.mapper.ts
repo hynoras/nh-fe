@@ -1,6 +1,6 @@
-import { permissionGroupMapper } from "app/(protected)/user-and-access/role/_domain/mapper/permission"
-import { User } from "../entity/user"
-import { MeModel, UserDetailModel, UserListModel } from "../model/user"
+import { permissionGroupMapper } from "domain/permission/permission.mapper"
+import { User } from "./user.entity"
+import { MeModel, UserDetailModel, UserListModel } from "./user.model"
 
 export const userListMapper = (model: UserListModel[]): User[] => {
   return model.map((user) => ({

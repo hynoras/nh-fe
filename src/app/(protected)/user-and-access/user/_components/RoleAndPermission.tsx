@@ -12,14 +12,17 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
 import ChipOverflowList from "components/ChipOverflowList"
+import { useNotification } from "hooks/notification"
 import { usePermissionGroupList } from "hooks/queries/permission"
 import { useUpdateUser, useUserDetail } from "hooks/queries/user"
-import { useNotification } from "hooks/notification"
 import { useParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
-import { Permission, PermissionGroup } from "../../role/_domain/entity/permission"
+import {
+  Permission,
+  PermissionGroup
+} from "../../../../../domain/permission/permission.entity"
+import { UpdateUserDto } from "../../../../../domain/user/user.dto"
 import { PermissionGroupListFilter } from "../../role/_types/permission-group"
-import { UpdateUserDto } from "../_domain/dto/user"
 
 const RoleAndPermission = () => {
   const { userId } = useParams<{ userId: string }>()
@@ -101,7 +104,6 @@ const RoleAndPermission = () => {
     }, 500),
     [handleSearch]
   )
-
 
   const handleSave = () => {
     updatePermissionsMutation.mutate(

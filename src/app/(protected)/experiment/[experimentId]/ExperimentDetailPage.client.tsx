@@ -25,10 +25,16 @@ import {
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { a11yProps } from "utils/accessibility"
+import {
+  UpdateExperimentDto,
+  UpdateExperimentStatusDto
+} from "../../../../domain/experiment/experiment.dto"
+import {
+  Experiment,
+  ExperimentStatus
+} from "../../../../domain/experiment/experiment.entity"
 import ExperimentStatusDisplay from "../_components/ExperimentStatusDisplay"
 import { statusMetadata } from "../_const/experiment"
-import { UpdateExperimentDto, UpdateExperimentStatusDto } from "../_domain/dto/experiment"
-import { Experiment, ExperimentStatus } from "../_domain/entity/experiment"
 import { StatusTransitionMetadata } from "../_types/experiment"
 import GeneralPage from "./GeneralPage"
 

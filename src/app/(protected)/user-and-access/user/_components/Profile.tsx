@@ -7,11 +7,11 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import { IconButton, Stack, TextField, Typography } from "@mui/material"
 import Grid from "@mui/material/Grid2"
 import { format } from "date-fns"
-import { useUpdateUser, useUserDetail } from "hooks/queries/user"
 import { useNotification } from "hooks/notification"
+import { useUpdateUser, useUserDetail } from "hooks/queries/user"
 import { useParams } from "next/navigation"
 import { Fragment, ReactNode, useState } from "react"
-import { UpdateUserDto } from "../_domain/dto/user"
+import { UpdateUserDto } from "../../../../../domain/user/user.dto"
 
 interface IDescriptionItem {
   label: ReactNode
@@ -41,7 +41,6 @@ const UserProfile = () => {
         notify(error.message, "error")
       })
   }
-
 
   const handleSaveEmail = () => {
     // Validate email is not empty

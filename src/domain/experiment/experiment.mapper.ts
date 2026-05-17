@@ -1,5 +1,5 @@
-import { Experiment, ExperimentStatus } from "../entity/experiment"
-import { ExperimentListModel, ExperimentModel } from "../model/experiment"
+import { Experiment, ExperimentStatus } from "./experiment.entity"
+import { ExperimentListModel, ExperimentModel } from "./experiment.model"
 
 export const experimentListMapper = (model: ExperimentListModel[]): Experiment[] => {
   return model.map((experiment) => ({

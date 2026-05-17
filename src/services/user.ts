@@ -1,23 +1,12 @@
 import { userPaths } from "consts/api"
+import { meMapper, userDetailMapper, userListMapper } from "domain/user/user.mapper"
 import { KyInstance } from "ky"
 import { httpClient } from "lib/api/http.client"
 import { handleRequest } from "lib/api/request"
 import { ApiResponse } from "types/response"
-import {
-  CreateUserDto,
-  UpdateUserDto
-} from "../app/(protected)/user-and-access/user/_domain/dto/user"
-import { User } from "../app/(protected)/user-and-access/user/_domain/entity/user"
-import {
-  meMapper,
-  userDetailMapper,
-  userListMapper
-} from "../app/(protected)/user-and-access/user/_domain/mapper/user"
-import {
-  MeModel,
-  UserDetailModel,
-  UserListModel
-} from "../app/(protected)/user-and-access/user/_domain/model/user"
+import { CreateUserDto, UpdateUserDto } from "../domain/user/user.dto"
+import { User } from "../domain/user/user.entity"
+import { MeModel, UserDetailModel, UserListModel } from "../domain/user/user.model"
 
 export const getUserListApi = async (
   search: string = "",
