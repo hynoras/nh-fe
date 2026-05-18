@@ -1,42 +1,55 @@
-export const primaryColorLight = "#3f0087"
-export const primaryColorLightHover = "#2a0057"
-export const primaryColorLightActive = "#1a0033"
-export const primaryColorLightDisabled = "#9370db"
-
-export const primaryColorDark = "#7c3aed"
-
-export const secondaryColorLight = "#6366f1"
-export const secondaryColorDark = "#818cf8"
-export const secondaryColorLightHover = "#4f46e5"
-export const secondaryColorLightActive = "#3730a3"
-export const secondaryColorLightDisabled = "#a5b4fc"
-
-export const tertiaryColorLight = "#06b6d4"
-export const tertiaryColorDark = "#22d3ee"
-export const tertiaryColorLightHover = "#0891b2"
-export const tertiaryColorLightActive = "#06536f"
-export const tertiaryColorLightDisabled = "#67e8f9"
-
-export const errorColorLight = "#dc2626"
-export const errorColorDark = "#ef4444"
-export const errorColorLightHover = "#991b1b"
-export const errorColorLightActive = "#7f1d1d"
-export const errorColorLightDisabled = "#fecaca"
-
-export const warningColorLight = "#d97706"
-export const warningColorDark = "#fbbf24"
-export const warningColorLightHover = "#b45309"
-export const warningColorLightActive = "#92400e"
-export const warningColorLightDisabled = "#fde68a"
-
-export const successColorLight = "#059669"
-export const successColorDark = "#10b981"
-export const successColorLightHover = "#047857"
-export const successColorLightActive = "#065f46"
-export const successColorLightDisabled = "#a7f3d0"
-
-export const infoColorLight = "#2563eb"
-export const infoColorDark = "#3b82f6"
-export const infoColorLightHover = "#1d4ed8"
-export const infoColorLightActive = "#1e40af"
-export const infoColorLightDisabled = "#bfdbfe"
+export const themePalette = {
+  light: {
+    primary: {
+      main: "#3f0087",
+      hover: "#2a0057",
+      active: "#1a0033",
+      disabled: "#9370db"
+    },
+    secondary: {
+      main: "#6366f1",
+      hover: "#4f46e5",
+      active: "#3730a3",
+      disabled: "#a5b4fc"
+    },
+    tertiary: {
+      main: "#06b6d4",
+      hover: "#0891b2",
+      active: "#06536f",
+      disabled: "#67e8f9"
+    },
+    error: {
+      main: "#dc2626",
+      hover: "#991b1b",
+      active: "#7f1d1d",
+      disabled: "#fecaca"
+    },
+    warning: {
+      main: "#d97706",
+      hover: "#b45309",
+      active: "#92400e",
+      disabled: "#fde68a"
+    },
+    success: {
+      main: "#059669",
+      hover: "#047857",
+      active: "#065f46",
+      disabled: "#a7f3d0"
+    },
+    info: {
+      main: "#2563eb",
+      hover: "#1d4ed8",
+      active: "#1e40af",
+      disabled: "#bfdbfe"
+    }
+  },
+  dark: {
+    primary: { main: "#7c3aed" },
+    secondary: { main: "#818cf8" },
+    tertiary: { main: "#22d3ee" },
+    error: { main: "#ef4444" },
+    warning: { main: "#fbbf24" },
+    success: { main: "#10b981" },
+    info: { main: "#3b82f6" }
+  }
+} as const

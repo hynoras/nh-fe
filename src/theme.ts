@@ -1,21 +1,6 @@
 "use client"
 import { createTheme } from "@mui/material/styles"
-import {
-  errorColorDark,
-  errorColorLight,
-  infoColorDark,
-  infoColorLight,
-  primaryColorDark,
-  primaryColorLight,
-  secondaryColorDark,
-  secondaryColorLight,
-  successColorDark,
-  successColorLight,
-  tertiaryColorDark,
-  tertiaryColorLight,
-  warningColorDark,
-  warningColorLight
-} from "consts/color"
+import { themePalette } from "consts/color"
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -36,24 +21,24 @@ const theme = createTheme({
   colorSchemes: {
     light: {
       palette: {
-        primary: { main: primaryColorLight },
-        secondary: { main: secondaryColorLight },
-        tertiary: { main: tertiaryColorLight },
-        error: { main: errorColorLight },
-        warning: { main: warningColorLight },
-        success: { main: successColorLight },
-        info: { main: infoColorLight }
+        primary: { main: themePalette.light.primary.main },
+        secondary: { main: themePalette.light.secondary.main },
+        tertiary: { main: themePalette.light.tertiary.main },
+        error: { main: themePalette.light.error.main },
+        warning: { main: themePalette.light.warning.main },
+        success: { main: themePalette.light.success.main },
+        info: { main: themePalette.light.info.main }
       }
     },
     dark: {
       palette: {
-        primary: { main: primaryColorDark },
-        secondary: { main: secondaryColorDark },
-        tertiary: { main: tertiaryColorDark },
-        error: { main: errorColorDark },
-        warning: { main: warningColorDark },
-        success: { main: successColorDark },
-        info: { main: infoColorDark }
+        primary: { main: themePalette.dark.primary.main },
+        secondary: { main: themePalette.dark.secondary.main },
+        tertiary: { main: themePalette.dark.tertiary.main },
+        error: { main: themePalette.dark.error.main },
+        warning: { main: themePalette.dark.warning.main },
+        success: { main: themePalette.dark.success.main },
+        info: { main: themePalette.dark.info.main }
       }
     }
   },
@@ -63,7 +48,60 @@ const theme = createTheme({
   typography: {
     fontFamily: "var(--font-roboto)"
   },
-  components: {}
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: ({ theme, ownerState }) => {
+          const color = ownerState.color || "primary"
+          const variant = ownerState.variant || "text"
+          const mode = theme.palette.mode
+
+          if (mode === "light" && color in themePalette.light) {
+            const paletteColor = themePalette.light[color as keyof typeof themePalette.light]
+
+            if (variant === "contained") {
+              return {
+                "&:hover": {
+                  backgroundColor: paletteColor.hover
+                },
+                "&:active": {
+                  backgroundColor: paletteColor.active
+                },
+                "&.Mui-disabled": {
+                  backgroundColor: paletteColor.disabled,
+                  color: "#ffffff",
+                  opacity: 0.7
+                }
+              }
+            } else if (variant === "outlined") {
+              return {
+                "&:hover": {
+                  borderColor: paletteColor.hover,
+                  color: paletteColor.hover
+                },
+                "&.Mui-disabled": {
+                  borderColor: paletteColor.disabled,
+                  color: paletteColor.disabled
+                }
+              }
+            } else {
+              return {
+                color: paletteColor.main,
+                "&:hover": {
+                  color: paletteColor.hover,
+                  backgroundColor: "rgba(0, 0, 0, 0.04)"
+                },
+                "&.Mui-disabled": {
+                  color: paletteColor.disabled
+                }
+              }
+            }
+          }
+          return {}
+        }
+      }
+    }
+  }
 })
 
 export default theme
