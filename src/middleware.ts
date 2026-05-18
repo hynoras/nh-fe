@@ -4,6 +4,12 @@ const PUBLIC_ROUTES = ["/login"]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Bypass API routes completely from middleware redirection
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next()
+  }
+
   const session = request.cookies.get("auth_session")?.value
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
