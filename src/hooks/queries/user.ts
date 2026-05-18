@@ -1,17 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { queryKey } from "consts/query-key"
+import { queryKey } from "constants/query-key"
 import {
   createUserApi,
   deleteUserApi,
   getUserDetailApi,
   getUserListApi,
   updateUserApi
-} from "services/user"
-import {
-  CreateUserDto,
-  UpdateUserDto
-} from "../../app/(protected)/user-and-access/user/_domain/dto/user"
-import { UserListFilter } from "../../app/(protected)/user-and-access/user/_types/user"
+} from "services/user.service"
+import { CreateUserDto, UpdateUserDto } from "../../domain/user/user.dto"
+import { UserListFilter } from "../../features/user/types/user"
 
 /**
  * Query hook for fetching user list

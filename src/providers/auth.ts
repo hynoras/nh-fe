@@ -1,7 +1,7 @@
 import { AuthProvider } from "@refinedev/core"
-import { LoginDto } from "app/login/_domain/dto/login"
-import { loginApi, logoutApi } from "services/auth"
-import { getMeApi } from "services/user"
+import { LoginDto } from "domain/auth/auth.dto"
+import { loginApi, logoutApi } from "services/auth.service"
+import { getMeApi } from "services/user.service"
 
 export const authProvider: AuthProvider = {
   login: async ({ username, password }) => {

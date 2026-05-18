@@ -3,9 +3,9 @@ import { AccountCircle, Logout, Settings } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
 import { AppBar, IconButton, ListItemIcon, Menu, MenuItem, Toolbar } from "@mui/material"
 import { useMutation } from "@tanstack/react-query"
-import { logoutApi } from "services/auth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { logoutApi } from "services/auth.service"
 
 type HeaderProps = {
   sidebarOpen: boolean

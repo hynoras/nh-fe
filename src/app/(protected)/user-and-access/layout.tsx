@@ -2,7 +2,7 @@
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import { Box, IconButton, Stack, Tab, Tabs, Typography } from "@mui/material"
-import { navigationRoutes } from "consts/navigation"
+import { navigationRoutes } from "constants/navigation"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 

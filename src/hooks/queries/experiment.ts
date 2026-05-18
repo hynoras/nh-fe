@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { queryKey } from "consts/query-key"
+import { queryKey } from "constants/query-key"
 import {
   createExperimentApi,
   deleteExperimentApi,
@@ -7,13 +7,13 @@ import {
   getExperimentListApi,
   updateExperimentApi,
   updateExperimentStatusApi
-} from "services/experiment"
+} from "services/experiment.service"
 import {
   CreateExperimentDto,
   UpdateExperimentDto,
   UpdateExperimentStatusDto
-} from "../../app/(protected)/experiment/_domain/dto/experiment"
-import { ExperimentListFilter } from "../../app/(protected)/experiment/_types/experiment"
+} from "../../domain/experiment/experiment.dto"
+import { ExperimentListFilter } from "../../features/experiment/types/experiment"
 
 /**
  * Query hook for fetching experiment list

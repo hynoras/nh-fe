@@ -20,8 +20,8 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { FormContainer, TextFieldElement } from "react-hook-form-mui"
-import { LoginDto } from "./_domain/dto/login"
-import { loginApi } from "services/auth"
+import { loginApi } from "services/auth.service"
+import { LoginDto } from "../../domain/auth/auth.dto"
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
