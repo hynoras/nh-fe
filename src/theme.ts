@@ -1,6 +1,6 @@
 "use client"
 import { createTheme } from "@mui/material/styles"
-import { themePalette } from "consts/color"
+import { themePalette } from "constants/color"
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -57,7 +57,8 @@ const theme = createTheme({
           const mode = theme.palette.mode
 
           if (mode === "light" && color in themePalette.light) {
-            const paletteColor = themePalette.light[color as keyof typeof themePalette.light]
+            const paletteColor =
+              themePalette.light[color as keyof typeof themePalette.light]
 
             if (variant === "contained") {
               return {

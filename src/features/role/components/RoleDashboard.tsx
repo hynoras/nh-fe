@@ -13,7 +13,7 @@ import {
 import ChipOverflowList from "components/ChipOverflowList"
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
-import { navigationRoutes } from "consts/navigation"
+import { navigationRoutes } from "constants/navigation"
 import { format } from "date-fns"
 import { useNotification } from "hooks/notification"
 import {
@@ -23,10 +23,7 @@ import {
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
-import {
-  Permission,
-  PermissionGroup
-} from "../../../domain/permission/permission.entity"
+import { Permission, PermissionGroup } from "../../../domain/permission/permission.entity"
 import { PermissionGroupListFilter } from "../types/permission-group"
 
 const RoleDashboard = () => {

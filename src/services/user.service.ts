@@ -1,4 +1,4 @@
-import { userPaths } from "consts/api"
+import { userPaths } from "constants/api"
 import { meMapper, userDetailMapper, userListMapper } from "domain/user/user.mapper"
 import { KyInstance } from "ky"
 import { httpClient } from "lib/api/http.client"

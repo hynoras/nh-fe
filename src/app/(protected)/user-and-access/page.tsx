@@ -1,5 +1,5 @@
 "use client"
-import { navigationKeys, navigationRoutes } from "consts/navigation"
+import { navigationKeys, navigationRoutes } from "constants/navigation"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
 

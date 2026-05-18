@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { queryKey } from "consts/query-key"
+import { queryKey } from "constants/query-key"
 import {
   createPermissionGroupApi,
   deletePermissionGroupApi,
@@ -8,11 +8,11 @@ import {
   getPermissionListApi,
   updatePermissionGroupApi
 } from "services/permission.service"
-import { PermissionGroupListFilter } from "../../features/role/types/permission-group"
 import {
   CreatePermissionGroupDto,
   UpdatePermissionGroupDto
 } from "../../domain/permission/permission.dto"
+import { PermissionGroupListFilter } from "../../features/role/types/permission-group"
 
 /**
  * Query hook for fetching permission group list

@@ -17,7 +17,7 @@ import {
 } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import CustomForm from "components/form"
-import { navigationRoutes } from "consts/navigation"
+import { navigationRoutes } from "constants/navigation"
 import { useNotification } from "hooks/notification"
 import { usePermissionGroupList } from "hooks/queries/permission"
 import { useCreateUser } from "hooks/queries/user"

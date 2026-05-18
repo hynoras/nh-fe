@@ -1,4 +1,4 @@
-import { experimentPaths } from "consts/api"
+import { experimentPaths } from "constants/api"
 import {
   CreateExperimentDto,
   UpdateExperimentDto,

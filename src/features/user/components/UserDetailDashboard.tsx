@@ -18,9 +18,9 @@ import {
   Typography
 } from "@mui/material"
 import Popup from "components/popup"
-import { navigationRoutes } from "consts/navigation"
-import { useDeleteUser, useUserDetail } from "hooks/queries/user"
+import { navigationRoutes } from "constants/navigation"
 import { useNotification } from "hooks/notification"
+import { useDeleteUser, useUserDetail } from "hooks/queries/user"
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { a11yProps } from "utils/accessibility"
@@ -104,7 +104,6 @@ const UserDetailDashboard = () => {
     }
   }
 
-
   // Tab handler
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -187,7 +186,6 @@ const UserDetailDashboard = () => {
           <RoleAndPermission />
         </TabPanel>
       </Stack>
-
     </>
   )
 }

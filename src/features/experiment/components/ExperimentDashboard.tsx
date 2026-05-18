@@ -12,7 +12,7 @@ import {
 } from "@mui/x-data-grid"
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
-import { navigationRoutes } from "consts/navigation"
+import { navigationRoutes } from "constants/navigation"
 import { useNotification } from "hooks/notification"
 import {
   useCreateExperiment,
@@ -27,9 +27,9 @@ import {
   Experiment,
   ExperimentStatus
 } from "../../../domain/experiment/experiment.entity"
+import { ExperimentListFilter } from "../types/experiment"
 import CreateExperiment from "./CreateExperiment"
 import ExperimentStatusDisplay from "./ExperimentStatusDisplay"
-import { ExperimentListFilter } from "../types/experiment"
 
 const ExperimentDashboard = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)

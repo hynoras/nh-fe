@@ -10,7 +10,7 @@ import {
   Stack,
   Typography
 } from "@mui/material"
-import { navigationRoutes } from "consts/navigation"
+import { navigationRoutes } from "constants/navigation"
 import { useRouter } from "next/navigation"
 
 type MenuItem = {

@@ -1,4 +1,4 @@
-import { Severity } from "consts/component"
+import { Severity } from "constants/component"
 import { create } from "zustand"
 
 interface NotificationState {

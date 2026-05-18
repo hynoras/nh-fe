@@ -13,7 +13,7 @@ import {
 import ChipOverflowList from "components/ChipOverflowList"
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
-import { navigationRoutes } from "consts/navigation"
+import { navigationRoutes } from "constants/navigation"
 import { format } from "date-fns"
 import { useNotification } from "hooks/notification"
 import { useDeleteUser, useUserList } from "hooks/queries/user"

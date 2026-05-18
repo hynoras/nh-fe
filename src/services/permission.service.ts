@@ -1,4 +1,4 @@
-import { permissionGroupPaths, permissionPaths } from "consts/api"
+import { permissionGroupPaths, permissionPaths } from "constants/api"
 import {
   CreatePermissionGroupDto,
   UpdatePermissionGroupDto

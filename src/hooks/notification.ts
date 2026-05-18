@@ -1,4 +1,4 @@
-import { Severity } from "consts/component"
+import { Severity } from "constants/component"
 import { useNotificationStore } from "stores/notification"
 
 export const useNotification = () => {
