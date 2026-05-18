@@ -23,8 +23,8 @@ import { useExperimentDetail, useUpdateExperiment } from "hooks/queries/experime
 import { useParams } from "next/navigation"
 import { useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { UpdateExperimentDto } from "../../../../domain/experiment/experiment.dto"
-import { Experiment } from "../../../../domain/experiment/experiment.entity"
+import { UpdateExperimentDto } from "../../../domain/experiment/experiment.dto"
+import { Experiment } from "../../../domain/experiment/experiment.entity"
 
 const ExperimentObjectiveCard = ({
   experiment,

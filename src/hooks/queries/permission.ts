@@ -8,7 +8,7 @@ import {
   getPermissionListApi,
   updatePermissionGroupApi
 } from "services/permission.service"
-import { PermissionGroupListFilter } from "../../app/(protected)/user-and-access/role/_types/permission-group"
+import { PermissionGroupListFilter } from "../../features/role/types/permission-group"
 import {
   CreatePermissionGroupDto,
   UpdatePermissionGroupDto

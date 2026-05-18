@@ -23,10 +23,10 @@ import { useCreatePermissionGroup, usePermissions } from "hooks/queries/permissi
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { CreatePermissionGroupDto } from "../../../../../domain/permission/permission.dto"
-import { Permission } from "../../../../../domain/permission/permission.entity"
+import { CreatePermissionGroupDto } from "../../../domain/permission/permission.dto"
+import { Permission } from "../../../domain/permission/permission.entity"
 
-const CreateRolePageClient = () => {
+const CreateRoleDashboard = () => {
   const [searchFilter, setSearchFilter] = useState("")
 
   const router = useRouter()
@@ -263,4 +263,4 @@ const CreateRolePageClient = () => {
   )
 }
 
-export default CreateRolePageClient
+export default CreateRoleDashboard

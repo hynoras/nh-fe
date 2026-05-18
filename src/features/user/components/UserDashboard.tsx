@@ -20,11 +20,11 @@ import { useDeleteUser, useUserList } from "hooks/queries/user"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
-import { Permission } from "../../../../domain/permission/permission.entity"
-import { User } from "../../../../domain/user/user.entity"
-import { UserListFilter } from "./_types/user"
+import { Permission } from "../../../domain/permission/permission.entity"
+import { User } from "../../../domain/user/user.entity"
+import { UserListFilter } from "../types/user"
 
-const UserPageClient = () => {
+const UserDashboard = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [userListFilter, setUserListFilter] = useState<UserListFilter>({
@@ -206,4 +206,4 @@ const UserPageClient = () => {
   )
 }
 
-export default UserPageClient
+export default UserDashboard

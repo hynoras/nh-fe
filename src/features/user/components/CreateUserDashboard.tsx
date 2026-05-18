@@ -24,11 +24,11 @@ import { useCreateUser } from "hooks/queries/user"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { Permission } from "../../../../../domain/permission/permission.entity"
-import { CreateUserDto } from "../../../../../domain/user/user.dto"
-import { PermissionGroupListFilter } from "../../role/_types/permission-group"
+import { Permission } from "../../../domain/permission/permission.entity"
+import { CreateUserDto } from "../../../domain/user/user.dto"
+import { PermissionGroupListFilter } from "../../role/types/permission-group"
 
-const CreateUserPageClient = () => {
+const CreateUserDashboard = () => {
   const [anchorPermissionPopper, setAnchorPermissionPopper] =
     useState<null | HTMLElement>(null)
 
@@ -293,4 +293,4 @@ const CreateUserPageClient = () => {
   )
 }
 
-export default CreateUserPageClient
+export default CreateUserDashboard

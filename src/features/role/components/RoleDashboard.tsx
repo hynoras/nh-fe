@@ -26,10 +26,10 @@ import { useRef, useState } from "react"
 import {
   Permission,
   PermissionGroup
-} from "../../../../domain/permission/permission.entity"
-import { PermissionGroupListFilter } from "./_types/permission-group"
+} from "../../../domain/permission/permission.entity"
+import { PermissionGroupListFilter } from "../types/permission-group"
 
-const RolePageClient = () => {
+const RoleDashboard = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedPermissionGroup, setSelectedPermissionGroup] =
     useState<PermissionGroup | null>(null)
@@ -220,4 +220,4 @@ const RolePageClient = () => {
   )
 }
 
-export default RolePageClient
+export default RoleDashboard

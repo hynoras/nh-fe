@@ -1,5 +1,5 @@
-import { ExperimentStatus } from "../../../../domain/experiment/experiment.entity"
-import { StatusTransitionMetadata } from "../_types/experiment"
+import { ExperimentStatus } from "../../../domain/experiment/experiment.entity"
+import { StatusTransitionMetadata } from "../types/experiment"
 
 export const statusMetadata: Record<ExperimentStatus, StatusTransitionMetadata> = {
   [ExperimentStatus.DRAFT]: {

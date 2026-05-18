@@ -20,7 +20,7 @@ import {
   TextFieldElement,
   useForm
 } from "react-hook-form-mui"
-import { CreateExperimentDto } from "../../../../domain/experiment/experiment.dto"
+import { CreateExperimentDto } from "../../../domain/experiment/experiment.dto"
 
 type CreateExperimentProps = {
   open: boolean

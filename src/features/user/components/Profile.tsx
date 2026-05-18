@@ -11,7 +11,7 @@ import { useNotification } from "hooks/notification"
 import { useUpdateUser, useUserDetail } from "hooks/queries/user"
 import { useParams } from "next/navigation"
 import { Fragment, ReactNode, useState } from "react"
-import { UpdateUserDto } from "../../../../../domain/user/user.dto"
+import { UpdateUserDto } from "../../../domain/user/user.dto"
 
 interface IDescriptionItem {
   label: ReactNode

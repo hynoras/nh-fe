@@ -27,11 +27,11 @@ import {
   Experiment,
   ExperimentStatus
 } from "../../../domain/experiment/experiment.entity"
-import CreateExperiment from "./_components/CreateExperiment"
-import ExperimentStatusDisplay from "./_components/ExperimentStatusDisplay"
-import { ExperimentListFilter } from "./_types/experiment"
+import CreateExperiment from "./CreateExperiment"
+import ExperimentStatusDisplay from "./ExperimentStatusDisplay"
+import { ExperimentListFilter } from "../types/experiment"
 
-const ExperimentPageClient = () => {
+const ExperimentDashboard = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [openCreateDialog, setOpenCreateDialog] = useState(false)
   const [selectedExperiment, setSelectedExperiment] = useState<Experiment | null>(null)
@@ -231,4 +231,4 @@ const ExperimentPageClient = () => {
   )
 }
 
-export default ExperimentPageClient
+export default ExperimentDashboard

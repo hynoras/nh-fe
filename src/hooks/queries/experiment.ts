@@ -8,7 +8,7 @@ import {
   updateExperimentApi,
   updateExperimentStatusApi
 } from "services/experiment.service"
-import { ExperimentListFilter } from "../../app/(protected)/experiment/_types/experiment"
+import { ExperimentListFilter } from "../../features/experiment/types/experiment"
 import {
   CreateExperimentDto,
   UpdateExperimentDto,

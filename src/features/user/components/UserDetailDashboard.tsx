@@ -24,8 +24,8 @@ import { useNotification } from "hooks/notification"
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 import { a11yProps } from "utils/accessibility"
-import Profile from "../_components/Profile"
-import RoleAndPermission from "../_components/RoleAndPermission"
+import Profile from "./Profile"
+import RoleAndPermission from "./RoleAndPermission"
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -47,7 +47,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
   )
 }
 
-const UserDetailPageClient = () => {
+const UserDetailDashboard = () => {
   const { userId } = useParams<{ userId: string }>()
   const router = useRouter()
 
@@ -192,4 +192,4 @@ const UserDetailPageClient = () => {
   )
 }
 
-export default UserDetailPageClient
+export default UserDetailDashboard

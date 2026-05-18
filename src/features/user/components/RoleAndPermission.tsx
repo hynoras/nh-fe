@@ -20,9 +20,9 @@ import { useCallback, useEffect, useState } from "react"
 import {
   Permission,
   PermissionGroup
-} from "../../../../../domain/permission/permission.entity"
-import { UpdateUserDto } from "../../../../../domain/user/user.dto"
-import { PermissionGroupListFilter } from "../../role/_types/permission-group"
+} from "../../../domain/permission/permission.entity"
+import { UpdateUserDto } from "../../../domain/user/user.dto"
+import { PermissionGroupListFilter } from "../../role/types/permission-group"
 
 const RoleAndPermission = () => {
   const { userId } = useParams<{ userId: string }>()

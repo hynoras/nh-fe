@@ -28,8 +28,8 @@ import {
 import { useParams, useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui"
-import { UpdatePermissionGroupDto } from "../../../../../domain/permission/permission.dto"
-import { Permission } from "../../../../../domain/permission/permission.entity"
+import { UpdatePermissionGroupDto } from "../../../domain/permission/permission.dto"
+import { Permission } from "../../../domain/permission/permission.entity"
 
 type OriginalValues = {
   name: string
@@ -37,7 +37,7 @@ type OriginalValues = {
   permissions: string[]
 }
 
-const EditRolePageClient = () => {
+const EditRoleDashboard = () => {
   const { permissionGroupId } = useParams<{ permissionGroupId: string }>()
   const [searchFilter, setSearchFilter] = useState("")
   const [originalValues, setOriginalValues] = useState<OriginalValues>({
@@ -375,4 +375,4 @@ const EditRolePageClient = () => {
   )
 }
 
-export default EditRolePageClient
+export default EditRoleDashboard

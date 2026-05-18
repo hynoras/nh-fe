@@ -28,14 +28,14 @@ import { a11yProps } from "utils/accessibility"
 import {
   UpdateExperimentDto,
   UpdateExperimentStatusDto
-} from "../../../../domain/experiment/experiment.dto"
+} from "../../../domain/experiment/experiment.dto"
 import {
   Experiment,
   ExperimentStatus
-} from "../../../../domain/experiment/experiment.entity"
-import ExperimentStatusDisplay from "../_components/ExperimentStatusDisplay"
-import { statusMetadata } from "../_const/experiment"
-import { StatusTransitionMetadata } from "../_types/experiment"
+} from "../../../domain/experiment/experiment.entity"
+import ExperimentStatusDisplay from "./ExperimentStatusDisplay"
+import { statusMetadata } from "../constants/experiment"
+import { StatusTransitionMetadata } from "../types/experiment"
 import GeneralPage from "./GeneralPage"
 
 const renderStatusMetadata = (status: ExperimentStatus): StatusTransitionMetadata[] => {
@@ -119,7 +119,7 @@ const getTabIndexFromName = (name: string | null): number => {
   return index === -1 ? 0 : index
 }
 
-const ExperimentDetailPageClient = () => {
+const ExperimentDetailDashboard = () => {
   const params = useParams<{ experimentId: string }>()
   const experimentId = params.experimentId
   const { data: experiment, isLoading } = useExperimentDetail(experimentId)
@@ -328,4 +328,4 @@ const ExperimentDetailPageClient = () => {
   )
 }
 
-export default ExperimentDetailPageClient
+export default ExperimentDetailDashboard
