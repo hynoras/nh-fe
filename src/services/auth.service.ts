@@ -1,5 +1,5 @@
-import { LoginDto } from "app/login/_domain/dto/login"
 import { authPaths } from "constants/api"
+import { LoginDto } from "domain/auth/auth.dto"
 import { User } from "domain/user/user.entity"
 import { userDetailMapper } from "domain/user/user.mapper"
 import { UserDetailModel } from "domain/user/user.model"
