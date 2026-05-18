@@ -48,37 +48,33 @@ Live: https://noheir.vercel.app
 
 # Architecture
 
-The frontend follows a hybrid **Layered + Feature-Based Architecture** to balance scalability, encapsulation, and maintainability.
+The frontend follows a hybrid **Feature-Sliced Design** (Clean Architecture) to guarantee maximum decoupling, testability, and a highly responsive page rendering workflow.
 
 ```text
 src/
-├── app/                  # Next.js App Router routes
-│   ├── (public)/         # Public routes
-│   └── (protected)/      # Protected application routes
-│       ├── experiment/   # Feature modules
-│       ├── role/
-│       └── user/
+├── app/                  # Next.js App Router (Strictly Router-Only)
+│   ├── (public)/         # Public entry routes
+│   └── (protected)/      # Protected routes (Server-Side Authorization & Wiring Only)
 │
-├── components/           # Shared reusable UI components
-├── hooks/                # Custom hooks
-├── lib/                  # Shared libraries/configurations
-├── providers/            # App-level providers
-├── service/              # Global service abstractions
-├── store/                # Zustand global stores
-├── types/                # Shared TypeScript types/interfaces
-└── utils/                # Utility functions
+├── domain/               # Enterprise core models, types, and DTOs (e.g., user, permission)
+├── features/             # Feature-Sliced modules containing components, hooks, and types
+│   ├── experiment/       # Isolated Experiment feature workspace
+│   ├── role/             # Isolated Role/Permission-Group feature workspace
+│   └── user/             # Isolated User management feature workspace
+│
+├── components/           # Shared reusable atomic UI components (e.g., overflows, table headers)
+├── hooks/                # Core hooks (queries, mutations, responsive scaling)
+├── lib/                  # Isomorphic utilities (API clients, authorization hooks)
+├── providers/            # Root application context providers
+├── services/             # Endpoint connection layers
+└── utils/                # Small pure utility helper functions
 ```
 
-Feature folders may contain localized modules such as:
+### Architectural Principles
 
-```text
-_components/
-_domain/
-_service/
-_hooks/
-```
-
-This structure allows features to evolve independently while maintaining shared platform conventions.
+1. **Strictly Router-Only `/app`**: Files in the `src/app` directory are kept extremely lean. They function solely as route decoders and layout wrappers. They execute **Isomorphic Server-Side Authorization Guards** (`checkPermissionServer`), returning `<State.Forbidden>` instantly if unauthorized, or directly mounting a unified feature container from `src/features/`. They _never_ maintain component-specific client states or local UI logic.
+2. **Encapsulated Features (`src/features/*`)**: Feature workspaces are independent and self-contained, encapsulating their own components, states, constants, and localized type schemas. This guarantees they can be refactored, extended, or tested in isolation.
+3. **Enterprise Domain Core (`src/domain/*`)**: Contains global interfaces, entities, validation rules, and DTO mappers that are utilized across the entire project (e.g. `domain/permission/permission.entity.ts`).
 
 ---
 
