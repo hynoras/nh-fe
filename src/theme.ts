@@ -21,6 +21,10 @@ const theme = createTheme({
   colorSchemes: {
     light: {
       palette: {
+        background: {
+          default: themePalette.light.default,
+          paper: themePalette.light.default
+        },
         primary: { main: themePalette.light.primary.main },
         secondary: { main: themePalette.light.secondary.main },
         tertiary: { main: themePalette.light.tertiary.main },
@@ -32,6 +36,10 @@ const theme = createTheme({
     },
     dark: {
       palette: {
+        background: {
+          default: themePalette.dark.default,
+          paper: themePalette.dark.default
+        },
         primary: { main: themePalette.dark.primary.main },
         secondary: { main: themePalette.dark.secondary.main },
         tertiary: { main: themePalette.dark.tertiary.main },
@@ -49,6 +57,41 @@ const theme = createTheme({
     fontFamily: "var(--font-roboto)"
   },
   components: {
+    MuiTypography: {
+      styleOverrides: {
+        root: ({ theme, ownerState }) => {
+          const variant = ownerState.variant || "body1"
+          const lightTypography = themePalette.light.typography
+          const darkTypography = themePalette.dark.typography
+
+          if (variant in darkTypography) {
+            const key = variant as keyof typeof darkTypography
+            return {
+              color: lightTypography[key].color,
+              ...theme.applyStyles("dark", {
+                color: darkTypography[key].color
+              })
+            }
+          }
+          return {}
+        }
+      }
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderRadius: "20px",
+          ...theme.applyStyles("dark", {
+            border: "1px solid rgba(255, 255, 255, 0.06)",
+            boxShadow: "0 8px 30px rgba(0, 0, 0, 0.35)"
+          }),
+          ...theme.applyStyles("light", {
+            border: "1px solid rgba(0, 0, 0, 0.06)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.06), 0 0 24px rgba(63, 0, 135, 0.04)"
+          })
+        })
+      }
+    },
     MuiButton: {
       styleOverrides: {
         root: ({ theme, ownerState }) => {
@@ -56,9 +99,20 @@ const theme = createTheme({
           const variant = ownerState.variant || "text"
           const mode = theme.palette.mode
 
-          if (mode === "light" && color in themePalette.light) {
-            const paletteColor =
-              themePalette.light[color as keyof typeof themePalette.light]
+          const validColors = [
+            "primary",
+            "secondary",
+            "tertiary",
+            "error",
+            "warning",
+            "success",
+            "info"
+          ] as const
+          const isValidColor = (col: string): col is (typeof validColors)[number] =>
+            validColors.includes(col as any)
+
+          if (mode === "light" && isValidColor(color)) {
+            const paletteColor = themePalette.light[color]
 
             if (variant === "contained") {
               return {
