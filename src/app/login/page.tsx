@@ -57,40 +57,70 @@ const Login = () => {
   }
 
   return (
-    <Box className="flex items-center justify-center min-h-screen">
+    <Box
+      className="flex items-center justify-center min-h-screen"
+      sx={(theme) => ({
+        background: `radial-gradient(
+          circle at top,
+          rgba(63, 0, 135, 0.12) 0%,
+          transparent 38%
+        ),
+        radial-gradient(
+          ellipse at center,
+          #F7F7F8 0%,
+          rgba(63, 0, 135, 0.12) 40%
+        )`,
+        ...theme.applyStyles("dark", {
+          background: `radial-gradient(
+            circle at top,
+            rgba(109, 94, 246, 0.12) 0%,
+            transparent 38%
+          ),
+          radial-gradient(
+            ellipse at center,
+            #000 0%,
+            rgba(109, 94, 246, 0.05) 80%
+          )`
+        })
+      })}
+    >
       <Card
-        variant="outlined"
-        className="w-full max-w-md shadow-lg"
+        className="w-full max-w-md"
         sx={{
-          borderRadius: "10px",
-          padding: "4px"
+          padding: "48px 36px"
         }}
       >
         <CardHeader
           className="text-center"
+          sx={{ p: 0, pb: "24px" }}
           title={
-            <Typography className="font-bold" variant="h4" component={"h1"}>
-              Login to Noheir
-            </Typography>
+            <>
+              <Typography className="font-semibold" variant="h4">
+                Noheir
+              </Typography>
+              <Typography className="font-medium mb-4" variant="body1">
+                Scientific Workflow Platform
+              </Typography>
+            </>
           }
-          subheader={
-            <Typography variant="body2">
-              Please enter your email and password to login
-            </Typography>
-          }
+          subheader={<Typography variant="subtitle2">Sign in to continue</Typography>}
         />
-        <Divider variant="middle" />
-        <CardContent className="flex flex-col justify-center gap-10">
+        <Divider />
+        <CardContent
+          className="flex flex-col justify-center pt-4"
+          sx={{ p: 0, "&:last-child": { pb: 0 } }}
+        >
           <FormContainer
             formContext={formContext}
             handleSubmit={formContext.handleSubmit(handleLogin)}
           >
-            <Box className="space-y-4 h-full flex flex-col justify-center gap-4">
-              <div>
-                <FormLabel className="font-semibold" required htmlFor="email">
+            <Box className="flex flex-col justify-center gap-[28px]">
+              <div className="flex flex-col gap-[10px]">
+                <FormLabel className="font-semibold" htmlFor="email">
                   Email
                 </FormLabel>
                 <TextFieldElement
+                  className="border-[#2B2B2B]"
                   id="email"
                   type="email"
                   name="email"
@@ -111,31 +141,18 @@ const Login = () => {
                       )
                     }
                   }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      marginTop: "8px",
-                      borderRadius: "10px",
-                      "&.Mui-focused fieldset": {
-                        boxShadow: "0 0 0 3px rgba(63, 0, 135, 0.1)"
-                      }
-                    },
-                    "& .MuiOutlinedInput-input::placeholder": {
-                      color: "#64748b",
-                      opacity: 1
-                    }
-                  }}
                 />
               </div>
-              <div>
-                <FormLabel className="font-semibold" required htmlFor="password">
+              <div className="flex flex-col gap-[10px]">
+                <FormLabel className="font-semibold" htmlFor="password">
                   Password
                 </FormLabel>
                 <TextFieldElement
+                  className="border-[#2B2B2B]"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   id="password"
                   autoComplete="current-password"
-                  autoFocus
                   required
                   fullWidth
                   variant="outlined"
@@ -165,19 +182,6 @@ const Login = () => {
                       )
                     }
                   }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      marginTop: "8px",
-                      borderRadius: "10px",
-                      "&.Mui-focused fieldset": {
-                        boxShadow: "0 0 0 3px rgba(63, 0, 135, 0.1)"
-                      }
-                    },
-                    "& .MuiOutlinedInput-input::placeholder": {
-                      color: "#64748b",
-                      opacity: 1
-                    }
-                  }}
                 />
               </div>
             </Box>
@@ -186,18 +190,17 @@ const Login = () => {
                 Username or password is incorrect
               </Typography>
             )}
-            <div className="mt-4">
-              <Divider />
+            <div className="mt-12">
               <Button
                 type="submit"
                 variant="contained"
                 fullWidth
-                size="small"
-                className="mt-4 font-bold"
+                size="large"
+                className="font-bold text-base normal-case"
                 loading={loginMutation.isPending}
                 disabled={loginMutation.isPending}
               >
-                Login
+                Sign In
               </Button>
             </div>
           </FormContainer>
