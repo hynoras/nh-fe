@@ -20,19 +20,27 @@
   }
 } */
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-select:-webkit-autofill {
-  box-shadow: 0 0 0 1000px #0d1117 inset !important; /* your dark bg color */
-  -webkit-text-fill-color: #fff !important; /* text color */
-  caret-color: #fff !important;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
 body {
   overflow-y: hidden;
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Disable native WebKit styling on inputs */
+input,
+textarea,
+select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Fix WebKit autofill background color overriding theme (works for both light/dark modes) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+  -webkit-text-fill-color: inherit !important;
+  caret-color: inherit !important;
 }
