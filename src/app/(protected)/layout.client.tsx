@@ -1,14 +1,18 @@
 "use client"
 
-import { useState } from "react"
 import { Box, Toolbar } from "@mui/material"
 import { Authenticated } from "@refinedev/core"
 import Header from "components/Header"
-import Sidebar from "components/Sidebar"
+import Sidebar from "components/layout/Sidebar"
+import { useState } from "react"
 
 const DRAWER_WIDTH = 220
 
-export default function ProtectedLayoutClient({ children }: { children: React.ReactNode }) {
+export default function ProtectedLayoutClient({
+  children
+}: {
+  children: React.ReactNode
+}) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true)
 
   return (
