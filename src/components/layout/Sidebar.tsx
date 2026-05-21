@@ -13,11 +13,14 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
   Toolbar,
   Tooltip
 } from "@mui/material"
 import { navigationRoutes } from "constants/navigation"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 type MenuItem = {
   type: "item" | "divider"
@@ -26,26 +29,33 @@ type MenuItem = {
   navigate: string
 }
 
-const menuItems: MenuItem[] = [
-  {
-    type: "item",
-    text: "Experiment",
-    icon: <ScienceIcon />,
-    navigate: navigationRoutes.experiment.list
-  },
-  {
-    type: "divider",
-    text: "",
-    icon: null,
-    navigate: ""
-  },
-  {
-    type: "item",
-    text: "Users & Access",
-    icon: <ManageAccountsIcon />,
-    navigate: navigationRoutes.userAndAccess.user.list
-  }
-]
+type Component = "sidebar" | "button"
+
+const getListItems = (componentCategory: Component): MenuItem[] => {
+  return [
+    {
+      type: "item",
+      text: "Experiment",
+      icon: <ScienceIcon />,
+      navigate: componentCategory === "sidebar" ? navigationRoutes.experiment.list : ""
+    },
+    // {
+    //   type: "divider",
+    //   text: "",
+    //   icon: null,
+    //   navigate: ""
+    // },
+    {
+      type: "item",
+      text: componentCategory === "sidebar" ? "Users & Access" : "User",
+      icon: <ManageAccountsIcon />,
+      navigate:
+        componentCategory === "sidebar"
+          ? navigationRoutes.userAndAccess.user.list
+          : navigationRoutes.userAndAccess.user.create
+    }
+  ]
+}
 
 type SidebarProps = {
   open: boolean
@@ -56,6 +66,16 @@ type SidebarProps = {
 const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
   const router = useRouter()
   const currentWidth = open ? drawerWidth : collapsedWidth
+  const [newMenuAnchor, setNewMenuAnchor] = useState<null | HTMLElement>(null)
+  const newMenuOpen = Boolean(newMenuAnchor)
+
+  const handleNewClick = (event: React.MouseEvent<HTMLElement>) => {
+    setNewMenuAnchor(event.currentTarget)
+  }
+
+  const handleNewMenuClose = () => {
+    setNewMenuAnchor(null)
+  }
 
   return (
     <Drawer
@@ -80,14 +100,20 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
       <Toolbar className="min-h-[50px]" />
       <Box className="flex justify-center items-center px-4 py-2">
         {open ? (
-          <Button variant="outlined" size="large" fullWidth startIcon={<Add />}>
+          <Button
+            variant="outlined"
+            size="large"
+            fullWidth
+            startIcon={<Add />}
+            onClick={handleNewClick}
+          >
             New
           </Button>
         ) : (
           <IconButton
             color="primary"
             aria-label="New"
-            onClick={() => {}}
+            onClick={handleNewClick}
             sx={(theme) => ({
               border: `1px solid ${theme.palette.primary.main}`,
               borderRadius: "8px"
@@ -97,9 +123,33 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
           </IconButton>
         )}
       </Box>
+      <Menu
+        anchorEl={newMenuAnchor}
+        open={newMenuOpen}
+        onClose={handleNewMenuClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        {getListItems("button").map((item: MenuItem) =>
+          item.type === "divider" ? (
+            <Divider key="divider" />
+          ) : (
+            <MenuItem
+              key={item.text}
+              onClick={() => {
+                handleNewMenuClose()
+                router.push(item.navigate)
+              }}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </MenuItem>
+          )
+        )}
+      </Menu>
       <Divider />
       <List>
-        {menuItems.map((item: MenuItem) =>
+        {getListItems("sidebar").map((item: MenuItem) =>
           item.type === "divider" ? (
             <Divider key="divider" />
           ) : (
