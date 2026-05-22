@@ -22,9 +22,15 @@ const theme = createTheme({
     light: {
       palette: {
         background: {
-          default: themePalette.light.default,
-          paper: themePalette.light.default
+          default: themePalette.light.background.canvas,
+          paper: themePalette.light.background.surface
         },
+        text: {
+          primary: themePalette.light.typography.body1.color,
+          secondary: themePalette.light.typography.body2.color,
+          disabled: themePalette.light.typography.caption.color
+        },
+        divider: themePalette.light.borders.subtle,
         primary: { main: themePalette.light.primary.main },
         secondary: { main: themePalette.light.secondary.main },
         tertiary: { main: themePalette.light.tertiary.main },
@@ -37,9 +43,15 @@ const theme = createTheme({
     dark: {
       palette: {
         background: {
-          default: themePalette.dark.default,
-          paper: themePalette.dark.default
+          default: themePalette.dark.background.canvas,
+          paper: themePalette.dark.background.surface
         },
+        text: {
+          primary: themePalette.dark.typography.body1.color,
+          secondary: themePalette.dark.typography.body2.color,
+          disabled: themePalette.dark.typography.caption.color
+        },
+        divider: themePalette.dark.borders.subtle,
         primary: { main: themePalette.dark.primary.main },
         secondary: { main: themePalette.dark.secondary.main },
         tertiary: { main: themePalette.dark.tertiary.main },
@@ -57,14 +69,32 @@ const theme = createTheme({
     fontFamily: "var(--font-roboto)"
   },
   components: {
-    MuiDrawer: {
+    MuiAppBar: {
       styleOverrides: {
         root: ({ theme }) => ({
           ...theme.applyStyles("light", {
-            backgroundColor: theme.palette.background.default
+            backgroundColor: themePalette.light.background.surface,
+            borderBottom: `1px solid ${themePalette.light.borders.subtle}`,
+            boxShadow: "none"
           }),
           ...theme.applyStyles("dark", {
-            backgroundColor: theme.palette.background.default
+            backgroundColor: themePalette.dark.background.surface,
+            borderBottom: `1px solid ${themePalette.dark.borders.subtle}`,
+            boxShadow: "none"
+          })
+        })
+      }
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          ...theme.applyStyles("light", {
+            backgroundColor: themePalette.light.background.surface,
+            borderRight: `1px solid ${themePalette.light.borders.subtle}`
+          }),
+          ...theme.applyStyles("dark", {
+            backgroundColor: themePalette.dark.background.surface,
+            borderRight: `1px solid ${themePalette.dark.borders.subtle}`
           })
         })
       }
@@ -94,11 +124,13 @@ const theme = createTheme({
         root: ({ theme }) => ({
           borderRadius: "20px",
           ...theme.applyStyles("dark", {
-            border: "1px solid rgba(255, 255, 255, 0.06)",
+            backgroundColor: themePalette.dark.background.card,
+            border: `1px solid ${themePalette.dark.borders.subtle}`,
             boxShadow: "0 8px 30px rgba(0, 0, 0, 0.35)"
           }),
           ...theme.applyStyles("light", {
-            border: "1px solid rgba(0, 0, 0, 0.06)",
+            backgroundColor: themePalette.light.background.card,
+            border: `1px solid ${themePalette.light.borders.subtle}`,
             boxShadow: "0 10px 30px rgba(0,0,0,0.06), 0 0 24px rgba(63, 0, 135, 0.04)"
           })
         })
@@ -165,6 +197,76 @@ const theme = createTheme({
             }
           }
           return {}
+        }
+      }
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          ...theme.applyStyles("light", {
+            borderColor: themePalette.light.borders.subtle
+          }),
+          ...theme.applyStyles("dark", {
+            borderColor: themePalette.dark.borders.subtle
+          })
+        })
+      }
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          ...theme.applyStyles("light", {
+            backgroundColor: themePalette.light.background.popover,
+            border: `1px solid ${themePalette.light.borders.subtle}`
+          }),
+          ...theme.applyStyles("dark", {
+            backgroundColor: themePalette.dark.background.popover,
+            border: `1px solid ${themePalette.dark.borders.subtle}`
+          })
+        })
+      }
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderLeft: "3px solid transparent",
+          ...theme.applyStyles("light", {
+            color: themePalette.light.navigation.textIdle,
+            "&:hover": {
+              backgroundColor: themePalette.light.background.canvas,
+              color: themePalette.light.navigation.textHover
+            },
+            "&.Mui-selected": {
+              backgroundColor: "rgba(63, 0, 135, 0.08)",
+              color: themePalette.light.navigation.textActive,
+              borderLeftColor: themePalette.light.navigation.accentBar,
+              "&:hover": {
+                backgroundColor: "rgba(63, 0, 135, 0.12)"
+              }
+            }
+          }),
+          ...theme.applyStyles("dark", {
+            color: themePalette.dark.navigation.textIdle,
+            "&:hover": {
+              backgroundColor: themePalette.dark.background.canvas,
+              color: themePalette.dark.navigation.textHover
+            },
+            "&.Mui-selected": {
+              backgroundColor: "rgba(109, 94, 246, 0.08)",
+              color: themePalette.dark.navigation.textActive,
+              borderLeftColor: themePalette.dark.navigation.accentBar,
+              "&:hover": {
+                backgroundColor: "rgba(109, 94, 246, 0.12)"
+              }
+            }
+          })
+        })
+      }
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          color: "inherit"
         }
       }
     }
