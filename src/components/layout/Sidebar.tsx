@@ -21,23 +21,33 @@ import {
 import { navigationRoutes } from "constants/navigation"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useModalStore } from "stores/modal"
 
 type MenuItem = {
   type: "item" | "divider"
   text: string
   icon: React.ReactNode
   navigate: string
+  onClick?: () => void
 }
 
 type Component = "sidebar" | "button"
 
-const getListItems = (componentCategory: Component): MenuItem[] => {
+const getListItems = (
+  componentCategory: Component,
+  setOpenCreateExperiment: (open: boolean) => void
+): MenuItem[] => {
   return [
     {
       type: "item",
       text: "Experiment",
       icon: <ScienceIcon />,
-      navigate: componentCategory === "sidebar" ? navigationRoutes.experiment.list : ""
+      navigate: componentCategory === "sidebar" ? navigationRoutes.experiment.list : "",
+      onClick: () => {
+        if (componentCategory === "button") {
+          setOpenCreateExperiment(true)
+        }
+      }
     },
     // {
     //   type: "divider",
@@ -64,6 +74,7 @@ type SidebarProps = {
 }
 
 const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
+  const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
   const router = useRouter()
   const currentWidth = open ? drawerWidth : collapsedWidth
   const [newMenuAnchor, setNewMenuAnchor] = useState<null | HTMLElement>(null)
@@ -71,6 +82,15 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
 
   const handleNewClick = (event: React.MouseEvent<HTMLElement>) => {
     setNewMenuAnchor(event.currentTarget)
+  }
+
+  const handleButtonMenuClick = (item: MenuItem) => {
+    handleNewMenuClose()
+    if (item.navigate) {
+      router.push(item.navigate)
+    } else {
+      item.onClick?.()
+    }
   }
 
   const handleNewMenuClose = () => {
@@ -130,17 +150,11 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        {getListItems("button").map((item: MenuItem) =>
+        {getListItems("button", setOpenCreateExperiment).map((item: MenuItem) =>
           item.type === "divider" ? (
             <Divider key="divider" />
           ) : (
-            <MenuItem
-              key={item.text}
-              onClick={() => {
-                handleNewMenuClose()
-                router.push(item.navigate)
-              }}
-            >
+            <MenuItem key={item.text} onClick={() => handleButtonMenuClick(item)}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </MenuItem>
@@ -149,7 +163,7 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
       </Menu>
       <Divider />
       <List>
-        {getListItems("sidebar").map((item: MenuItem) =>
+        {getListItems("sidebar", setOpenCreateExperiment).map((item: MenuItem) =>
           item.type === "divider" ? (
             <Divider key="divider" />
           ) : (
