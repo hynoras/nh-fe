@@ -4,6 +4,7 @@ import { Box, Toolbar } from "@mui/material"
 import { Authenticated } from "@refinedev/core"
 import Header from "components/Header"
 import Sidebar from "components/layout/Sidebar"
+import CreateExperiment from "features/experiment/components/CreateExperiment"
 import { useState } from "react"
 
 const DRAWER_WIDTH = 220
@@ -18,6 +19,7 @@ export default function ProtectedLayoutClient({
 
   return (
     <Authenticated key="authenticated-routes" redirectOnFail="/login">
+      <CreateExperiment />
       <Box>
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <Box sx={{ display: "flex", width: "100%", overflow: "hidden" }}>
