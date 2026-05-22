@@ -13,34 +13,29 @@ import {
   Typography
 } from "@mui/material"
 import Grid from "@mui/material/Grid2"
-import { useEffect, useState } from "react"
+import { useNotification } from "hooks/notification"
+import { useCreateExperiment } from "hooks/queries/experiment"
+import { useEffect, useMemo, useState } from "react"
 import {
   FormContainer,
   RadioButtonGroup,
   TextFieldElement,
   useForm
 } from "react-hook-form-mui"
+import { useModalStore } from "stores/modal"
 import { CreateExperimentDto } from "../../../domain/experiment/experiment.dto"
 
-type CreateExperimentProps = {
-  open: boolean
-  onClose: () => void
-  onSubmit: (data: CreateExperimentDto) => void
-  loading?: boolean
-  disabled?: boolean
-  error?: string | null
-  success?: boolean
-}
+const CreateExperiment = () => {
+  const openCreateExperiment = useModalStore((state) => state.openCreateExperiment)
+  const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
+  const { notify } = useNotification()
+  const createExperimentMutation = useCreateExperiment()
 
-const CreateExperiment = ({
-  open,
-  onClose,
-  onSubmit,
-  loading,
-  disabled,
-  error,
-  success
-}: CreateExperimentProps) => {
+  const errorMessage = useMemo(
+    () => createExperimentMutation.error?.message ?? null,
+    [createExperimentMutation.error?.message]
+  )
+
   const formContext = useForm<CreateExperimentDto>({
     defaultValues: {
       title: "",
@@ -52,7 +47,12 @@ const CreateExperiment = ({
 
   const handleCreateExperiment = (data: CreateExperimentDto) => {
     setShowError(false)
-    onSubmit(data)
+    createExperimentMutation.mutate(data, {
+      onSuccess: () => {
+        notify("Experiment created successfully", "success")
+        handleClose()
+      }
+    })
   }
 
   const handleCloseError = () => {
@@ -62,28 +62,20 @@ const CreateExperiment = ({
   const handleClose = () => {
     setShowError(false)
     formContext.reset()
-    onClose()
+    createExperimentMutation.reset()
+    setOpenCreateExperiment(false)
   }
 
-  // Show error when error prop changes
   useEffect(() => {
-    if (error) {
+    if (errorMessage) {
       setShowError(true)
     } else {
       setShowError(false)
     }
-  }, [error])
-
-  // Reset form when success prop changes to true
-  useEffect(() => {
-    if (success) {
-      formContext.reset()
-      setShowError(false)
-    }
-  }, [success, formContext])
+  }, [errorMessage])
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={openCreateExperiment} onClose={handleClose}>
       <DialogTitle id="alert-dialog-title">Create Experiment</DialogTitle>
       <FormContainer
         formContext={formContext}
@@ -107,7 +99,7 @@ const CreateExperiment = ({
                 fullWidth
                 variant="outlined"
                 size="small"
-                disabled={disabled}
+                disabled={createExperimentMutation.isPending}
               />
             </Grid>
             <Grid size={3}>
@@ -148,13 +140,13 @@ const CreateExperiment = ({
                 rows={4}
                 variant="outlined"
                 size="small"
-                disabled={disabled}
+                disabled={createExperimentMutation.isPending}
               />
             </Grid>{" "}
           </Grid>
-          <Collapse in={showError && !!error}>
+          <Collapse in={showError && !!errorMessage}>
             <Alert severity="error" onClose={handleCloseError} sx={{ mt: 2 }}>
-              {error}
+              {errorMessage}
             </Alert>
           </Collapse>
         </DialogContent>
@@ -166,8 +158,8 @@ const CreateExperiment = ({
             type="submit"
             variant="contained"
             startIcon={<AddIcon />}
-            loading={loading}
-            disabled={disabled || !formContext.formState.isValid}
+            loading={createExperimentMutation.isPending}
+            disabled={createExperimentMutation.isPending || !formContext.formState.isValid}
           >
             Create
           </Button>
