@@ -10,10 +10,9 @@ import { logoutApi } from "services/auth.service"
 type HeaderProps = {
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
-  drawerWidth: number
 }
 
-const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
+const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const router = useRouter()
   const logoutMutation = useMutation({
@@ -39,14 +38,8 @@ const Header = ({ sidebarOpen, setSidebarOpen, drawerWidth }: HeaderProps) => {
     <AppBar
       position="fixed"
       sx={{
-        width: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
         height: 50,
-        ml: sidebarOpen ? `${drawerWidth}px` : 0,
-        transition: (theme) =>
-          theme.transitions.create(["margin", "width"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen
-          })
+        zIndex: (theme) => theme.zIndex.drawer + 1
       }}
     >
       <Toolbar className="flex justify-between items-center min-h-[50px]">

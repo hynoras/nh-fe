@@ -14,26 +14,21 @@ import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import { navigationRoutes } from "constants/navigation"
 import { useNotification } from "hooks/notification"
-import {
-  useCreateExperiment,
-  useDeleteExperiment,
-  useExperimentList
-} from "hooks/queries/experiment"
+import { useDeleteExperiment, useExperimentList } from "hooks/queries/experiment"
 import { useResponsiveHeight } from "hooks/responsive"
 import { useRouter } from "next/navigation"
-import { useMemo, useRef, useState } from "react"
-import { CreateExperimentDto } from "../../../domain/experiment/experiment.dto"
+import { useRef, useState } from "react"
+import { useModalStore } from "stores/modal"
 import {
   Experiment,
   ExperimentStatus
 } from "../../../domain/experiment/experiment.entity"
 import { ExperimentListFilter } from "../types/experiment"
-import CreateExperiment from "./CreateExperiment"
 import ExperimentStatusDisplay from "./ExperimentStatusDisplay"
 
 const ExperimentDashboard = () => {
+  const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-  const [openCreateDialog, setOpenCreateDialog] = useState(false)
   const [selectedExperiment, setSelectedExperiment] = useState<Experiment | null>(null)
   const [experimentListFilter, setExperimentListFilter] = useState<ExperimentListFilter>({
     search: "",
@@ -65,28 +60,6 @@ const ExperimentDashboard = () => {
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false)
     setSelectedExperiment(null)
-  }
-
-  const createExperimentMutation = useCreateExperiment()
-
-  // Stabilize error message to prevent infinite loops
-  const errorMessage = useMemo(
-    () => createExperimentMutation.error?.message ?? null,
-    [createExperimentMutation.error?.message]
-  )
-
-  const handleCloseCreateDialog = () => {
-    setOpenCreateDialog(false)
-    createExperimentMutation.reset()
-  }
-
-  const handleCreateExperiment = (data: CreateExperimentDto) => {
-    createExperimentMutation.mutate(data, {
-      onSuccess: () => {
-        notify("Experiment created successfully", "success")
-        setOpenCreateDialog(false)
-      }
-    })
   }
 
   const handleEditExperiment = (experimentId: string) => {
@@ -177,15 +150,6 @@ const ExperimentDashboard = () => {
 
   return (
     <>
-      <CreateExperiment
-        open={openCreateDialog}
-        onClose={handleCloseCreateDialog}
-        onSubmit={handleCreateExperiment}
-        loading={createExperimentMutation.isPending}
-        disabled={createExperimentMutation.isPending}
-        error={errorMessage}
-        success={createExperimentMutation.isSuccess}
-      />
       <Popup.DeleteConfirmation
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
@@ -204,7 +168,7 @@ const ExperimentDashboard = () => {
             primaryButton={{
               children: "Create Experiment",
               startIcon: <AddIcon />,
-              onClick: () => setOpenCreateDialog(true)
+              onClick: () => setOpenCreateExperiment(true)
             }}
           />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
