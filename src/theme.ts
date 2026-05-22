@@ -57,6 +57,18 @@ const theme = createTheme({
     fontFamily: "var(--font-roboto)"
   },
   components: {
+    MuiDrawer: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          ...theme.applyStyles("light", {
+            backgroundColor: theme.palette.background.default
+          }),
+          ...theme.applyStyles("dark", {
+            backgroundColor: theme.palette.background.default
+          })
+        })
+      }
+    },
     MuiTypography: {
       styleOverrides: {
         root: ({ theme, ownerState }) => {

@@ -76,12 +76,19 @@ type SidebarProps = {
 const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
   const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
   const router = useRouter()
-  const currentWidth = open ? drawerWidth : collapsedWidth
+
   const [newMenuAnchor, setNewMenuAnchor] = useState<null | HTMLElement>(null)
+  const [selectedSidebarItem, setSelectedSidebarItem] = useState<number | null>(null)
+
   const newMenuOpen = Boolean(newMenuAnchor)
+  const currentWidth = open ? drawerWidth : collapsedWidth
 
   const handleNewClick = (event: React.MouseEvent<HTMLElement>) => {
     setNewMenuAnchor(event.currentTarget)
+  }
+
+  const handleNewMenuClose = () => {
+    setNewMenuAnchor(null)
   }
 
   const handleButtonMenuClick = (item: MenuItem) => {
@@ -93,8 +100,9 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
     }
   }
 
-  const handleNewMenuClose = () => {
-    setNewMenuAnchor(null)
+  const handleSidebarItemClick = (item: MenuItem, index: number) => {
+    router.push(item.navigate)
+    setSelectedSidebarItem(index)
   }
 
   return (
@@ -118,10 +126,11 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
       anchor="left"
     >
       <Toolbar className="min-h-[50px]" />
-      <Box className="flex justify-center items-center px-4 py-2">
+      <Box className="flex justify-center items-center px-4 py-4">
         {open ? (
           <Button
             variant="outlined"
+            color="primary"
             size="large"
             fullWidth
             startIcon={<Add />}
@@ -161,36 +170,38 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
           )
         )}
       </Menu>
-      <Divider />
+      <Divider variant="middle" />
       <List>
-        {getListItems("sidebar", setOpenCreateExperiment).map((item: MenuItem) =>
-          item.type === "divider" ? (
-            <Divider key="divider" />
-          ) : (
-            <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
-              <Tooltip title={!open ? item.text : ""} placement="right" arrow>
-                <ListItemButton
-                  onClick={() => router.push(item.navigate)}
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5
-                  }}
-                >
-                  <ListItemIcon
+        {getListItems("sidebar", setOpenCreateExperiment).map(
+          (item: MenuItem, index: number) =>
+            item.type === "divider" ? (
+              <Divider key="divider" />
+            ) : (
+              <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
+                <Tooltip title={!open ? item.text : ""} placement="right" arrow>
+                  <ListItemButton
+                    selected={selectedSidebarItem === index}
+                    onClick={() => handleSidebarItemClick(item, index)}
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 1.5 : "auto",
-                      justifyContent: "center"
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5
                     }}
                   >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          )
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 1.5 : "auto",
+                        justifyContent: "center"
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </Tooltip>
+              </ListItem>
+            )
         )}
       </List>
     </Drawer>

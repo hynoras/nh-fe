@@ -7,7 +7,7 @@ import Sidebar from "components/layout/Sidebar"
 import CreateExperiment from "features/experiment/components/CreateExperiment"
 import { useState } from "react"
 
-const DRAWER_WIDTH = 220
+const DRAWER_WIDTH = 200
 const COLLAPSED_WIDTH = 64
 
 export default function ProtectedLayoutClient({
