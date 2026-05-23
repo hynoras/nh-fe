@@ -30,7 +30,7 @@ const theme = createTheme({
           secondary: themePalette.light.typography.body2.color,
           disabled: themePalette.light.typography.caption.color
         },
-        divider: themePalette.light.borders.subtle,
+        // divider: themePalette.light.divider,
         primary: { main: themePalette.light.primary.main },
         secondary: { main: themePalette.light.secondary.main },
         tertiary: { main: themePalette.light.tertiary.main },
@@ -51,7 +51,7 @@ const theme = createTheme({
           secondary: themePalette.dark.typography.body2.color,
           disabled: themePalette.dark.typography.caption.color
         },
-        divider: themePalette.dark.borders.subtle,
+        // divider: themePalette.dark.divider,
         primary: { main: themePalette.dark.primary.main },
         secondary: { main: themePalette.dark.secondary.main },
         tertiary: { main: themePalette.dark.tertiary.main },
@@ -99,6 +99,18 @@ const theme = createTheme({
         })
       }
     },
+    // MuiDivider: {
+    //   styleOverrides: {
+    //     root: ({ theme }) => ({
+    //       ...theme.applyStyles("light", {
+    //         borderColor: themePalette.light.divider
+    //       }),
+    //       ...theme.applyStyles("dark", {
+    //         borderColor: themePalette.dark.divider
+    //       })
+    //     })
+    //   }
+    // },
     MuiTypography: {
       styleOverrides: {
         root: ({ theme, ownerState }) => {
@@ -198,18 +210,6 @@ const theme = createTheme({
           }
           return {}
         }
-      }
-    },
-    MuiDivider: {
-      styleOverrides: {
-        root: ({ theme }) => ({
-          ...theme.applyStyles("light", {
-            borderColor: themePalette.light.borders.subtle
-          }),
-          ...theme.applyStyles("dark", {
-            borderColor: themePalette.dark.borders.subtle
-          })
-        })
       }
     },
     MuiPopover: {
