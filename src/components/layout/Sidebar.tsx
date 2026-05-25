@@ -15,10 +15,13 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Skeleton,
   Toolbar,
   Tooltip
 } from "@mui/material"
+import { useGetIdentity } from "@refinedev/core"
 import { navigationRoutes } from "constants/navigation"
+import { User } from "domain/user/user.entity"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useModalStore } from "stores/modal"
@@ -27,6 +30,7 @@ type MenuItem = {
   type: "item" | "divider"
   text: string
   icon: React.ReactNode
+  allowedPermissions: Array<string>
   navigate: string
   onClick?: () => void
 }
@@ -42,6 +46,7 @@ const getListItems = (
       type: "item",
       text: "Experiment",
       icon: <ScienceIcon />,
+      allowedPermissions: ["experiment:view", "experiment:manage"],
       navigate: componentCategory === "sidebar" ? navigationRoutes.experiment.list : "",
       onClick: () => {
         if (componentCategory === "button") {
@@ -59,6 +64,7 @@ const getListItems = (
       type: "item",
       text: componentCategory === "sidebar" ? "Users & Access" : "User",
       icon: <ManageAccountsIcon />,
+      allowedPermissions: ["user:view", "user:manage"],
       navigate:
         componentCategory === "sidebar"
           ? navigationRoutes.userAndAccess.user.list
@@ -74,6 +80,7 @@ type SidebarProps = {
 }
 
 const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
+  const { data: currentUser, isLoading } = useGetIdentity<User>()
   const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
   const router = useRouter()
 
@@ -103,6 +110,35 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
   const handleSidebarItemClick = (item: MenuItem, index: number) => {
     router.push(item.navigate)
     setSelectedSidebarItem(index)
+  }
+
+  if (isLoading) {
+    return (
+      <Drawer
+        sx={{
+          width: currentWidth,
+          flexShrink: 0,
+          whiteSpace: "nowrap",
+          "& .MuiDrawer-paper": {
+            width: currentWidth,
+            boxSizing: "border-box",
+            overflowX: "hidden",
+            transition: (theme) =>
+              theme.transitions.create("width", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen
+              })
+          }
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar className="min-h-[50px]" />
+        <Box className="flex justify-center items-center px-4 py-4">
+          <Skeleton variant="rectangular" width={120} height={40} />
+        </Box>
+      </Drawer>
+    )
   }
 
   return (
@@ -159,21 +195,36 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        {getListItems("button", setOpenCreateExperiment).map((item: MenuItem) =>
-          item.type === "divider" ? (
-            <Divider key="divider" />
-          ) : (
-            <MenuItem key={item.text} onClick={() => handleButtonMenuClick(item)}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </MenuItem>
+        {getListItems("button", setOpenCreateExperiment)
+          .filter(
+            (item: MenuItem) =>
+              item.type === "divider" ||
+              item.allowedPermissions.some((perm) =>
+                currentUser?.permissionCodes?.includes(perm)
+              )
           )
-        )}
+          .map((item: MenuItem) =>
+            item.type === "divider" ? (
+              <Divider key="divider" />
+            ) : (
+              <MenuItem key={item.text} onClick={() => handleButtonMenuClick(item)}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </MenuItem>
+            )
+          )}
       </Menu>
       <Divider variant="middle" />
       <List>
-        {getListItems("sidebar", setOpenCreateExperiment).map(
-          (item: MenuItem, index: number) =>
+        {getListItems("sidebar", setOpenCreateExperiment)
+          .filter(
+            (item: MenuItem) =>
+              item.type === "divider" ||
+              item.allowedPermissions.some((perm) =>
+                currentUser?.permissionCodes?.includes(perm)
+              )
+          )
+          .map((item: MenuItem, index: number) =>
             item.type === "divider" ? (
               <Divider key="divider" />
             ) : (
@@ -202,7 +253,7 @@ const Sidebar = ({ open, drawerWidth, collapsedWidth }: SidebarProps) => {
                 </Tooltip>
               </ListItem>
             )
-        )}
+          )}
       </List>
     </Drawer>
   )
