@@ -3,6 +3,7 @@
 import { Box, Toolbar } from "@mui/material"
 import { Authenticated } from "@refinedev/core"
 import Header from "components/Header"
+import GlobalNotification from "components/feedback/GlobalNotification"
 import Sidebar from "components/layout/Sidebar"
 import { themePalette } from "constants/color"
 import CreateExperiment from "features/experiment/components/CreateExperiment"
@@ -20,6 +21,7 @@ export default function ProtectedLayoutClient({
 
   return (
     <Authenticated key="authenticated-routes" redirectOnFail="/login">
+      <GlobalNotification />
       <CreateExperiment />
       <Box>
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
