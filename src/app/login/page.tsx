@@ -186,7 +186,10 @@ const Login = () => {
               </div>
             </Box>
             {loginMutation.isError && (
-              <Typography variant="body2" color="error">
+              <Typography
+                variant="body2"
+                color="error"
+              >
                 Username or password is incorrect
               </Typography>
             )}

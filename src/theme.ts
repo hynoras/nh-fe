@@ -114,6 +114,12 @@ const theme = createTheme({
     MuiTypography: {
       styleOverrides: {
         root: ({ theme, ownerState }) => {
+          // Skip custom typography colors when an explicit color is set
+          // (e.g. via color prop or sx={{ color: ... }})
+          if (ownerState.color && ownerState.color !== "initial") {
+            return {}
+          }
+
           const variant = ownerState.variant || "body1"
           const lightTypography = themePalette.light.typography
           const darkTypography = themePalette.dark.typography
