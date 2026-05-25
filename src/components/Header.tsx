@@ -1,8 +1,20 @@
 "use client"
 import { AccountCircle, Logout, Settings } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
-import { AppBar, IconButton, ListItemIcon, Menu, MenuItem, Toolbar } from "@mui/material"
+import {
+  AppBar,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Stack,
+  Toolbar,
+  Typography
+} from "@mui/material"
+import { useGetIdentity } from "@refinedev/core"
 import { useMutation } from "@tanstack/react-query"
+import { User } from "domain/user/user.entity"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { logoutApi } from "services/auth.service"
@@ -13,6 +25,8 @@ type HeaderProps = {
 }
 
 const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
+  const { data: identity } = useGetIdentity<User>()
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const router = useRouter()
   const logoutMutation = useMutation({
@@ -44,36 +58,42 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
     >
       <Toolbar className="flex justify-between items-center min-h-[50px]">
         <IconButton
-          size="small"
           edge="start"
-          color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          <MenuIcon />
+          <MenuIcon fontSize="large" />
         </IconButton>
-        <IconButton
-          size="small"
-          edge="end"
-          aria-controls={open ? "setting-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleOpenMenu}
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
+        <Stack direction="row" alignItems="center" gap={2}>
+          <IconButton
+            edge="end"
+            aria-controls={open ? "setting-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleOpenMenu}
+          >
+            <AccountCircle fontSize="large" />
+          </IconButton>
+        </Stack>
         <Menu id="setting-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
+          <MenuItem>
+            <Stack direction="column">
+              <Typography variant="h6">{identity?.username}</Typography>
+              <Typography variant="body1">{identity?.email}</Typography>
+            </Stack>
+          </MenuItem>
+          <Divider variant="middle" />
           <MenuItem onClick={() => router.push("/setting")}>
             <ListItemIcon>
               <Settings fontSize="small" />
             </ListItemIcon>
             Settings
           </MenuItem>
+          <Divider variant="middle" />
           <MenuItem onClick={handleLogout}>
             <ListItemIcon>
-              <Logout fontSize="small" />
+              <Logout fontSize="medium" />
             </ListItemIcon>
             Logout
           </MenuItem>
