@@ -85,7 +85,7 @@ export const themePalette = {
     default: "#141414",
 
     background: {
-      canvas: "#0F0F11", // Deep off-black base layout shell
+      canvas: "#18181B", // Deep off-black base layout shell
       surface: "#16161A", // Sidebar, Navigation Headers, Layout Shells
       card: "#1E1E24", // Data widgets, panels, and grid containers
       popover: "#25252B" // Context menus, modal overlays, tooltips
