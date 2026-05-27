@@ -35,13 +35,11 @@ export default function ProtectedLayoutClient({
             sx={[
               {
                 flexGrow: 1,
-                height: "99vh",
+                height: "100vh",
                 p: 2,
-                mb: "6px",
                 width: "100%",
                 maxWidth: "100%",
-                overflowY: "hidden",
-                borderRadius: 2
+                overflowY: "hidden"
               },
               (theme) => ({
                 transition: theme.transitions.create(["margin", "width"], {
