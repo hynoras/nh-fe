@@ -85,6 +85,9 @@ const ExperimentListHeader = ({
 
 const ExperimentDashboard = () => {
   const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
+  const router = useRouter()
+  const { notify } = useNotification()
+
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [selectedExperiment, setSelectedExperiment] = useState<Experiment | null>(null)
   const [experimentListFilter, setExperimentListFilter] = useState<ExperimentListFilter>({
@@ -92,14 +95,16 @@ const ExperimentDashboard = () => {
     page: 1,
     pageSize: 10
   })
+
+  const {
+    data: experimentsData,
+    isLoading,
+    refetch
+  } = useExperimentList(experimentListFilter)
+  const deleteExperimentMutation = useDeleteExperiment()
+
   const tableRef = useRef<HTMLDivElement>(null)
   const tableHeight = useResponsiveHeight(tableRef)
-
-  const { data: experimentsData, isLoading } = useExperimentList(experimentListFilter)
-
-  const deleteExperimentMutation = useDeleteExperiment()
-  const router = useRouter()
-  const { notify } = useNotification()
 
   const handlePaginationChange = (model: GridPaginationModel) => {
     setExperimentListFilter((prev) => ({
@@ -117,6 +122,10 @@ const ExperimentDashboard = () => {
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false)
     setSelectedExperiment(null)
+  }
+
+  const handleRefreshButton = async () => {
+    await refetch()
   }
 
   const handleEditExperiment = (experimentId: string) => {
@@ -231,6 +240,11 @@ const ExperimentDashboard = () => {
             setFilter={setExperimentListFilter}
             searchBar={{
               placeholder: "Search by title"
+            }}
+            refreshButton={{
+              show: true,
+              iconOnly: true,
+              onClick: handleRefreshButton
             }}
           />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
