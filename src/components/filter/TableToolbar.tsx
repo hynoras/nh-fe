@@ -35,6 +35,7 @@ interface TableToolbarProps<T extends { search?: string }> {
     onClick?: () => void
     variant?: "outlined" | "contained" | "text"
   }
+  otherActions?: React.ReactNode
 }
 
 const TableToolbar = <T extends { search?: string }>({
@@ -42,13 +43,15 @@ const TableToolbar = <T extends { search?: string }>({
   setFilter,
   searchBar,
   primaryButton,
-  refreshButton
+  refreshButton,
+  otherActions
 }: TableToolbarProps<T>) => {
   const [searchValue, setSearchValue] = useState(filter.search || "")
 
   const showSearchBar = searchBar !== undefined && searchBar.show !== false
   const showPrimaryButton = primaryButton !== undefined && primaryButton.show !== false
   const showRefreshButton = refreshButton !== undefined && refreshButton.show !== false
+  const showOtherActions = otherActions !== undefined
 
   const isRefreshButtonIconOnly = showRefreshButton && refreshButton.iconOnly !== false
 
@@ -98,6 +101,7 @@ const TableToolbar = <T extends { search?: string }>({
         )}
       </Stack>
       <Stack direction={"row"} spacing={1}>
+        {showOtherActions && otherActions}
         {showRefreshButton &&
           (isRefreshButtonIconOnly ? (
             <IconButton
