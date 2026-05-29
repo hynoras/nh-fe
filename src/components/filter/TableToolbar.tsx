@@ -3,7 +3,7 @@
 import { Search } from "@mui/icons-material"
 import RefreshIcon from "@mui/icons-material/Refresh"
 import { Button, InputAdornment, Stack, TextField, debounce } from "@mui/material"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 interface TableToolbarProps<T extends { search?: string }> {
   filter: T
@@ -22,9 +22,10 @@ interface TableToolbarProps<T extends { search?: string }> {
     startIcon?: React.ReactNode
   }
   refreshButton?: {
+    show?: boolean
+    iconOnly?: boolean
     onClick?: () => void
     variant?: "outlined" | "contained" | "text"
-    show?: boolean
   }
 }
 
@@ -35,19 +36,32 @@ const TableToolbar = <T extends { search?: string }>({
   primaryButton,
   refreshButton
 }: TableToolbarProps<T>) => {
+  const [searchValue, setSearchValue] = useState(filter.search || "")
+
+  const showSearchBar = searchBar !== undefined && searchBar.show !== false
+  const showPrimaryButton = primaryButton !== undefined && primaryButton.show !== false
+  const showRefreshButton = refreshButton !== undefined && refreshButton.show !== false
+
   const debouncedHandleSearch = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    debounce((val: string) => {
       setFilter((prev) => ({
         ...prev,
-        search: e.target.value
+        search: val
       }))
     }, 500),
     [setFilter]
   )
 
-  const showSearchBar = searchBar !== undefined && searchBar.show !== false
-  const showPrimaryButton = primaryButton !== undefined && primaryButton.show !== false
-  const showRefreshButton = refreshButton !== undefined && refreshButton.show !== false
+  const handleSearchChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setSearchValue(e.target.value)
+    debouncedHandleSearch(e.target.value)
+  }
+
+  useEffect(() => {
+    setSearchValue(filter.search || "")
+  }, [filter.search])
 
   return (
     <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
@@ -58,8 +72,8 @@ const TableToolbar = <T extends { search?: string }>({
             placeholder={searchBar?.placeholder || "Search"}
             variant="outlined"
             size={searchBar?.size || "small"}
-            value={filter.search || ""}
-            onChange={(e) => debouncedHandleSearch(e)}
+            value={searchValue}
+            onChange={handleSearchChange}
             sx={searchBar?.width ? { width: searchBar.width } : undefined}
             slotProps={{
               input: {
