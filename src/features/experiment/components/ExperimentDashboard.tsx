@@ -1,9 +1,17 @@
 "use client"
 
-import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import { Box, IconButton, Stack, Typography } from "@mui/material"
+import {
+  Box,
+  Button,
+  Chip,
+  Divider,
+  IconButton,
+  Skeleton,
+  Stack,
+  Typography
+} from "@mui/material"
 import {
   DataGrid,
   GridColDef,
@@ -25,6 +33,55 @@ import {
 } from "../../../domain/experiment/experiment.entity"
 import { ExperimentListFilter } from "../types/experiment"
 import ExperimentStatusDisplay from "./ExperimentStatusDisplay"
+
+const ExperimentListHeader = ({
+  isLoading,
+  totalExperiments,
+  runningExperiments,
+  setOpenCreateExperiment
+}: {
+  isLoading: boolean
+  totalExperiments: number
+  runningExperiments: number
+  setOpenCreateExperiment: (open: boolean) => void
+}) => {
+  if (isLoading) {
+    return (
+      <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+          <Skeleton variant="rounded" width={120} height={36} />
+          <Skeleton variant="rounded" width={120} height={36} />
+        </Stack>
+        <Skeleton variant="rounded" width={160} height={36} />
+      </Stack>
+    )
+  }
+
+  return (
+    <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+      <Stack direction={"row"} alignItems={"center"} spacing={2}>
+        <Chip
+          label={`${totalExperiments} experiments`}
+          color="secondary"
+          variant="outlined"
+        />
+        <Chip
+          label={`${runningExperiments} running`}
+          color="secondary"
+          variant="outlined"
+        />
+      </Stack>
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={() => setOpenCreateExperiment(true)}
+      >
+        Create Experiment
+      </Button>
+    </Stack>
+  )
+}
 
 const ExperimentDashboard = () => {
   const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
@@ -158,17 +215,22 @@ const ExperimentDashboard = () => {
       />
       <Box sx={{ width: "100%" }}>
         <Stack direction={"column"} spacing={2}>
-          <Typography variant="h5">Experiment</Typography>
+          <ExperimentListHeader
+            isLoading={isLoading}
+            totalExperiments={experimentsData?.length || 0}
+            runningExperiments={
+              experimentsData?.data?.filter(
+                (experiment) => experiment.status === ExperimentStatus.RUNNING
+              ).length || 0
+            }
+            setOpenCreateExperiment={setOpenCreateExperiment}
+          />
+          <Divider />
           <TableToolbar
             filter={experimentListFilter}
             setFilter={setExperimentListFilter}
             searchBar={{
               placeholder: "Search by title"
-            }}
-            primaryButton={{
-              children: "Create Experiment",
-              startIcon: <AddIcon />,
-              onClick: () => setOpenCreateExperiment(true)
             }}
           />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
