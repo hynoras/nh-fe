@@ -2,7 +2,15 @@
 
 import { Search } from "@mui/icons-material"
 import RefreshIcon from "@mui/icons-material/Refresh"
-import { Button, InputAdornment, Stack, TextField, debounce } from "@mui/material"
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  debounce
+} from "@mui/material"
+import { themePalette } from "constants/color"
 import { useCallback, useEffect, useState } from "react"
 
 interface TableToolbarProps<T extends { search?: string }> {
@@ -41,6 +49,8 @@ const TableToolbar = <T extends { search?: string }>({
   const showSearchBar = searchBar !== undefined && searchBar.show !== false
   const showPrimaryButton = primaryButton !== undefined && primaryButton.show !== false
   const showRefreshButton = refreshButton !== undefined && refreshButton.show !== false
+
+  const isRefreshButtonIconOnly = showRefreshButton && refreshButton.iconOnly !== false
 
   const debouncedHandleSearch = useCallback(
     debounce((val: string) => {
@@ -88,14 +98,33 @@ const TableToolbar = <T extends { search?: string }>({
         )}
       </Stack>
       <Stack direction={"row"} spacing={1}>
-        {showRefreshButton && (
-          <Button
-            variant={refreshButton?.variant || "outlined"}
-            onClick={refreshButton?.onClick}
-          >
-            <RefreshIcon />
-          </Button>
-        )}
+        {showRefreshButton &&
+          (isRefreshButtonIconOnly ? (
+            <IconButton
+              onClick={refreshButton?.onClick}
+              sx={(theme) => ({
+                borderRadius: "4px",
+                ...theme.applyStyles("light", {
+                  border: `1px solid ${themePalette.light.borders.muted}`,
+                  color: themePalette.light.typography.body1.color
+                }),
+                ...theme.applyStyles("dark", {
+                  border: `1px solid ${themePalette.dark.borders.muted}`,
+                  color: themePalette.dark.typography.body1.color
+                })
+              })}
+            >
+              <RefreshIcon />
+            </IconButton>
+          ) : (
+            <Button
+              variant={refreshButton?.variant || "outlined"}
+              onClick={refreshButton?.onClick}
+            >
+              <RefreshIcon />
+              Refresh
+            </Button>
+          ))}
         {showPrimaryButton && (
           <Button
             variant="contained"
