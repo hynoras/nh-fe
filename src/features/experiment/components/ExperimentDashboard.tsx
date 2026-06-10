@@ -1,26 +1,25 @@
 "use client"
 
-import DeleteIcon from "@mui/icons-material/Delete"
-import EditIcon from "@mui/icons-material/Edit"
+import { Cancel, CheckCircle, Circle } from "@mui/icons-material"
 import {
   Box,
   Button,
+  Card,
+  CardActionArea,
+  CardContent,
   Chip,
   Divider,
-  IconButton,
+  List,
+  ListItem,
   Skeleton,
   Stack,
   Typography
 } from "@mui/material"
-import {
-  DataGrid,
-  GridColDef,
-  GridPaginationModel,
-  GridRenderCellParams
-} from "@mui/x-data-grid"
+import { GridPaginationModel } from "@mui/x-data-grid"
 import TableToolbar from "components/filter/TableToolbar"
 import Popup from "components/popup"
 import { navigationRoutes } from "constants/navigation"
+import { formatDistanceToNow } from "date-fns"
 import { useNotification } from "hooks/notification"
 import { useDeleteExperiment, useExperimentList } from "hooks/queries/experiment"
 import { useResponsiveHeight } from "hooks/responsive"
@@ -32,7 +31,6 @@ import {
   ExperimentStatus
 } from "../../../domain/experiment/experiment.entity"
 import { ExperimentListFilter } from "../types/experiment"
-import ExperimentStatusDisplay from "./ExperimentStatusDisplay"
 
 const ExperimentListHeader = ({
   isLoading,
@@ -83,9 +81,85 @@ const ExperimentListHeader = ({
   )
 }
 
+const ExperimentCardItem = ({ experiment }: { experiment: Experiment }) => {
+  const router = useRouter()
+
+  const formatCreatedAtDistance = experiment.createdAt
+    ? formatDistanceToNow(new Date(experiment.createdAt), {
+        addSuffix: true
+      })
+    : "Unknown time"
+
+  const formatStartedAtDistance = experiment.startedAt
+    ? formatDistanceToNow(new Date(experiment.startedAt), {
+        addSuffix: true
+      })
+    : "Unknown time"
+
+  const handleEditExperiment = (experimentId: string) => {
+    router.push(navigationRoutes.experiment.detail(experimentId))
+  }
+
+  const getStatusColor = (status: ExperimentStatus) => {
+    switch (status) {
+      case ExperimentStatus.RUNNING:
+        return "info"
+      case ExperimentStatus.COMPLETED:
+        return "success"
+      case ExperimentStatus.ABORTED:
+        return "default"
+      default:
+        return "default"
+    }
+  }
+
+  const getStatusIcon = (status: ExperimentStatus) => {
+    switch (status) {
+      case ExperimentStatus.RUNNING:
+        return <Circle />
+      case ExperimentStatus.COMPLETED:
+        return <CheckCircle />
+      case ExperimentStatus.ABORTED:
+        return <Cancel />
+      default:
+        return
+    }
+  }
+
+  return (
+    <Card className="w-full mb-4">
+      <CardActionArea onClick={() => handleEditExperiment(experiment.id as string)}>
+        <CardContent className="flex flex-col gap-4">
+          <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+            <Typography variant="h5">{experiment.title}</Typography>
+            <Chip
+              label={experiment.status}
+              icon={getStatusIcon(experiment.status as ExperimentStatus)}
+              size="small"
+              variant="outlined"
+              color={getStatusColor(experiment.status as ExperimentStatus)}
+            />
+          </Stack>
+          <Typography variant="subtitle1">{experiment.objective}</Typography>
+          <Stack direction={"row"} alignItems={"center"} spacing={2}>
+            <Chip variant="outlined" label={experiment.type} />
+            <Typography variant="subtitle2">
+              {`Created ${formatCreatedAtDistance}`}
+            </Typography>
+            {experiment.status === ExperimentStatus.RUNNING && (
+              <Typography variant="subtitle2">
+                {`Started ${formatStartedAtDistance}`}
+              </Typography>
+            )}
+          </Stack>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  )
+}
+
 const ExperimentDashboard = () => {
   const setOpenCreateExperiment = useModalStore((state) => state.setOpenCreateExperiment)
-  const router = useRouter()
   const { notify } = useNotification()
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
@@ -128,10 +202,6 @@ const ExperimentDashboard = () => {
     await refetch()
   }
 
-  const handleEditExperiment = (experimentId: string) => {
-    router.push(navigationRoutes.experiment.detail(experimentId))
-  }
-
   const handleDeleteExperiment = () => {
     if (selectedExperiment) {
       deleteExperimentMutation.mutate(selectedExperiment.id as string, {
@@ -146,73 +216,6 @@ const ExperimentDashboard = () => {
       })
     }
   }
-
-  const columns: GridColDef[] = [
-    {
-      field: "title",
-      headerName: "Title",
-      sortable: true,
-      resizable: true,
-      flex: 0.6,
-      renderCell: (params: GridRenderCellParams<Experiment, string>) => {
-        return (
-          <Stack
-            height={"100%"}
-            direction={"row"}
-            justifyContent={"flex-start"}
-            alignItems={"center"}
-            spacing={1}
-          >
-            <ExperimentStatusDisplay
-              status={params.row.status || ExperimentStatus.DRAFT}
-            />
-            <Typography variant="body2" color="textSecondary">
-              {params.value}
-            </Typography>
-          </Stack>
-        )
-      }
-    },
-    {
-      field: "type",
-      headerName: "Type",
-      sortable: false,
-      resizable: false,
-      flex: 0.4
-    },
-    {
-      field: "objective",
-      headerName: "Objective",
-      sortable: false,
-      resizable: false,
-      flex: 0.6
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 0.6,
-      sortable: false,
-      resizable: false,
-      renderCell: (params: GridRenderCellParams<Experiment, string>) => {
-        return (
-          <Stack
-            height={"100%"}
-            direction={"row"}
-            justifyContent={"flex-start"}
-            alignItems={"center"}
-            spacing={2}
-          >
-            <IconButton onClick={() => handleEditExperiment(params.row.id as string)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton color="error" onClick={() => handleClickOpen(params.row)}>
-              <DeleteIcon />
-            </IconButton>
-          </Stack>
-        )
-      }
-    }
-  ]
 
   return (
     <>
@@ -248,22 +251,13 @@ const ExperimentDashboard = () => {
             }}
           />
           <Box sx={{ height: tableHeight }} ref={tableRef}>
-            <DataGrid
-              rows={experimentsData?.data || []}
-              columns={columns}
-              loading={isLoading}
-              paginationMode="server"
-              rowCount={experimentsData?.length || 0}
-              paginationModel={{
-                page: (experimentListFilter?.page || 1) - 1,
-                pageSize: experimentListFilter?.pageSize || 10
-              }}
-              onPaginationModelChange={handlePaginationChange}
-              pageSizeOptions={[5, 10, 25, 50, 100]}
-              sx={{
-                border: 0
-              }}
-            />
+            <List>
+              {experimentsData?.data?.map((experiment) => (
+                <ListItem key={experiment.id} disablePadding>
+                  <ExperimentCardItem experiment={experiment} />
+                </ListItem>
+              ))}
+            </List>
           </Box>
         </Stack>
       </Box>
