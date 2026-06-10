@@ -4,6 +4,8 @@ export type ExperimentListModel = {
   objective: string
   type: string
   status: string
+  created_at: string
+  started_at: string
 }
 
 export type ExperimentModel = {

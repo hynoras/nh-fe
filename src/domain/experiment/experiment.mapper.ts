@@ -7,7 +7,9 @@ export const experimentListMapper = (model: ExperimentListModel[]): Experiment[]
     title: experiment.title,
     objective: experiment.objective,
     type: experiment.type,
-    status: experiment.status as ExperimentStatus
+    status: experiment.status as ExperimentStatus,
+    createdAt: experiment.created_at,
+    startedAt: experiment.started_at
   }))
 }
 
