@@ -18,6 +18,7 @@
     "@emotion/styled": "^11.14.1",
     "@fontsource/roboto": "^5.2.8",
     "@mui/icons-material": "^6.5.0",
+    "@mui/lab": "6.0.1-beta.36",
     "@mui/material": "^6.5.0",
     "@mui/material-nextjs": "^6.5.0",
     "@mui/x-data-grid": "^8.18.0",
@@ -28,6 +29,7 @@
     "@refinedev/simple-rest": "^6.0.1",
     "@tanstack/react-query": "^5.90.9",
     "date-fns": "^4.1.0",
+    "js-cookie": "^3.0.8",
     "ky": "^1.13.0",
     "next": "15.5.18",
     "rc-overflow": "^1.5.0",
@@ -41,6 +43,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
