@@ -1,4 +1,5 @@
 import { buildUrl } from "utils/api"
+import { OAuthProvider } from "./auth"
 
 /**
  * Auth API paths
@@ -7,7 +8,8 @@ const authPath = "auth"
 export const authPaths = {
   login: `${authPath}/login`,
   register: `${authPath}/register`,
-  logout: `${authPath}/logout`
+  logout: `${authPath}/logout`,
+  providerLogin: (provider: OAuthProvider) => `${authPath}/${provider}/login`,
 }
 
 const userPath = "users"
