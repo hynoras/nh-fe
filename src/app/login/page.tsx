@@ -1,6 +1,6 @@
 "use client"
 
-import { Visibility, VisibilityOff } from "@mui/icons-material"
+import { Google, Visibility, VisibilityOff } from "@mui/icons-material"
 import LockPersonIcon from "@mui/icons-material/LockPerson"
 import PersonIcon from "@mui/icons-material/Person"
 import {
@@ -16,8 +16,10 @@ import {
   Typography
 } from "@mui/material"
 import { useMutation } from "@tanstack/react-query"
+import { authPaths } from "constants/api"
+import { OAuthProvider } from "constants/auth"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { FormContainer, TextFieldElement } from "react-hook-form-mui"
 import { loginApi } from "services/auth.service"
@@ -56,6 +58,30 @@ const Login = () => {
     loginMutation.mutate(data)
   }
 
+  const handleGoogleLogin = () => {
+    const width = 500
+    const height = 600
+    const left = window.screenX + (window.outerWidth - width) / 2
+    const top = window.screenY + (window.outerHeight - height) / 2
+
+    window.open(
+      authPaths.providerLogin(OAuthProvider.GOOGLE),
+      "google-login",
+      `width=${width},height=${height},left=${left},top=${top}`
+    )
+  }
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "LOGIN_SUCCESS") {
+        router.push("/home")
+      }
+    }
+
+    window.addEventListener("message", handleMessage)
+    return () => window.removeEventListener("message", handleMessage)
+  }, [router])
+
   return (
     <Box
       className="flex items-center justify-center min-h-screen"
@@ -87,7 +113,7 @@ const Login = () => {
       <Card
         className="w-full max-w-md"
         sx={{
-          padding: "48px 36px"
+          padding: "36px 36px"
         }}
       >
         <CardHeader
@@ -186,20 +212,17 @@ const Login = () => {
               </div>
             </Box>
             {loginMutation.isError && (
-              <Typography
-                variant="body2"
-                color="error"
-              >
+              <Typography variant="body2" color="error">
                 Username or password is incorrect
               </Typography>
             )}
             <div className="mt-12">
               <Button
+                className="font-bold text-base normal-case"
                 type="submit"
                 variant="contained"
                 fullWidth
                 size="large"
-                className="font-bold text-base normal-case"
                 loading={loginMutation.isPending}
                 disabled={loginMutation.isPending}
               >
@@ -207,6 +230,19 @@ const Login = () => {
               </Button>
             </div>
           </FormContainer>
+          <Divider className="my-4">
+            <Typography variant="subtitle2">Or</Typography>
+          </Divider>
+          <Button
+            className="text-base normal-case"
+            variant="outlined"
+            fullWidth
+            size="large"
+            startIcon={<Google />}
+            onClick={handleGoogleLogin}
+          >
+            Continue with Google
+          </Button>
         </CardContent>
       </Card>
     </Box>
