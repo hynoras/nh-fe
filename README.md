@@ -27,6 +27,7 @@ Live: https://noheir.vercel.app
 ## Authentication & Authorization
 
 - Session-based authentication
+- OAuth 2.0 / Sign In & Sign Up with Google
 - Role-Based Access Control (RBAC)
 - Protected route architecture
 - Permission-aware UI rendering
