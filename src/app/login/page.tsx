@@ -69,7 +69,7 @@ const Login = () => {
     )
 
     window.open(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}${authPaths.providerLogin(OAuthProvider.GOOGLE)}`,
+      `api/${authPaths.providerLogin(OAuthProvider.GOOGLE)}`,
       "google-login",
       `width=${width},height=${height},left=${left},top=${top}`
     )
