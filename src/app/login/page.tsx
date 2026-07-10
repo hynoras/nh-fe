@@ -64,6 +64,10 @@ const Login = () => {
     const left = window.screenX + (window.outerWidth - width) / 2
     const top = window.screenY + (window.outerHeight - height) / 2
 
+    console.log(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}${authPaths.providerLogin(OAuthProvider.GOOGLE)}`
+    )
+
     window.open(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}${authPaths.providerLogin(OAuthProvider.GOOGLE)}`,
       "google-login",
