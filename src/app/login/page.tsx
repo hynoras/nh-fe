@@ -65,7 +65,7 @@ const Login = () => {
     const top = window.screenY + (window.outerHeight - height) / 2
 
     window.open(
-      authPaths.providerLogin(OAuthProvider.GOOGLE),
+      `api/${authPaths.providerLogin(OAuthProvider.GOOGLE)}`,
       "google-login",
       `width=${width},height=${height},left=${left},top=${top}`
     )
