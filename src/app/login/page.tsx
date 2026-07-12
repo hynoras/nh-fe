@@ -65,7 +65,7 @@ const Login = () => {
     const top = window.screenY + (window.outerHeight - height) / 2
 
     window.open(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}auth/google/login`,
+      "/api/auth/google/login",
       "google-login",
       `width=${width},height=${height},left=${left},top=${top}`
     )
